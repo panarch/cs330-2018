@@ -18,7 +18,8 @@ WORKDIR /tmp
 # RUN tar -xzf pintos.tar.gz && \
 #    mv ./pintos/src /pintos && \
 #    rm -rf ./pintos.tar.gz ./pintos
-RUN git clone https://email:password@github.com/panarch/cs330-2018.git
+ARG GITHUB_ACCOUNT
+RUN git clone https://$GITHUB_ACCOUNT@github.com/panarch/cs330-2018.git
 RUN mv ./cs330-2018 /pintos
 WORKDIR /pintos
 
@@ -36,7 +37,9 @@ RUN apt-get update && \
             gdb ddd \
             qemu
 
-RUN apt-get install -y ack-grep tmux
+RUN apt-get install -y ctags ack-grep tmux
+RUN git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+RUN cp /pintos/.tmux.conf ~/
 
 # Clean up apt-get's files
 RUN apt-get clean autoclean && \
