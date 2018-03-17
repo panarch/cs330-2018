@@ -88,6 +88,7 @@ struct thread
     char name[16];                      /* Name (for debugging purposes). */
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
+    int prev_priority;                  /* Previous Priority */
     int64_t wakeup_ticks;               /* Let the thread sleep until wakeup_ticks */
     struct list_elem allelem;           /* List element for all threads list. */
 
@@ -141,5 +142,6 @@ int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
 void thread_list_insert_ordered (struct list *thread_list, struct list_elem *elem);
+void thread_ready_list_sort (void);
 
 #endif /* threads/thread.h */

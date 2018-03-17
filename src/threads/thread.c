@@ -389,6 +389,7 @@ void
 thread_set_priority (int new_priority) 
 {
   thread_current ()->priority = new_priority;
+  thread_current ()->prev_priority = new_priority;
 
   if (next_thread_to_run_without_pop ()->priority > new_priority)
     thread_yield ();
@@ -436,6 +437,18 @@ void
 thread_list_insert_ordered (struct list *thread_list, struct list_elem *elem)
 {
   list_insert_ordered (thread_list, elem, priority_list_less_func, 0);
+}
+
+static void
+thread_list_sort (struct list *thread_list)
+{
+  list_sort (thread_list, priority_list_less_func, 0);
+}
+
+void
+thread_ready_list_sort (void)
+{
+  thread_list_sort(&ready_list);
 }
 
 
@@ -523,6 +536,7 @@ init_thread (struct thread *t, const char *name, int priority)
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
+  t->prev_priority = priority;
   t->magic = THREAD_MAGIC;
   list_push_back (&all_list, &t->allelem);
 }
