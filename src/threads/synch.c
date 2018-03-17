@@ -266,6 +266,23 @@ cond_init (struct condition *cond)
   list_init (&cond->waiters);
 }
 
+static bool
+cond_waiters_list_less_func (const struct list_elem *a,
+                      const struct list_elem *b,
+                      void *aux UNUSED)
+{
+  struct semaphore_elem *sema_elem_a = list_entry (a, struct semaphore_elem, elem);
+  struct semaphore_elem *sema_elem_b = list_entry (b, struct semaphore_elem, elem);
+
+  struct semaphore *sema_a = &sema_elem_a->semaphore;
+  struct semaphore *sema_b = &sema_elem_b->semaphore;
+
+  struct thread *ta = list_entry (list_front (&sema_a->waiters), struct thread, elem);
+  struct thread *tb = list_entry (list_front (&sema_b->waiters), struct thread, elem);
+
+  return ta->priority > tb->priority;
+}
+
 /* Atomically releases LOCK and waits for COND to be signaled by
    some other piece of code.  After COND is signaled, LOCK is
    reacquired before returning.  LOCK must be held before calling
@@ -319,8 +336,12 @@ cond_signal (struct condition *cond, struct lock *lock UNUSED)
   ASSERT (lock_held_by_current_thread (lock));
 
   if (!list_empty (&cond->waiters)) 
+  {
+    list_sort (&cond->waiters, cond_waiters_list_less_func, 0);
+
     sema_up (&list_entry (list_pop_front (&cond->waiters),
                           struct semaphore_elem, elem)->semaphore);
+  }
 }
 
 /* Wakes up all threads, if any, waiting on COND (protected by
