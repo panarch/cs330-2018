@@ -63,9 +63,13 @@ bool thread_mlfqs;
 
 static void kernel_thread (thread_func *, void *aux);
 
+static bool waiting_list_less_func (const struct list_elem *a, const struct list_elem *b, void *aux);
+static bool ready_list_less_func (const struct list_elem *a, const struct list_elem *b, void *aux);
+
 static void idle (void *aux UNUSED);
 static struct thread *running_thread (void);
 static struct thread *next_thread_to_run (void);
+static struct thread *next_thread_to_run_without_pop (void);
 static void init_thread (struct thread *, const char *name, int priority);
 static bool is_thread (struct thread *) UNUSED;
 static void *alloc_frame (struct thread *, size_t size);
@@ -161,17 +165,6 @@ thread_tick (int64_t ticks)
     intr_yield_on_return ();
 }
 
-static bool
-waiting_list_less_func (const struct list_elem *a,
-                const struct list_elem *b,
-                void *aux UNUSED)
-{
-  struct thread *ta = list_entry (a, struct thread, elem);
-  struct thread *tb = list_entry (b, struct thread, elem);
-
-  return ta->wakeup_ticks < tb->wakeup_ticks;
-}
-
 void
 thread_sleep (int64_t wakeup_ticks)
 {
@@ -259,6 +252,7 @@ thread_create (const char *name, int priority,
 
   /* Add to run queue. */
   thread_unblock (t);
+  thread_yield ();
 
   return tid;
 }
@@ -278,18 +272,6 @@ thread_block (void)
   thread_current ()->status = THREAD_BLOCKED;
   schedule ();
 }
-
-static bool
-ready_list_less_func (const struct list_elem *a,
-                      const struct list_elem *b,
-                      void *aux UNUSED)
-{
-  struct thread *ta = list_entry (a, struct thread, elem);
-  struct thread *tb = list_entry (b, struct thread, elem);
-
-  return ta->priority > tb->priority;
-}
-
 
 /* Transitions a blocked thread T to the ready-to-run state.
    This is an error if T is not blocked.  (Use thread_yield() to
@@ -379,7 +361,7 @@ thread_yield (void)
 
   old_level = intr_disable ();
   if (cur != idle_thread) 
-    list_push_back (&ready_list, &cur->elem);
+    list_insert_ordered (&ready_list, &cur->elem, ready_list_less_func, 0);
   cur->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
@@ -407,6 +389,9 @@ void
 thread_set_priority (int new_priority) 
 {
   thread_current ()->priority = new_priority;
+
+  if (next_thread_to_run_without_pop ()->priority > new_priority)
+    thread_yield ();
 }
 
 /* Returns the current thread's priority. */
@@ -562,6 +547,15 @@ next_thread_to_run (void)
     return list_entry (list_pop_front (&ready_list), struct thread, elem);
 }
 
+static struct thread *
+next_thread_to_run_without_pop (void)
+{
+  if (list_empty (&ready_list))
+    return idle_thread;
+  else
+    return list_entry (list_front (&ready_list), struct thread, elem);
+}
+
 /* Completes a thread switch by activating the new thread's page
    tables, and, if the previous thread is dying, destroying it.
 
@@ -648,3 +642,25 @@ allocate_tid (void)
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
+
+static bool
+waiting_list_less_func (const struct list_elem *a,
+                const struct list_elem *b,
+                void *aux UNUSED)
+{
+  struct thread *ta = list_entry (a, struct thread, elem);
+  struct thread *tb = list_entry (b, struct thread, elem);
+
+  return ta->wakeup_ticks < tb->wakeup_ticks;
+}
+
+static bool
+ready_list_less_func (const struct list_elem *a,
+                      const struct list_elem *b,
+                      void *aux UNUSED)
+{
+  struct thread *ta = list_entry (a, struct thread, elem);
+  struct thread *tb = list_entry (b, struct thread, elem);
+
+  return ta->priority > tb->priority;
+}
