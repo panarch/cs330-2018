@@ -64,7 +64,7 @@ bool thread_mlfqs;
 static void kernel_thread (thread_func *, void *aux);
 
 static bool waiting_list_less_func (const struct list_elem *a, const struct list_elem *b, void *aux);
-static bool ready_list_less_func (const struct list_elem *a, const struct list_elem *b, void *aux);
+static bool priority_list_less_func (const struct list_elem *a, const struct list_elem *b, void *aux);
 
 static void idle (void *aux UNUSED);
 static struct thread *running_thread (void);
@@ -290,7 +290,7 @@ thread_unblock (struct thread *t)
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
-  list_insert_ordered (&ready_list, &t->elem, ready_list_less_func, 0);
+  thread_list_insert_ordered (&ready_list, &t->elem);
   t->status = THREAD_READY;
   intr_set_level (old_level);
 }
@@ -361,7 +361,7 @@ thread_yield (void)
 
   old_level = intr_disable ();
   if (cur != idle_thread) 
-    list_insert_ordered (&ready_list, &cur->elem, ready_list_less_func, 0);
+    thread_list_insert_ordered (&ready_list, &cur->elem);
   cur->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
@@ -431,6 +431,13 @@ thread_get_recent_cpu (void)
   /* Not yet implemented. */
   return 0;
 }
+
+void
+thread_list_insert_ordered (struct list *thread_list, struct list_elem *elem)
+{
+  list_insert_ordered (thread_list, elem, priority_list_less_func, 0);
+}
+
 
 /* Idle thread.  Executes when no other thread is ready to run.
 
@@ -655,7 +662,7 @@ waiting_list_less_func (const struct list_elem *a,
 }
 
 static bool
-ready_list_less_func (const struct list_elem *a,
+priority_list_less_func (const struct list_elem *a,
                       const struct list_elem *b,
                       void *aux UNUSED)
 {

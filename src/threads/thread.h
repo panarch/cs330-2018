@@ -140,4 +140,6 @@ void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
+void thread_list_insert_ordered (struct list *thread_list, struct list_elem *elem);
+
 #endif /* threads/thread.h */
