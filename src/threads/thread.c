@@ -439,7 +439,7 @@ thread_list_insert_ordered (struct list *thread_list, struct list_elem *elem)
   list_insert_ordered (thread_list, elem, priority_list_less_func, 0);
 }
 
-static void
+void
 thread_list_sort (struct list *thread_list)
 {
   list_sort (thread_list, priority_list_less_func, 0);

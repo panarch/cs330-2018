@@ -142,6 +142,7 @@ int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
 void thread_list_insert_ordered (struct list *thread_list, struct list_elem *elem);
+void thread_list_sort (struct list *thread_list);
 void thread_ready_list_sort (void);
 
 #endif /* threads/thread.h */
