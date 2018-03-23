@@ -65,6 +65,7 @@ static void kernel_thread (thread_func *, void *aux);
 
 static bool waiting_list_less_func (const struct list_elem *a, const struct list_elem *b, void *aux);
 static bool priority_list_less_func (const struct list_elem *a, const struct list_elem *b, void *aux);
+static bool holding_locks_less_func (const struct list_elem *a, const struct list_elem *b, void *aux);
 
 static void idle (void *aux UNUSED);
 static struct thread *running_thread (void);
@@ -384,12 +385,54 @@ thread_foreach (thread_action_func *func, void *aux)
     }
 }
 
+void
+thread_sync_priority()
+{
+  struct thread *cur = thread_current();
+
+  if (!list_empty (&cur->holding_locks))
+  {
+    list_sort (&cur->holding_locks, holding_locks_less_func, 0);
+
+    struct lock *max_lock = list_entry (list_front (&cur->holding_locks), struct lock, elem);
+    struct semaphore *max_sema = &max_lock->semaphore;
+
+    if (!list_empty (&max_sema->waiters))
+    {
+      struct thread *max_t = list_entry (list_front (&max_sema->waiters), struct thread, elem);
+      if (max_t->priority > cur->prev_priority)
+      {
+        cur->priority = max_t->priority;
+        thread_ready_list_sort ();
+      }
+    }
+    else if (cur->priority != cur->prev_priority)
+    {
+      cur->priority = cur->prev_priority;
+      thread_ready_list_sort ();
+    }
+  }
+  else if (cur->priority != cur->prev_priority)
+  {
+    cur->priority = cur->prev_priority;
+    thread_ready_list_sort ();
+  }
+}
+
+
 /* Sets the current thread's priority to NEW_PRIORITY. */
 void
 thread_set_priority (int new_priority) 
 {
+  enum intr_level old_level = intr_disable ();
+
   thread_current ()->priority = new_priority;
   thread_current ()->prev_priority = new_priority;
+
+  thread_sync_priority();
+
+  intr_set_level (old_level);
+
 
   if (next_thread_to_run_without_pop ()->priority > new_priority)
     thread_yield ();
@@ -685,4 +728,26 @@ priority_list_less_func (const struct list_elem *a,
   struct thread *tb = list_entry (b, struct thread, elem);
 
   return ta->priority > tb->priority;
+}
+
+static bool
+holding_locks_less_func (const struct list_elem *a,
+                 const struct list_elem *b,
+                 void *aux UNUSED)
+{
+  struct lock *lock_a = list_entry (a, struct lock, elem);
+  struct lock *lock_b = list_entry (b, struct lock, elem);
+
+  struct semaphore *sema_a = &lock_a->semaphore;
+  struct semaphore *sema_b = &lock_b->semaphore;
+
+  int priority_a = !list_empty (&sema_a->waiters) ?
+    (list_entry (list_front (&sema_a->waiters), struct thread, elem))->priority :
+    PRI_MIN;
+
+  int priority_b = !list_empty (&sema_b->waiters) ?
+    (list_entry (list_front (&sema_b->waiters), struct thread, elem))->priority :
+    PRI_MIN;
+
+  return priority_a > priority_b;
 }
