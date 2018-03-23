@@ -4,6 +4,8 @@
 #include <list.h>
 #include <stdbool.h>
 
+#define MAX_NESTING_LEVEL 8     /* Max nesting level for prioritiy donation */
+
 /* A counting semaphore. */
 struct semaphore 
   {

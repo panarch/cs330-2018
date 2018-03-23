@@ -208,6 +208,25 @@ locks_less_func (const struct list_elem *a,
   return priority_a > priority_b;
 }
 
+void
+lock_donate (struct lock *lock,
+             struct thread *waiter,
+             int nesting_level)
+{
+  if (nesting_level == MAX_NESTING_LEVEL ||
+      lock->holder == NULL ||
+      lock->holder->priority >= waiter->priority)
+    return;
+
+  lock->holder->priority = waiter->priority;
+
+  if (lock->holder->lock_to_acquire)
+    lock_donate (lock->holder->lock_to_acquire, lock->holder, nesting_level + 1);
+
+  if (nesting_level == 0)
+    thread_ready_list_sort ();
+}
+
 /* Acquires LOCK, sleeping until it becomes available if
    necessary.  The lock must not already be held by the current
    thread.
@@ -228,12 +247,8 @@ lock_acquire (struct lock *lock)
   old_level = intr_disable ();
   struct thread *cur = thread_current ();
 
-  if (lock->holder != NULL &&
-      lock->holder->priority < cur->priority)
-  {
-    lock->holder->priority = cur->priority;
-    thread_ready_list_sort ();
-  }
+  cur->lock_to_acquire = lock;
+  lock_donate (lock, cur, 0);
 
   intr_set_level (old_level);
 
@@ -242,6 +257,7 @@ lock_acquire (struct lock *lock)
   old_level = intr_disable ();
 
   cur = thread_current ();
+  cur->lock_to_acquire = NULL;
   lock->holder = cur;
   list_push_back (&cur->holding_locks, &lock->elem);
 
