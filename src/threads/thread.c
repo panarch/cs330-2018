@@ -24,6 +24,8 @@
    that are ready to run but not actually running. */
 static struct list ready_list;
 
+static struct list sleep_list;
+
 /* List of all processes.  Processes are added to this list
    when they are first scheduled and removed when they exit. */
 static struct list all_list;
@@ -92,6 +94,7 @@ thread_init (void)
   lock_init (&tid_lock);
   list_init (&ready_list);
   list_init (&all_list);
+  list_init (&sleep_list);
 
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
@@ -585,3 +588,40 @@ allocate_tid (void)
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
+
+void
+thread_push_back_sleep_list(struct thread* current_thread)
+{
+	list_push_back(&sleep_list,&current_thread->sleep_elem);
+}
+
+void
+thread_wake_up(int64_t ticks)
+{
+	struct list_elem *e;
+	for(e= list_begin(&sleep_list); e!= list_end(&sleep_list) ; e=list_next(e)){
+		struct thread *t = list_entry(e,struct thread,sleep_elem);
+		if(t->ticks_to_wake_up <= ticks){
+			list_remove(e);
+			thread_unblock(t);
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

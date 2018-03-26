@@ -89,9 +89,11 @@ struct thread
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
     struct list_elem allelem;           /* List element for all threads list. */
+	struct list_elem sleep_elem;
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
+	int64_t ticks_to_wake_up;
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
@@ -139,3 +141,7 @@ int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
 #endif /* threads/thread.h */
+
+
+void thread_push_back_sleep_list(struct thread *current_thraed);
+void thread_wake_up(int64_t ticks);
