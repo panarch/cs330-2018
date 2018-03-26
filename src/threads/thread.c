@@ -212,6 +212,10 @@ thread_create (const char *name, int priority,
   /* Add to run queue. */
   thread_unblock (t);
 
+  if (thread_compare (t)){
+	  thread_yield();
+  }
+
   return tid;
 }
 
@@ -248,9 +252,12 @@ thread_unblock (struct thread *t)
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
-  list_push_back (&ready_list, &t->elem);
+ // list_push_back (&ready_list, &t->elem);
+  list_insert_ordered(&ready_list,&t->elem,compare_priority,0);
+
   t->status = THREAD_READY;
   intr_set_level (old_level);
+
 }
 
 /* Returns the name of the running thread. */
@@ -318,8 +325,10 @@ thread_yield (void)
   ASSERT (!intr_context ());
 
   old_level = intr_disable ();
-  if (cur != idle_thread) 
-    list_push_back (&ready_list, &cur->elem);
+  if (cur != idle_thread){
+	  list_insert_ordered(&ready_list,&cur->elem,compare_priority,0);
+  }
+//    list_push_back (&ready_list, &cur->elem);
   cur->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
@@ -347,6 +356,9 @@ void
 thread_set_priority (int new_priority) 
 {
   thread_current ()->priority = new_priority;
+  if(thread_compare(list_entry(list_begin(&ready_list),struct thread, elem))){
+	  thread_yield();
+  }
 }
 
 /* Returns the current thread's priority. */
@@ -496,10 +508,12 @@ alloc_frame (struct thread *t, size_t size)
 static struct thread *
 next_thread_to_run (void) 
 {
-  if (list_empty (&ready_list))
+  if (list_empty (&ready_list)){
     return idle_thread;
-  else
+  }
+  else{
     return list_entry (list_pop_front (&ready_list), struct thread, elem);
+  }
 }
 
 /* Completes a thread switch by activating the new thread's page
@@ -608,8 +622,28 @@ thread_wake_up(int64_t ticks)
 	}
 }
 
+// boolean function for comparing priority
+bool compare_priority(const struct list_elem *a, const struct list_elem *b, void *aux){
+	if(list_entry(a,struct thread,elem)->priority > list_entry(b,struct thread,elem)->priority){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
 
-
+bool
+thread_compare(struct thread *new_thread)
+{
+	struct thread *cur = running_thread();
+	int curr_priority = cur->priority;
+	int new_thread_priority = new_thread->priority;
+	if(new_thread_priority > curr_priority){
+		return true;
+	}
+	return false;
+}
+		
 
 
 

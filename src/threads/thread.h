@@ -140,8 +140,9 @@ void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
-#endif /* threads/thread.h */
-
-
 void thread_push_back_sleep_list(struct thread *current_thraed);
 void thread_wake_up(int64_t ticks);
+bool compare_priority(const struct list_elem *a, const struct list_elem *b, void *aux);
+bool thread_compare(struct thread *new_thread);
+
+#endif /* threads/thread.h */
