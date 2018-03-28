@@ -211,10 +211,9 @@ thread_create (const char *name, int priority,
 
   /* Add to run queue. */
   thread_unblock (t);
-
-  if (thread_compare (t)){
-	  thread_yield();
-  }
+  //if(! list_empty(&ready_list)){
+  thread_compare_max();
+ // }
 
   return tid;
 }
@@ -319,8 +318,10 @@ thread_exit (void)
 void
 thread_yield (void) 
 {
+
   struct thread *cur = thread_current ();
   enum intr_level old_level;
+  
   
   ASSERT (!intr_context ());
 
@@ -356,9 +357,8 @@ void
 thread_set_priority (int new_priority) 
 {
   thread_current ()->priority = new_priority;
-  if(thread_compare(list_entry(list_begin(&ready_list),struct thread, elem))){
-	  thread_yield();
-  }
+  thread_current ()->original_priority =  new_priority;
+  thread_compare_max(); 
 }
 
 /* Returns the current thread's priority. */
@@ -483,6 +483,7 @@ init_thread (struct thread *t, const char *name, int priority)
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
+  t->original_priority = priority;
   t->magic = THREAD_MAGIC;
   list_push_back (&all_list, &t->allelem);
 }
@@ -575,6 +576,7 @@ schedule (void)
   struct thread *cur = running_thread ();
   struct thread *next = next_thread_to_run ();
   struct thread *prev = NULL;
+//  printf("3 check executed schedule\n");
 
   ASSERT (intr_get_level () == INTR_OFF);
   ASSERT (cur->status != THREAD_RUNNING);
@@ -643,11 +645,34 @@ thread_compare(struct thread *new_thread)
 	}
 	return false;
 }
+
+void
+thread_compare_max(void){
+	if(!list_empty(&ready_list)){
+//		ASSERT(1==2);
+		if (thread_current()->priority < list_entry(list_front(&ready_list),struct thread, elem)->priority){
+			//ASSERT(2==3);
+		
+		thread_yield();
+		}
+	}
+	//}
+}
 		
 
+int
+ready_list_size(void ){
+	return list_size(&ready_list);
+}
 
 
+void
+print_ready_list(void){
+	printf("%s\n",&list_entry(list_front(&ready_list),struct thread,elem)->name);
+	printf("%d\n",list_entry(list_front(&ready_list),struct thread,elem)->priority);
+//	printf("%d\n",&list_entry(list_pop_front(&ready_list),struct thread,elem)->status);
 
+}
 
 
 

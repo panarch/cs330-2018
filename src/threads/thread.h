@@ -90,6 +90,7 @@ struct thread
     int priority;                       /* Priority. */
     struct list_elem allelem;           /* List element for all threads list. */
 	struct list_elem sleep_elem;
+	int original_priority;
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
@@ -145,4 +146,7 @@ void thread_wake_up(int64_t ticks);
 bool compare_priority(const struct list_elem *a, const struct list_elem *b, void *aux);
 bool thread_compare(struct thread *new_thread);
 
+int ready_list_size(void);
+void print_ready_list(void);
+void thread_compare_max(void);
 #endif /* threads/thread.h */

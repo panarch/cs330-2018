@@ -51,6 +51,9 @@ test_priority_fifo (void)
   lock_init (&lock);
 
   thread_set_priority (PRI_DEFAULT + 2);
+//  msg ("check current thread name and priority  : %s and %d",thread_current()->name,thread_current()->priority);
+//  msg("ready_list size : %d ", ready_list_size());
+//ASSERT (lock_held_by_current_thread(&lock));
   for (i = 0; i < THREAD_CNT; i++) 
     {
       char name[16];
@@ -61,11 +64,13 @@ test_priority_fifo (void)
       d->lock = &lock;
       d->op = &op;
       thread_create (name, PRI_DEFAULT + 1, simple_thread_func, d);
+//	  msg("done?"); 
     }
 
   thread_set_priority (PRI_DEFAULT);
   /* All the other threads now run to termination here. */
   ASSERT (lock.holder == NULL);
+//msg("ready_list size : %d ", ready_list_size());
 
   cnt = 0;
   for (; output < op; output++) 
@@ -88,12 +93,17 @@ simple_thread_func (void *data_)
 {
   struct simple_thread_data *data = data_;
   int i;
-  
+ // msg("check executed : %d ", data->id);
+ // msg("current priority : %d", thread_current()->priority);
   for (i = 0; i < ITER_CNT; i++) 
     {
       lock_acquire (data->lock);
+	 // msg("lock_acquire : %d ", data->id);
       *(*data->op)++ = data->id;
-      lock_release (data->lock);
-      thread_yield ();
+	  lock_release (data->lock);
+     // msg("lock_release : %d ", data->id);
+	 // msg("ready_list size : %d ", ready_list_size());
+	 // print_ready_list();
+	  thread_yield ();
     }
 }
