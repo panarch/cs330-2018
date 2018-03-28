@@ -68,7 +68,7 @@ sema_down (struct semaphore *sema)
   old_level = intr_disable ();
   while (sema->value == 0) 
     {
-     // list_push_back (&sema->waiters, &thread_current ()->elem);
+//    list_push_back (&sema->waiters, &thread_current ()->elem);
 	  list_insert_ordered(&sema->waiters,&thread_current()->elem,compare_priority,0);
 
       thread_block ();
@@ -121,6 +121,7 @@ sema_up (struct semaphore *sema)
   }
   sema->value++;
   intr_set_level (old_level);
+  thread_yield();
 }
 
 static void sema_test_helper (void *sema_);
@@ -195,7 +196,7 @@ lock_init (struct lock *lock)
 void
 lock_acquire (struct lock *lock)
 {
-//  enum intr_level old_level;
+  enum intr_level old_level;
   ASSERT (lock != NULL);
   ASSERT (!intr_context ());
   ASSERT (!lock_held_by_current_thread (lock));
@@ -207,7 +208,16 @@ lock_acquire (struct lock *lock)
   if(lock->semaphore.value==0 && lock_holder->priority < curr->priority){
 	  ASSERT (lock != NULL);
 //	  lock_holder -> priority = thread_current()->priority;
+//	  old_level = intr_disable(); 
+	  
+    //  lock_holder -> priority = curr -> priority;
+	  list_insert_ordered(&lock_holder->donate_list, &lock_holder->donate_elem, compare_priority, 0);
+//	  lock_holder -> priority = list_entry( list_front( &lock_holder->donate_list) , struct thread, elem) ;
 	  lock_holder -> priority = curr -> priority;
+
+//	  intr_set_level(old_level);
+	
+
   }
 
   sema_down (&lock->semaphore);
@@ -244,12 +254,19 @@ lock_release (struct lock *lock)
 {
   ASSERT (lock != NULL);
   ASSERT (lock_held_by_current_thread (lock));
-  struct thread *t = lock->holder;
+  struct thread *lock_holder = lock->holder;
+  struct list donated_list = lock_holder->donate_list;
 
   lock->holder = NULL;
   sema_up (&lock->semaphore);
-  if(t->priority != t->original_priority){
-	  t->priority = t->original_priority;
+  if(lock_holder -> priority != lock_holder -> original_priority){
+	  if(!list_empty(&donated_list)){
+		  lock_holder -> priority = list_entry(list_pop_front(&donated_list),struct thread, donate_elem)->priority;
+	  }
+	  else{
+		  lock_holder -> priority = lock_holder -> original_priority;
+	  }
+//	  t->priority = lock_holder->original_priority;
   }
   thread_compare_max();
 }

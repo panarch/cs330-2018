@@ -485,6 +485,7 @@ init_thread (struct thread *t, const char *name, int priority)
   t->priority = priority;
   t->original_priority = priority;
   t->magic = THREAD_MAGIC;
+  list_init(&t->donate_list);
   list_push_back (&all_list, &t->allelem);
 }
 
@@ -582,9 +583,11 @@ schedule (void)
   ASSERT (cur->status != THREAD_RUNNING);
   ASSERT (is_thread (next));
 
-  if (cur != next)
+  if (cur != next){
     prev = switch_threads (cur, next);
+  }
   thread_schedule_tail (prev);
+  
 }
 
 /* Returns a tid to use for a new thread. */

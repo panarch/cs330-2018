@@ -91,6 +91,9 @@ struct thread
     struct list_elem allelem;           /* List element for all threads list. */
 	struct list_elem sleep_elem;
 	int original_priority;
+	struct list donate_list;
+	struct list_elem donate_elem;
+
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
