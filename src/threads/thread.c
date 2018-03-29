@@ -653,10 +653,10 @@ void
 thread_compare_max(void){
 	if(!list_empty(&ready_list)){
 //		ASSERT(1==2);
-		if (thread_current()->priority < list_entry(list_front(&ready_list),struct thread, elem)->priority){
-			//ASSERT(2==3);
+		 if (thread_current()->priority < list_entry(list_front(&ready_list),struct thread, elem)->priority){
+		//	ASSERT(2==3);
 		
-		thread_yield();
+			thread_yield();
 		}
 	}
 	//}

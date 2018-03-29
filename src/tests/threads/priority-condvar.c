@@ -32,20 +32,27 @@ test_priority_condvar (void)
       snprintf (name, sizeof name, "priority %d", priority);
       thread_create (name, priority, priority_condvar_thread, NULL);
     }
-
+  
+ // msg ("current thread : %s, %d, %d ", thread_current()->name, thread_current()->priority,lock.semaphore.value);
   for (i = 0; i < 10; i++) 
     {
       lock_acquire (&lock);
+//	  msg ("who acquire ? %s %d ", thread_current()->name, thread_current()->priority);
       msg ("Signaling...");
       cond_signal (&condition, &lock);
+//	  msg("which is first?");
       lock_release (&lock);
     }
+
+// msg("ready list size %d ", ready_list_size());
 }
 
 static void
 priority_condvar_thread (void *aux UNUSED) 
 {
   msg ("Thread %s starting.", thread_name ());
+// msg ("current thread : %s, %d, %d ", thread_current()->name, thread_current()->priority,lock.semaphore.value);
+
   lock_acquire (&lock);
   cond_wait (&condition, &lock);
   msg ("Thread %s woke up.", thread_name ());
