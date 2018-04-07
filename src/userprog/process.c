@@ -18,6 +18,9 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 
+#define PTR_SIZE 4
+
+
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
 
@@ -29,6 +32,8 @@ tid_t
 process_execute (const char *file_name) 
 {
   char *fn_copy;
+  // char *save_ptr;
+  char *save_ptr;
   tid_t tid;
 
   /* Make a copy of FILE_NAME.
@@ -37,6 +42,9 @@ process_execute (const char *file_name)
   if (fn_copy == NULL)
     return TID_ERROR;
   strlcpy (fn_copy, file_name, PGSIZE);
+
+  file_name = strtok_r (file_name, " ",&save_ptr); // "grep foo bar" -> grep
+
 
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
@@ -54,17 +62,103 @@ start_process (void *file_name_)
   struct intr_frame if_;
   bool success;
 
+  int argc;
+  int padding_num;
+  int* argv_index;
+  char* save_ptr;
+  char* token;
+  char* rest;
+  int file_name_len;
+  void *store_ptr;
+  printf("what is file_name : %s\n", file_name);
+
+
   /* Initialize interrupt frame and load executable. */
   memset (&if_, 0, sizeof if_);
   if_.gs = if_.fs = if_.es = if_.ds = if_.ss = SEL_UDSEG;
   if_.cs = SEL_UCSEG;
   if_.eflags = FLAG_IF | FLAG_MBS;
+
+  argc = 0;
+  argv_index = palloc_get_page(0);
+  argv_index[0] = 0; // this is for padding
+  file_name_len = strlen (file_name);
+  rest = file_name;
+  save_ptr = file_name;
+
   success = load (file_name, &if_.eip, &if_.esp);
+
+  /*after load, esp is pointing PHYS_BASE. Now, it's time to reduce esp */
+
+ 
+
+// parse and save offset in argv_index
+  argv_index[0]=0;
+  while( (token = strtok_r(NULL, " ", &save_ptr)) ){
+	
+	argc++;
+	argv_index[argc]= save_ptr - file_name;
+	
+  }
+   
+
+//  void esp_push_file_name(char * file_name_)
+
+  if_.esp -= (file_name_len+1);
+
+  memcpy (if_.esp, file_name, file_name_len+1);
+
+// void esp_push_padding
+
+  padding_num = PTR_SIZE -(file_name_len+1)%PTR_SIZE + PTR_SIZE;
+  if_.esp -= padding_num;
+  *(int *)(if_.esp) = 0;
+
+  printf("check\n");
+
+// esp_set_value
+  int iteration;
+  for(iteration=0; iteration < argc; iteration++){
+	if_.esp -= PTR_SIZE;
+	*(void **)(if_.esp) =  if_.esp + PTR_SIZE*(iteration+1) + padding_num + argv_index[argc-iteration];
+//	*(int *)if_.esp =  if_.esp + padding_num + PTR_SIZE*(i+1) + argv_index[i];
+  }
+
+// esp_set_rest_address
+  if_.esp -= PTR_SIZE;
+  *(void **)(if_.esp) = if_.esp + PTR_SIZE;
+//*(char **)if_.esp = if_esp + PTR_SIZE;
+  if_.esp -= PTR_SIZE;
+  *(int *)(if_.esp) = argc;
+  if_.esp -= PTR_SIZE;
+  *(int *)(if_.esp) = 0;
+
+  palloc_free_page (argv_index);
+
+  printf("Before hex_dump\n");
+  printf("check hex_dump 3rd arument value : %d\n", (4+4+4+4*argc+padding_num+file_name_len+1)  );
+  int cal = 4+4+4+4*argc+padding_num + file_name_len+1;
+  hex_dump ((uintptr_t)(PHYS_BASE - cal-20), if_.esp, cal, true);
+  printf("After hex_dump\n");
+  hex_dump ((uintptr_t)(PHYS_BASE - 200), if_.esp, 130, true);
+
+
+// esp_set_address
+
+  
+
+
 
   /* If load failed, quit. */
   palloc_free_page (file_name);
-  if (!success) 
+  printf("1 After hex_dump\n");
+
+  if (!success){ 
+	printf("2 After hex_dump\n");
     thread_exit ();
+  }
+  
+  printf("3 After hex_dump\n");
 
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in
@@ -73,7 +167,11 @@ start_process (void *file_name_)
      we just point the stack pointer (%esp) to our stack frame
      and jump to it. */
   asm volatile ("movl %0, %%esp; jmp intr_exit" : : "g" (&if_) : "memory");
+  printf("4 After hex_dump\n");
+
   NOT_REACHED ();
+  printf("5 After hex_dump\n");
+
 }
 
 /* Waits for thread TID to die and returns its exit status.  If
@@ -88,6 +186,10 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
+  while(1==1){
+	/* this is for implementing argument passing */
+//	break;
+  }
   return -1;
 }
 
