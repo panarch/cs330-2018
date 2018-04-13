@@ -15,6 +15,26 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f UNUSED) 
 {
-  printf ("system call!\n");
+  int *p = f->esp;
+  int fd = *(p+1);
+  char *buffer=*(p+2);
+  unsigned size = *(p+3);
+
+//  putbuf(buffer,size);
+
+
+
+  if(*p==SYS_WRITE){
+	printf("Sys write ?\n");
+	putbuf(buffer,size);
+	f->eax=(int)size;
+  }
+  else if(*p==SYS_EXIT)
+  {
+	printf("Executed SYS_EXIT?\n");
   thread_exit ();
+  }
+
+  printf("int p : %d\n",*p);
+  printf ("system call!\n");
 }

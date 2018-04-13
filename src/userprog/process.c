@@ -70,6 +70,7 @@ start_process (void *file_name_)
   char* rest;
   int file_name_len;
   void *store_ptr;
+  void *start
   printf("what is file_name : %s\n", file_name);
 
 
@@ -81,8 +82,9 @@ start_process (void *file_name_)
 
   argc = 0;
   argv_index = palloc_get_page(0);
-  argv_index[0] = 0; // this is for padding
+ // argv_index[0] = 0; // this is for padding
   file_name_len = strlen (file_name);
+ // argv_index[0] = 0; // this is for padding
   rest = file_name;
   save_ptr = file_name;
 
@@ -105,6 +107,7 @@ start_process (void *file_name_)
 //  void esp_push_file_name(char * file_name_)
 
   if_.esp -= (file_name_len+1);
+  start = if_.esp;
 
   memcpy (if_.esp, file_name, file_name_len+1);
 

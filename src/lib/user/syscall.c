@@ -120,6 +120,7 @@ read (int fd, void *buffer, unsigned size)
 int
 write (int fd, const void *buffer, unsigned size)
 {
+//  printf("write test\n");
   return syscall3 (SYS_WRITE, fd, buffer, size);
 }
 
