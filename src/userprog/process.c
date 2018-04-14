@@ -31,6 +31,8 @@ process_execute (const char *file_name)
   char *fn_copy;
   tid_t tid;
 
+  //  printf("\n process.c -> process_execute : %s\n", file_name);
+
   /* Make a copy of FILE_NAME.
      Otherwise there's a race between the caller and load(). */
   fn_copy = palloc_get_page (0);
@@ -63,8 +65,10 @@ start_process (void *file_name_)
 
   /* If load failed, quit. */
   palloc_free_page (file_name);
-  if (!success) 
+  if (!success)
+  {
     thread_exit ();
+  }
 
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in
@@ -88,6 +92,8 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
+  while (1) {}
+
   return -1;
 }
 
@@ -195,7 +201,7 @@ struct Elf32_Phdr
 #define PF_W 2          /* Writable. */
 #define PF_R 4          /* Readable. */
 
-static bool setup_stack (void **esp);
+static bool setup_stack (void **esp, char *file_name, char *argv_ptr);
 static bool validate_segment (const struct Elf32_Phdr *, struct file *);
 static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
                           uint32_t read_bytes, uint32_t zero_bytes,
@@ -206,7 +212,7 @@ static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
    and its initial stack pointer into *ESP.
    Returns true if successful, false otherwise. */
 bool
-load (const char *file_name, void (**eip) (void), void **esp) 
+load (const char *cmdline_, void (**eip) (void), void **esp)
 {
   struct thread *t = thread_current ();
   struct Elf32_Ehdr ehdr;
@@ -220,6 +226,13 @@ load (const char *file_name, void (**eip) (void), void **esp)
   if (t->pagedir == NULL) 
     goto done;
   process_activate ();
+
+  size_t cmdline_length = strlen (cmdline_) + 1;
+  char *cmdline = malloc (cmdline_length);
+  memcpy (cmdline, cmdline_, cmdline_length);
+
+  char *file_name, *argv_ptr;
+  file_name = strtok_r (cmdline, " ", &argv_ptr);
 
   /* Open executable file. */
   file = filesys_open (file_name);
@@ -302,7 +315,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
     }
 
   /* Set up stack. */
-  if (!setup_stack (esp))
+  if (!setup_stack (esp, file_name, argv_ptr))
     goto done;
 
   /* Start address. */
@@ -424,10 +437,72 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
   return true;
 }
 
+static void
+setup_stack_esp (void **esp, char *file_name, char *argv_ptr)
+{
+  char *token, *save_ptr;
+  size_t token_length;
+  size_t argv_length = 0;
+  int argc = 0;
+  int i;
+
+  *esp = PHYS_BASE;
+
+  token_length = strlen (file_name) + 1;
+  argv_length += token_length;
+  argc++;
+  *esp -= token_length;
+  memcpy (*esp, file_name, token_length);
+
+  for (token = strtok_r (argv_ptr, " ", &save_ptr); token != NULL;
+       token = strtok_r (NULL, " ", &save_ptr))
+  {
+    token_length = strlen (token) + 1;
+    argv_length += token_length;
+    argc++;
+    *esp -= token_length;
+    memcpy (*esp, token, token_length);
+  }
+
+  // save argv_ptr stored in esp
+  argv_ptr = *esp;
+
+  // word-align
+  *esp -= 4 - argv_length % 4;
+
+  // last-argument
+  *esp -= 4;
+  *(int *)(*esp) = 0;
+
+  // return address
+  *esp -= argc * 4 + 12;
+  *(int *)(*esp) = 0;
+
+  // argc
+  *esp += 4;
+  *(int *)(*esp) = argc;
+
+  // argv
+  *esp += 4;
+  *(char **)(*esp) = *esp + 4;
+
+  // argv : the last item to the first
+  *esp += 4 * argc;
+  for (i = argc - 1; i >= 0; i--)
+  {
+    *(char **)(*esp) = argv_ptr;
+
+    argv_ptr += strlen(argv_ptr) + 1;
+    *esp -= 4;
+  }
+
+  *esp -= 8;
+}
+
 /* Create a minimal stack by mapping a zeroed page at the top of
    user virtual memory. */
 static bool
-setup_stack (void **esp) 
+setup_stack (void **esp, char *file_name, char *argv_ptr)
 {
   uint8_t *kpage;
   bool success = false;
@@ -437,7 +512,9 @@ setup_stack (void **esp)
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
       if (success)
-        *esp = PHYS_BASE;
+      {
+        setup_stack_esp(esp, file_name, argv_ptr);
+      }
       else
         palloc_free_page (kpage);
     }
