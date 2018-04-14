@@ -56,8 +56,13 @@ syscall_handler (struct intr_frame *f UNUSED)
 static void
 syscall_exit (struct intr_frame *f UNUSED)
 {
+  int *esp = f->esp;
+  int exit_status = *(esp + 1);
+
+  thread_current()->exit_status = exit_status;
   thread_exit();
-  f->eax = 0;
+
+  f->eax = exit_status;
 }
 
 static void
