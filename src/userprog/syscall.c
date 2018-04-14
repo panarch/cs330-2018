@@ -7,6 +7,7 @@
 #include "filesys/file.h"
 #include "filesys/filesys.h"
 
+
 static void syscall_handler (struct intr_frame *);
 
 /*young : total 13 system calls*/
@@ -24,6 +25,8 @@ static void syscall_seek (struct intr_frame *);
 static void syscall_tell (struct intr_frame *);
 static void syscall_close (struct intr_frame *);
 
+static struct file* file_find (struct list files, int fd);
+
 void
 syscall_init (void) 
 {
@@ -38,7 +41,7 @@ syscall_handler (struct intr_frame *f UNUSED)
   switch (*syscall_number)
   {
 	case SYS_HALT:
-	  syscall_halt(f);
+//	  syscall_halt(f);
 	  break;
     case SYS_EXIT:
       syscall_exit(f);
@@ -67,13 +70,13 @@ syscall_handler (struct intr_frame *f UNUSED)
       syscall_write(f);
       break;
 	case SYS_SEEK:
-	  syscall_seek(f);
+//	  syscall_seek(f);
 	  break;
 	case SYS_TELL:
-	  syscall_tell(f);
+//	  syscall_tell(f);
 	  break;
 	case SYS_CLOSE:
-	  syscall_close(f);
+//	  syscall_close(f);
 	  break;
     default:
       printf ("system call! %d\n", *syscall_number);
@@ -188,6 +191,7 @@ syscall_write (struct intr_frame *f UNUSED)
   }
 }
 
+/*
 static void
 syscall_seek (struct intr_frame *f UNUSED)
 {
@@ -196,12 +200,13 @@ syscall_seek (struct intr_frame *f UNUSED)
   unsigned position = *(esp + 2);
   struct file *file;
 
-  f->eax = file_seek ();
+//  f->eax = file_seek ();
 
 
 
   return;
 }
+*/
 
 static struct file *
 file_find (struct list files, int fd)
