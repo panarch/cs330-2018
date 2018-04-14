@@ -150,6 +150,12 @@ syscall_open (struct intr_frame *f UNUSED)
   int *esp = f->esp;
   char *name = (char *)*(esp + 1);
 
+  if (!name)
+  {
+    f->eax = -1;
+    return;
+  }
+
   struct file *file = filesys_open (name);
 
   if (!file)
