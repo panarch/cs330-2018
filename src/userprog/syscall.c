@@ -74,9 +74,9 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_WRITE:
       syscall_write(f);
       break;
-	case SYS_SEEK:
-//	  syscall_seek(f);
-	  break;
+    case SYS_SEEK:
+      syscall_seek(f);
+      break;
 	case SYS_TELL:
 //	  syscall_tell(f);
 	  break;
@@ -232,22 +232,17 @@ syscall_write (struct intr_frame *f UNUSED)
   }
 }
 
-/*
 static void
 syscall_seek (struct intr_frame *f UNUSED)
 {
   int *esp = f->esp;
   int fd = *(esp + 1);
   unsigned position = *(esp + 2);
-  struct file *file;
 
-//  f->eax = file_seek ();
+  struct file *file = thread_file_find (fd);
 
-
-
-  return;
+  file_seek (file, position);
 }
-*/
 
 static struct file *
 file_find (struct list files, int fd)
