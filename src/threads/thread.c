@@ -586,6 +586,27 @@ thread_file_add (struct file *file)
   return file->fd;
 }
 
+struct file *
+thread_file_find (int fd)
+{
+  struct thread *cur = running_thread ();
+  struct file *file;
+  struct list_elem *elem;
+
+  for (elem = list_begin (&cur->files);
+       elem != list_end (&cur->files);
+       elem = list_next (elem))
+  {
+    file = list_entry (elem, struct file, elem);
+    if (file->fd == fd)
+    {
+      return file;
+    }
+  }
+
+  return NULL;
+}
+
 /* Schedules a new process.  At entry, interrupts must be off and
    the running process's state must have been changed from
    running to some other state.  This function finds another

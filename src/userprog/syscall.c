@@ -59,23 +59,24 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_CREATE:
       syscall_create(f);
       break;
-	case SYS_REMOVE:
-	  syscall_remove(f);
+    case SYS_REMOVE:
+      syscall_remove(f);
+      break;
     case SYS_OPEN:
       syscall_open(f);
       break;
 	case SYS_FILESIZE:
 	  syscall_filesize(f);
 	  break;
-	case SYS_READ:
-	  syscall_read(f);
-	  break;
+    case SYS_READ:
+      syscall_read(f);
+      break;
     case SYS_WRITE:
       syscall_write(f);
       break;
-	case SYS_SEEK:
-//	  syscall_seek(f);
-	  break;
+    case SYS_SEEK:
+      syscall_seek(f);
+      break;
 	case SYS_TELL:
 //	  syscall_tell(f);
 	  break;
@@ -141,16 +142,20 @@ syscall_create (struct intr_frame *f UNUSED)
   f->eax = filesys_create (name, initial_size);
 }
 
-/* young : exception case not implmented yet */
 static void
 syscall_remove (struct intr_frame *f UNUSED)
 {
   int *esp = f->esp;
   char *name = (char *)*(esp +1);
 
+  if (!name)
+  {
+    f->eax = -1;
+    return;
+  }
+
   f->eax = filesys_remove (name);
   return;
-
 }
 
 static void
@@ -196,11 +201,20 @@ syscall_filesize (struct intr_frame *f UNUSED)
 static void
 syscall_read (struct intr_frame *f UNUSED)
 {
+  int *esp = f->esp;
+  int fd = *(esp + 1);
+  char *buffer = (char *)*(esp + 2);
+  unsigned size = *(esp + 3);
 
+  struct file *file = thread_file_find (fd);
 
+  if (!file)
+  {
+    f->eax = -1;
+    return;
+  }
 
-
-  return;
+  f->eax = file_read (file, buffer, size);
 }
 
 static void
@@ -230,22 +244,17 @@ syscall_write (struct intr_frame *f UNUSED)
   }
 }
 
-/*
 static void
 syscall_seek (struct intr_frame *f UNUSED)
 {
   int *esp = f->esp;
   int fd = *(esp + 1);
   unsigned position = *(esp + 2);
-  struct file *file;
 
-//  f->eax = file_seek ();
+  struct file *file = thread_file_find (fd);
 
-
-
-  return;
+  file_seek (file, position);
 }
-*/
 
 static struct file *
 file_find (struct list files, int fd)
