@@ -32,9 +32,9 @@ tid_t
 process_execute (const char *file_name) 
 {
   char *fn_copy;
-  // char *save_ptr;
   char *save_ptr;
   char *fn;
+  struct thread *t;
 
   tid_t tid;
 
@@ -44,20 +44,32 @@ process_execute (const char *file_name)
   if (fn_copy == NULL)
     return TID_ERROR;
   strlcpy (fn_copy, file_name, PGSIZE);
+  
+  // due to length limitation in thread's name. parse first part
+//  fn = malloc(strlen(file_name)+1); 
 
-  fn = malloc(strlen(file_name)+1);
   if(!fn){
 //	goto done;
-	ASSERT(2 == 3);
+//	ASSERT(2 == 3);
   }
-  memcpy (fn, file_name, strlen(file_name) +1);
-  file_name = strtok_r (fn, " ",&save_ptr); // "grep foo bar" -> grep
+//  memcpy (fn, file_name, strlen(file_name) +1);
+  
+//  file_name = strtok_r (fn , " ",&save_ptr); // "grep foo bar" -> grep
+  file_name = strtok_r (file_name , " ",&save_ptr); // "grep foo bar" -> grep
 
+//  printf("(check) this is file_name : %s\n", file_name);
+//  printf("(check) this is fn_copy : %s\n", fn_copy);
 
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
-  if (tid == TID_ERROR)
+//  tid = thread_create (fn, PRI_DEFAULT, start_process, fn_copy);
+
+
+
+  if (tid == TID_ERROR){
+//	free(fn);
     palloc_free_page (fn_copy); 
+  }
   return tid;
 }
 
@@ -207,10 +219,31 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
+  struct thread *t;
+  int return_value;
+  t = thread_get_child( child_tid);
+ 
+//  printf("(check) : thread status %d\n",t->status);
+//  sema_down (&t->wait_process);
+
+  
+
+//  printf("(check) : process wait executed?\n");
+//  printf("(check) : what is child_tid %d\n", child_tid);
+
   while(1==1){
 	/* this is for implementing argument passing */
-//	break;
-  }
+//	printf("(check) : while loop start %d \n",flag);
+	break;
+	}
+  
+  sema_down (&t->wait_child);
+  thread_unblock(t);
+
+
+
+
+  
   return -1;
 }
 
@@ -220,6 +253,16 @@ process_exit (void)
 {
   struct thread *cur = thread_current ();
   uint32_t *pd;
+
+//  printf("(check) process exit thread : %s, %d, %d\n", cur->name, cur->tid, cur->status);
+  printf ("%s: exit(%d)\n", cur->name, cur->status);
+
+  sema_up (&cur->wait_child);
+  intr_disable();
+  thread_block();
+  intr_enable();
+
+
 
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */

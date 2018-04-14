@@ -184,6 +184,7 @@ thread_create (const char *name, int priority,
   init_thread (t, name, priority);
   tid = t->tid = allocate_tid ();
 
+
   /* Prepare thread for first run by initializing its stack.
      Do this atomically so intermediate values for the 'stack' 
      member cannot be observed. */
@@ -208,6 +209,8 @@ thread_create (const char *name, int priority,
 
   /* Add to run queue. */
   thread_unblock (t);
+
+
 
   return tid;
 }
@@ -470,6 +473,10 @@ init_thread (struct thread *t, const char *name, int priority)
   t->priority = priority;
   t->magic = THREAD_MAGIC;
   list_push_back (&all_list, &t->allelem);
+  /*this time initialize by 0 is good*/
+  sema_init (&t->wait_child, 0);
+
+
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
@@ -585,3 +592,29 @@ allocate_tid (void)
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
+
+
+/* I added */
+struct thread *
+thread_get_child (int child_tid){
+  struct thread *t;
+  struct list_elem *e;
+
+  for (e = list_begin (&all_list); e != list_end (&all_list); e = list_next (e)){
+	t = list_entry (e, struct thread, allelem);
+	if (t->tid == child_tid){
+	  return t;
+	}
+  }
+
+  return NULL;
+
+}
+
+
+
+
+
+
+
+
