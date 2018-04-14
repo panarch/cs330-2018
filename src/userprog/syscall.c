@@ -210,11 +210,23 @@ syscall_write (struct intr_frame *f UNUSED)
   int fd = *(esp + 1);
   char *buffer = (char *)*(esp + 2);
   unsigned size = *(esp + 3);
+  struct thread *cur;
+  struct file *file;
+  cur = thread_current();
 
   if (fd == 1)
   {
     putbuf(buffer, size);
     f->eax = (int)size;
+  }
+  else if (fd == 0){
+	f->eax = -1;
+	return;
+  }
+  else
+  {
+	file = file_find (cur->files, fd);
+	f->eax = file_write (file, buffer, size);
   }
 }
 
