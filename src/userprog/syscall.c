@@ -231,16 +231,22 @@ syscall_write (struct intr_frame *f UNUSED)
   {
     putbuf(buffer, size);
     f->eax = (int)size;
+    return;
   }
   else if (fd == 0){
-	f->eax = -1;
-	return;
+    f->eax = -1;
+    return;
   }
-  else
+
+  file = file_find (cur->files, fd);
+
+  if (!file)
   {
-	file = file_find (cur->files, fd);
-	f->eax = file_write (file, buffer, size);
+    f->eax = -1;
+    return;
   }
+
+  f->eax = file_write (file, buffer, size);
 }
 
 static void
