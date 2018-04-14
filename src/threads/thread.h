@@ -97,6 +97,7 @@ struct thread
     struct list_elem elem;              /* List element. */
 
 	struct semaphore wait_child;
+	struct list file_list; // list of files that thread holds
 	
 
 

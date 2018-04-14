@@ -255,12 +255,14 @@ process_exit (void)
   uint32_t *pd;
 
 //  printf("(check) process exit thread : %s, %d, %d\n", cur->name, cur->tid, cur->status);
-  printf ("%s: exit(%d)\n", cur->name, cur->status);
+//  printf ("%s: exit(%d)\n", cur->name, cur->status);
+  while (!list_empty (&cur->wait_child.waiters)){
+	sema_up (&cur->wait_child);
+  }
+//  file_close (&cur->file_f);
 
-  sema_up (&cur->wait_child);
-  intr_disable();
-  thread_block();
-  intr_enable();
+  struct file *f;
+  
 
 
 

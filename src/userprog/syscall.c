@@ -11,6 +11,20 @@ static void syscall_handler (struct intr_frame *);
 
 static int syscall_execute (const char *cmd_line);
 static int syscall_create (const char *file, unsigned initial_size);
+static int syscall_write (int fd, const char * buffer, unsigned size);
+static int syscall_filesize (int fd);
+
+struct file_structure {
+  struct file* file_ptr;
+// how about this? :  struct file files;
+  struct list_elem elem;
+  int fd;
+}
+  
+
+
+
+
 
 void
 syscall_init (void) 
@@ -36,6 +50,7 @@ syscall_handler (struct intr_frame *f UNUSED)
 //	printf("Sys write ?\n");
 	putbuf(buffer,size);
 	f->eax=(int)size;
+//	syscall_write(*(p+1),*(p+2),*(p+3));
   }
   else if(*p==SYS_EXIT)
   {
@@ -65,6 +80,15 @@ syscall_handler (struct intr_frame *f UNUSED)
   else if(*p==SYS_REMOVE){
 
   }
+  else if(*p == SYS_SEEK){
+
+
+  }
+  else if(*p==SYS_FILESIZE){
+	syscall_filesize (*(p+1));
+	file_length ( list_search( &thread_current()->files, *(p+1))->ptr);
+
+  }
   else
   {
 	printf("what is going on?\n");
@@ -76,6 +100,37 @@ syscall_handler (struct intr_frame *f UNUSED)
 
 
 
+
+
+static int syscall_write(int fd, const char *buffer, unsigned size){
+
+  struct file *f;
+  int return_value;
+  return_value = -1;
+
+  /* stdout */
+  if (fd == 1){
+	putbuf (buffer, size);
+  }
+  else if (fd == 0){
+	// stdin
+	return -1;
+  }
+
+  if (!is_user_vaddr (buffer) || !is_user_vaddr (buffer + size)){
+	syscall_exit(-1);
+  }
+
+//  file_write
+
+
+  return -1;
+
+
+
+
+
+}
 
 
 static int syscall_execute(const char* file_name){
@@ -91,6 +146,76 @@ static int syscall_execute(const char* file_name){
 static int syscall_create (const char *file, unsigned initial_size){
   return filesys_open (file, initial_size);
 }
+
+
+static int32_t syscall_filesize (int fd){
+  struct thread *cur;
+  struct file *file;
+  file = NULL;
+  cur = thread_current();
+
+  file = file_find (cur, fd)->file_ptr;
+
+  if(file == NULL){
+	return -1;
+  }
+
+  return file_length (file); 
+}
+
+static int syscall_seek (int fd, unsigned position){
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+struct file_structure* file_find (struct thread *t, int fd){
+
+  struct file_structure *f;
+  f = NULL;
+  struct list_elem *e;
+  t->files;
+  for ( e = list_begin (&t->file_list); e != list_end (&t->file_list); e = list_next (e)){
+	f = list_entry (e, sturct file_structure, elem);
+	if (f->fd == fd){
+	  break;
+	}
+  }
+
+  return f;
+}
+	 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
