@@ -34,6 +34,8 @@ process_execute (const char *file_name)
   char *fn_copy;
   // char *save_ptr;
   char *save_ptr;
+  char *fn;
+
   tid_t tid;
 
   /* Make a copy of FILE_NAME.
@@ -43,7 +45,13 @@ process_execute (const char *file_name)
     return TID_ERROR;
   strlcpy (fn_copy, file_name, PGSIZE);
 
-  file_name = strtok_r (file_name, " ",&save_ptr); // "grep foo bar" -> grep
+  fn = malloc(strlen(file_name)+1);
+  if(!fn){
+//	goto done;
+	ASSERT(2 == 3);
+  }
+  memcpy (fn, file_name, strlen(file_name) +1);
+  file_name = strtok_r (fn, " ",&save_ptr); // "grep foo bar" -> grep
 
 
   /* Create a new thread to execute FILE_NAME. */
@@ -70,8 +78,8 @@ start_process (void *file_name_)
   char* rest;
   int file_name_len;
   void *store_ptr;
-  void *start
-  printf("what is file_name : %s\n", file_name);
+  void *start;
+//  printf("what is file_name : %s\n", file_name);
 
 
   /* Initialize interrupt frame and load executable. */
@@ -81,28 +89,34 @@ start_process (void *file_name_)
   if_.eflags = FLAG_IF | FLAG_MBS;
 
   argc = 0;
-  argv_index = palloc_get_page(0);
- // argv_index[0] = 0; // this is for padding
+  argv_index = malloc (32 * sizeof (int));
+  argv_index[0] = 0; // this is for padding
+
   file_name_len = strlen (file_name);
- // argv_index[0] = 0; // this is for padding
-  rest = file_name;
-  save_ptr = file_name;
+//  printf("file length : %d\n", file_name_len);
+
+  for (token = strtok_r (file_name, " ", &save_ptr) ; token != NULL; token = strtok_r (NULL, " ", &save_ptr)){
+
+	// this code seems meaning less
+	/* 
+	while (*(save_ptr) == ' '){
+	  printf ("(check) save_ptr executed?\n");
+	  ++save_ptr;
+	}
+	*/
+	argv_index[++argc] = save_ptr - file_name;
+//	printf("(check) argv_index : %d\n", argv_index[argc]);
+//  	printf("(check) argv_argc : %d\n", argc);
+  }
 
   success = load (file_name, &if_.eip, &if_.esp);
 
   /*after load, esp is pointing PHYS_BASE. Now, it's time to reduce esp */
-
+ 
  
 
 // parse and save offset in argv_index
-  argv_index[0]=0;
-  while( (token = strtok_r(NULL, " ", &save_ptr)) ){
-	
-	argc++;
-	argv_index[argc]= save_ptr - file_name;
-	
-  }
-   
+
 
 //  void esp_push_file_name(char * file_name_)
 
@@ -116,52 +130,56 @@ start_process (void *file_name_)
   padding_num = PTR_SIZE -(file_name_len+1)%PTR_SIZE + PTR_SIZE;
   if_.esp -= padding_num;
   *(int *)(if_.esp) = 0;
+//  printf("padding_num : %d\n", padding_num);
+//  printf("(check) padding esp address %p\n",if_.esp);
+//  printf("(check) padding esp pointing value %d\n",*(int *)if_.esp);
 
-  printf("check\n");
-
-// esp_set_value
-  int iteration;
-  for(iteration=0; iteration < argc; iteration++){
+//  printf("check\n");
+  int i;
+  for ( i = 0; i<argc; i++){
+	// for (i = argc -1; i>=0; --i)
 	if_.esp -= PTR_SIZE;
-	*(void **)(if_.esp) =  if_.esp + PTR_SIZE*(iteration+1) + padding_num + argv_index[argc-iteration];
-//	*(int *)if_.esp =  if_.esp + padding_num + PTR_SIZE*(i+1) + argv_index[i];
+//	*(void **)(if_.esp) = start + argv_index[i];
+	*(void **)(if_.esp) = if_.esp + padding_num + PTR_SIZE*(i+1) + argv_index[argc-1-i];
   }
 
+
+// esp_set_value
+  
+
 // esp_set_rest_address
+
   if_.esp -= PTR_SIZE;
-  *(void **)(if_.esp) = if_.esp + PTR_SIZE;
-//*(char **)if_.esp = if_esp + PTR_SIZE;
+  //*(char **)(if_.esp) = if_.esp + PTR_SIZE;
+  *(void **)if_.esp = if_.esp + PTR_SIZE;
   if_.esp -= PTR_SIZE;
   *(int *)(if_.esp) = argc;
   if_.esp -= PTR_SIZE;
   *(int *)(if_.esp) = 0;
+//  printf("(check) fake? esp address %p\n",if_.esp);
+//  printf("(check) esp pointing value %d\n",*(int *)if_.esp);
+  
 
-  palloc_free_page (argv_index);
+//  palloc_free_page (argv_index);
+  free (argv_index);
 
-  printf("Before hex_dump\n");
-  printf("check hex_dump 3rd arument value : %d\n", (4+4+4+4*argc+padding_num+file_name_len+1)  );
-  int cal = 4+4+4+4*argc+padding_num + file_name_len+1;
-  hex_dump ((uintptr_t)(PHYS_BASE - cal-20), if_.esp, cal, true);
-  printf("After hex_dump\n");
-  hex_dump ((uintptr_t)(PHYS_BASE - 200), if_.esp, 130, true);
+//  printf("Before hex_dump\n");
+//  hex_dump ((uintptr_t)(PHYS_BASE - 100-20), if_.esp-12, 100, true);
+//  printf("After hex_dump\n");
 
 
 // esp_set_address
 
-  
-
-
-
   /* If load failed, quit. */
   palloc_free_page (file_name);
-  printf("1 After hex_dump\n");
+//  printf("1 After hex_dump\n");
 
   if (!success){ 
-	printf("2 After hex_dump\n");
+//	printf("2 After hex_dump\n");
     thread_exit ();
   }
   
-  printf("3 After hex_dump\n");
+//  printf("3 After hex_dump\n");
 
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in
@@ -170,10 +188,10 @@ start_process (void *file_name_)
      we just point the stack pointer (%esp) to our stack frame
      and jump to it. */
   asm volatile ("movl %0, %%esp; jmp intr_exit" : : "g" (&if_) : "memory");
-  printf("4 After hex_dump\n");
+//  printf("4 After hex_dump\n");
 
   NOT_REACHED ();
-  printf("5 After hex_dump\n");
+//  printf("5 After hex_dump\n");
 
 }
 
@@ -322,6 +340,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
 
   /* Allocate and activate page directory. */
   t->pagedir = pagedir_create ();
+//  printf("(check) : what is thread name : %s\n", t->name);
   if (t->pagedir == NULL) 
     goto done;
   process_activate ();

@@ -6,6 +6,11 @@
 
 static void syscall_handler (struct intr_frame *);
 
+
+//static void sys_write (int *ret, int fd, 
+
+
+
 void
 syscall_init (void) 
 {
@@ -25,7 +30,7 @@ syscall_handler (struct intr_frame *f UNUSED)
 
 
   if(*p==SYS_WRITE){
-	printf("Sys write ?\n");
+//	printf("Sys write ?\n");
 	putbuf(buffer,size);
 	f->eax=(int)size;
   }
@@ -34,7 +39,14 @@ syscall_handler (struct intr_frame *f UNUSED)
 	printf("Executed SYS_EXIT?\n");
   thread_exit ();
   }
+  else if(*p==SYS_OPEN){
+//	printf("Executed SYS_OPEN\n");
+  }
+  else
+  {
+//	printf("what is going on?\n");
+  }
 
-  printf("int p : %d\n",*p);
-  printf ("system call!\n");
+ // printf("int p : %d\n",*p);
+ // printf ("system call!\n");
 }
