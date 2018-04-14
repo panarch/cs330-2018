@@ -1,4 +1,5 @@
 #include "userprog/syscall.h"
+#include "userprog/process.h"
 #include <stdio.h>
 #include <syscall-nr.h>
 #include "threads/interrupt.h"
@@ -8,6 +9,7 @@
 
 static void syscall_handler (struct intr_frame *);
 static void syscall_exit (struct intr_frame *);
+static void syscall_exec (struct intr_frame *);
 static void syscall_wait (struct intr_frame *);
 static void syscall_create (struct intr_frame *);
 static void syscall_open (struct intr_frame *);
@@ -28,6 +30,9 @@ syscall_handler (struct intr_frame *f UNUSED)
   {
     case SYS_EXIT:
       syscall_exit(f);
+      break;
+    case SYS_EXEC:
+      syscall_exec(f);
       break;
     case SYS_WAIT:
       syscall_wait(f);
@@ -56,10 +61,21 @@ syscall_exit (struct intr_frame *f UNUSED)
 }
 
 static void
+syscall_exec (struct intr_frame *f UNUSED)
+{
+  int *esp = f->esp;
+  char *cmdline = (char *)*(esp + 1);
+
+  f->eax = process_execute (cmdline);
+}
+
+static void
 syscall_wait (struct intr_frame *f UNUSED)
 {
-  printf("syscall wait!!\n");
-  thread_exit();
+  int *esp = f->esp;
+  tid_t tid = *(esp + 1);
+
+  process_wait (tid);
 }
 
 static void
