@@ -2,6 +2,7 @@
 #include "userprog/process.h"
 #include <stdio.h>
 #include <syscall-nr.h>
+#include "devices/shutdown.h"
 #include "threads/interrupt.h"
 #include "threads/thread.h"
 #include "filesys/file.h"
@@ -43,9 +44,9 @@ syscall_handler (struct intr_frame *f UNUSED)
 
   switch (*syscall_number)
   {
-	case SYS_HALT:
-//	  syscall_halt(f);
-	  break;
+    case SYS_HALT:
+      syscall_halt(f);
+      break;
     case SYS_EXIT:
       syscall_exit(f);
       break;
@@ -86,6 +87,12 @@ syscall_handler (struct intr_frame *f UNUSED)
       break;
   }
 
+}
+
+static void
+syscall_halt (struct intr_frame *f UNUSED)
+{
+  shutdown_power_off();
 }
 
 static void
@@ -151,6 +158,12 @@ syscall_open (struct intr_frame *f UNUSED)
 {
   int *esp = f->esp;
   char *name = (char *)*(esp + 1);
+
+  if (!name)
+  {
+    f->eax = -1;
+    return;
+  }
 
   struct file *file = filesys_open (name);
 
