@@ -549,7 +549,7 @@ thread_schedule_tail (struct thread *prev)
 }
 
 int
-thread_file_open (struct file *file)
+thread_file_add (struct file *file)
 {
   struct thread *cur = running_thread ();
 

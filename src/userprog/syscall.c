@@ -7,11 +7,20 @@
 #include "filesys/filesys.h"
 
 static void syscall_handler (struct intr_frame *);
+
+/*young : total 13 system calls*/
+static void syscall_halt (struct intr_frame *);
 static void syscall_exit (struct intr_frame *);
 static void syscall_wait (struct intr_frame *);
 static void syscall_create (struct intr_frame *);
+static void syscall_remove (struct intr_frame *);
 static void syscall_open (struct intr_frame *);
+static void syscall_filesize (struct intr_frame *);
+static void syscall_read (struct intr_frame *);
 static void syscall_write (struct intr_frame *);
+static void syscall_seek (struct intr_frame *);
+static void syscall_tell (struct intr_frame *);
+static void syscall_close (struct intr_frame *);
 
 void
 syscall_init (void) 
@@ -26,6 +35,9 @@ syscall_handler (struct intr_frame *f UNUSED)
 
   switch (*syscall_number)
   {
+	case SYS_HALT:
+	  syscall_halt(f);
+	  break;
     case SYS_EXIT:
       syscall_exit(f);
       break;
@@ -35,12 +47,29 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_CREATE:
       syscall_create(f);
       break;
+	case SYS_REMOVE:
+	  syscall_remove(f);
     case SYS_OPEN:
       syscall_open(f);
       break;
+	case SYS_FILESIZE:
+	  syscall_filesize(f);
+	  break;
+	case SYS_READ:
+	  syscall_read(f);
+	  break;
     case SYS_WRITE:
       syscall_write(f);
       break;
+	case SYS_SEEK:
+	  syscall_seek(f);
+	  break;
+	case SYS_TELL:
+	  syscall_tell(f);
+	  break;
+	case SYS_CLOSE:
+	  syscall_close(f);
+	  break;
     default:
       printf ("system call! %d\n", *syscall_number);
       break;
@@ -72,6 +101,18 @@ syscall_create (struct intr_frame *f UNUSED)
   f->eax = filesys_create (name, initial_size);
 }
 
+/* young : exception case not implmented yet */
+static void
+syscall_remove (struct intr_frame *f UNUSED)
+{
+  int *esp = f->esp;
+  char *name = (char *)*(esp +1);
+
+  f->eax = filesys_remove (name);
+  return;
+
+}
+
 static void
 syscall_open (struct intr_frame *f UNUSED)
 {
@@ -86,7 +127,34 @@ syscall_open (struct intr_frame *f UNUSED)
     return;
   }
 
-  f->eax = thread_file_open (file);
+  f->eax = thread_file_add (file);
+}
+
+static void
+syscall_filesize (struct intr_frame *f UNUSED)
+{
+  int *esp = f->esp;
+  int fd = *(esp + 1);
+  struct thread *cur;
+  struct file *file;
+
+  cur = thread_current();
+  file = file_find (cur->files, fd);
+
+  f->eax = file_length (file);
+
+  return;
+
+}
+
+static void
+syscall_read (struct intr_frame *f UNUSED)
+{
+
+
+
+
+  return;
 }
 
 static void
@@ -103,3 +171,40 @@ syscall_write (struct intr_frame *f UNUSED)
     f->eax = (int)size;
   }
 }
+
+static void
+syscall_seek (struct intr_frame *f UNUSED)
+{
+  int *esp = f->esp;
+  int fd = *(esp + 1);
+  unsigned position = *(esp + 2);
+  struct file *file;
+
+  f->eax = file_seek ();
+
+
+
+  return;
+}
+
+static struct file *
+file_find (struct list files, int fd)
+{
+  struct file *file;
+  struct list_elem *e;
+
+  for (e = list_begin (&files) ; e != list_end (&files);
+	   e = list_next (e))
+  {
+	file = list_entry (e, struct file, elem);
+	if (file->fd == fd)
+	{
+	  break;
+	}
+  }
+
+  return file;
+}
+
+
+
