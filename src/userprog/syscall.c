@@ -26,11 +26,6 @@ static void syscall_seek (struct intr_frame *);
 static void syscall_tell (struct intr_frame *);
 static void syscall_close (struct intr_frame *);
 
-static struct file* file_find (struct list files, int fd);
-
-
-
-
 void
 syscall_init (void) 
 {
@@ -180,21 +175,21 @@ syscall_open (struct intr_frame *f UNUSED)
 
   f->eax = thread_file_add (file);
 }
+
 static void
 syscall_filesize (struct intr_frame *f UNUSED)
 {
   int *esp = f->esp;
   int fd = *(esp + 1);
-  struct thread *cur;
-  struct file *file;
+  struct file *file = thread_file_find (fd);
 
-  cur = thread_current();
-  file = file_find (cur->files, fd);
+  if (!file)
+  {
+    f->eax = -1;
+    return;
+  }
 
   f->eax = file_length (file);
-
-  return;
-
 }
 
 static void
@@ -223,9 +218,6 @@ syscall_write (struct intr_frame *f UNUSED)
   int fd = *(esp + 1);
   char *buffer = (char *)*(esp + 2);
   unsigned size = *(esp + 3);
-  struct thread *cur;
-  struct file *file;
-  cur = thread_current();
 
   if (fd == 1)
   {
@@ -238,7 +230,7 @@ syscall_write (struct intr_frame *f UNUSED)
     return;
   }
 
-  file = file_find (cur->files, fd);
+  struct file *file = thread_file_find (fd);
 
   if (!file)
   {
@@ -271,25 +263,3 @@ syscall_tell (struct intr_frame *f UNUSED)
 
   f->eax = file_tell (file);
 }
-
-static struct file *
-file_find (struct list files, int fd)
-{
-  struct file *file;
-  struct list_elem *e;
-
-  for (e = list_begin (&files) ; e != list_end (&files);
-	   e = list_next (e))
-  {
-	file = list_entry (e, struct file, elem);
-	if (file->fd == fd)
-	{
-	  break;
-	}
-  }
-
-  return file;
-}
-
-
-
