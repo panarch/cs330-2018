@@ -77,9 +77,9 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_SEEK:
       syscall_seek(f);
       break;
-	case SYS_TELL:
-//	  syscall_tell(f);
-	  break;
+    case SYS_TELL:
+      syscall_tell(f);
+      break;
 	case SYS_CLOSE:
 //	  syscall_close(f);
 	  break;
@@ -180,7 +180,6 @@ syscall_open (struct intr_frame *f UNUSED)
 
   f->eax = thread_file_add (file);
 }
-
 static void
 syscall_filesize (struct intr_frame *f UNUSED)
 {
@@ -242,6 +241,17 @@ syscall_seek (struct intr_frame *f UNUSED)
   struct file *file = thread_file_find (fd);
 
   file_seek (file, position);
+}
+
+static void
+syscall_tell (struct intr_frame *f UNUSED)
+{
+  int *esp = f->esp;
+  int fd = *(esp + 1);
+
+  struct file *file = thread_file_find (fd);
+
+  f->eax = file_tell (file);
 }
 
 static struct file *
