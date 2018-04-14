@@ -27,6 +27,9 @@ static void syscall_close (struct intr_frame *);
 
 static struct file* file_find (struct list files, int fd);
 
+
+
+
 void
 syscall_init (void) 
 {
@@ -120,7 +123,13 @@ syscall_create (struct intr_frame *f UNUSED)
 {
   int *esp = f->esp;
   char *name = (char *)*(esp + 1);
-  unsigned initial_size = *(esp + 3);
+  int32_t initial_size = *(esp + 2);
+
+  if (!name)
+  {
+    f->eax = -1;
+    return;
+  }
 
   f->eax = filesys_create (name, initial_size);
 }
