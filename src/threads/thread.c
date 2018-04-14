@@ -257,6 +257,27 @@ thread_name (void)
   return thread_current ()->name;
 }
 
+struct thread *
+thread_find (tid_t tid)
+{
+  struct thread *t;
+  struct list_elem *elem;
+
+  for (elem = list_begin (&all_list);
+       elem != list_end (&all_list);
+       elem = list_next (elem))
+  {
+    t = list_entry (elem, struct thread, allelem);
+
+    if (t->tid == tid)
+    {
+      return t;
+    }
+  }
+
+  return NULL;
+}
+
 /* Returns the running thread.
    This is running_thread() plus a couple of sanity checks.
    See the big comment at the top of thread.h for details. */
@@ -471,6 +492,7 @@ init_thread (struct thread *t, const char *name, int priority)
   t->magic = THREAD_MAGIC;
 
   list_init (&t->files);
+  sema_init (&t->wait_sema, 0);
 
   list_push_back (&all_list, &t->allelem);
 }

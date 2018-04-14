@@ -16,6 +16,7 @@
 #include "threads/interrupt.h"
 #include "threads/palloc.h"
 #include "threads/thread.h"
+#include "threads/synch.h"
 #include "threads/vaddr.h"
 
 static thread_func start_process NO_RETURN;
@@ -31,8 +32,6 @@ process_execute (const char *file_name)
   char *fn_copy;
   tid_t tid;
 
-  //  printf("\n process.c -> process_execute : %s\n", file_name);
-
   /* Make a copy of FILE_NAME.
      Otherwise there's a race between the caller and load(). */
   fn_copy = palloc_get_page (0);
@@ -40,8 +39,15 @@ process_execute (const char *file_name)
     return TID_ERROR;
   strlcpy (fn_copy, file_name, PGSIZE);
 
+  size_t cmdline_length = strlen (file_name) + 1;
+  char *cmdline = malloc (cmdline_length);
+  memcpy (cmdline, file_name, cmdline_length);
+
+  char *thread_name, *save_ptr;
+  thread_name = strtok_r (cmdline, " ", &save_ptr);
+
   /* Create a new thread to execute FILE_NAME. */
-  tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
+  tid = thread_create (thread_name, PRI_DEFAULT, start_process, fn_copy);
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
   return tid;
@@ -92,7 +98,9 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
-  while (1) {}
+  struct thread *t = thread_find (child_tid);
+
+  sema_down (&t->wait_sema);
 
   return -1;
 }
@@ -103,6 +111,13 @@ process_exit (void)
 {
   struct thread *cur = thread_current ();
   uint32_t *pd;
+
+  while (!list_empty (&cur->wait_sema.waiters))
+  {
+    sema_up (&cur->wait_sema);
+  }
+
+  printf ("%s: exit(0)\n", cur->name);
 
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */

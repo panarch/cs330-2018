@@ -5,6 +5,7 @@
 #include <list.h>
 #include <stdint.h>
 #include "filesys/file.h"
+#include "threads/synch.h"
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -95,6 +96,7 @@ struct thread
     struct list_elem elem;              /* List element. */
 
     struct list files;                  /* Opened files */
+    struct semaphore wait_sema;         /* Semaphore for process_wait */
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
@@ -122,6 +124,7 @@ tid_t thread_create (const char *name, int priority, thread_func *, void *);
 void thread_block (void);
 void thread_unblock (struct thread *);
 
+struct thread *thread_find (tid_t tid);
 struct thread *thread_current (void);
 tid_t thread_tid (void);
 const char *thread_name (void);
