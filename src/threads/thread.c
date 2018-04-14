@@ -469,6 +469,9 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
   t->magic = THREAD_MAGIC;
+
+  list_init (&t->files);
+
   list_push_back (&all_list, &t->allelem);
 }
 
@@ -543,6 +546,22 @@ thread_schedule_tail (struct thread *prev)
       ASSERT (prev != cur);
       palloc_free_page (prev);
     }
+}
+
+int
+thread_file_open (struct file *file)
+{
+  struct thread *cur = running_thread ();
+
+  file->fd = (
+    list_empty (&cur->files) ?
+    2 :
+    (list_entry (list_back (&cur->files), struct file, elem))->fd + 1
+  );
+
+  list_push_back (&cur->files, &file->elem);
+
+  return file->fd;
 }
 
 /* Schedules a new process.  At entry, interrupts must be off and

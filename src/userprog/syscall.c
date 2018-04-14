@@ -3,10 +3,15 @@
 #include <syscall-nr.h>
 #include "threads/interrupt.h"
 #include "threads/thread.h"
+#include "filesys/file.h"
+#include "filesys/filesys.h"
 
 static void syscall_handler (struct intr_frame *);
-static void syscall_write (struct intr_frame *);
 static void syscall_exit (struct intr_frame *);
+static void syscall_wait (struct intr_frame *);
+static void syscall_create (struct intr_frame *);
+static void syscall_open (struct intr_frame *);
+static void syscall_write (struct intr_frame *);
 
 void
 syscall_init (void) 
@@ -21,17 +26,67 @@ syscall_handler (struct intr_frame *f UNUSED)
 
   switch (*syscall_number)
   {
-    case SYS_WRITE:
-      syscall_write(f);
-      break;
     case SYS_EXIT:
       syscall_exit(f);
       break;
+    case SYS_WAIT:
+      syscall_wait(f);
+      break;
+    case SYS_CREATE:
+      syscall_create(f);
+      break;
+    case SYS_OPEN:
+      syscall_open(f);
+      break;
+    case SYS_WRITE:
+      syscall_write(f);
+      break;
     default:
-      printf ("system call!\n");
+      printf ("system call! %d\n", *syscall_number);
       break;
   }
 
+}
+
+static void
+syscall_exit (struct intr_frame *f UNUSED)
+{
+  thread_exit();
+  f->eax = 0;
+}
+
+static void
+syscall_wait (struct intr_frame *f UNUSED)
+{
+  printf("syscall wait!!\n");
+  thread_exit();
+}
+
+static void
+syscall_create (struct intr_frame *f UNUSED)
+{
+  int *esp = f->esp;
+  char *name = (char *)*(esp + 1);
+  unsigned initial_size = *(esp + 3);
+
+  f->eax = filesys_create (name, initial_size);
+}
+
+static void
+syscall_open (struct intr_frame *f UNUSED)
+{
+  int *esp = f->esp;
+  char *name = (char *)*(esp + 1);
+
+  struct file *file = filesys_open (name);
+
+  if (!file)
+  {
+    f->eax = -1;
+    return;
+  }
+
+  f->eax = thread_file_open (file);
 }
 
 static void
@@ -47,11 +102,4 @@ syscall_write (struct intr_frame *f UNUSED)
     putbuf(buffer, size);
     f->eax = (int)size;
   }
-}
-
-static void
-syscall_exit (struct intr_frame *f UNUSED)
-{
-  thread_exit();
-  f->eax = -1;
 }
