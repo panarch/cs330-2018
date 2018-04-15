@@ -26,10 +26,24 @@ static void syscall_seek (struct intr_frame *);
 static void syscall_tell (struct intr_frame *);
 static void syscall_close (struct intr_frame *);
 
+struct lock file_lock;
+
+void syscall_file_lock_acquire ()
+{
+  lock_acquire (&file_lock);
+}
+
+void syscall_file_lock_release ()
+{
+  lock_release (&file_lock);
+}
+
 void
 syscall_init (void) 
 {
   intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
+
+  lock_init (&file_lock);
 }
 
 static void
@@ -60,9 +74,9 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_OPEN:
       syscall_open(f);
       break;
-	case SYS_FILESIZE:
-	  syscall_filesize(f);
-	  break;
+    case SYS_FILESIZE:
+      syscall_filesize(f);
+      break;
     case SYS_READ:
       syscall_read(f);
       break;
@@ -118,7 +132,9 @@ syscall_exec (struct intr_frame *f UNUSED)
   int *esp = f->esp;
   char *cmdline = (char *)*(esp + 1);
 
+  syscall_file_lock_acquire ();
   f->eax = process_execute (cmdline);
+  syscall_file_lock_release ();
 }
 
 static void
@@ -174,7 +190,9 @@ syscall_open (struct intr_frame *f UNUSED)
     return;
   }
 
+  syscall_file_lock_acquire ();
   struct file *file = filesys_open (name);
+  syscall_file_lock_release ();
 
   if (!file)
   {
@@ -224,7 +242,9 @@ syscall_read (struct intr_frame *f UNUSED)
     return;
   }
 
+  syscall_file_lock_acquire ();
   f->eax = file_read (file, buffer, size);
+  syscall_file_lock_release ();
 }
 
 static void
@@ -254,7 +274,9 @@ syscall_write (struct intr_frame *f UNUSED)
     return;
   }
 
+  syscall_file_lock_acquire ();
   f->eax = file_write (file, buffer, size);
+  syscall_file_lock_release ();
 }
 
 static void
