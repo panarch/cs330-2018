@@ -98,8 +98,11 @@ struct thread
     tid_t parent_tid;                   /* Parent TID */
     int exit_status;                    /* Exit status for process_exit */
     struct list files;                  /* Opened files */
+    struct semaphore load_begin_sema;         /* Se */
+    struct semaphore load_end_sema;
     struct semaphore wait_sema;         /* Semaphore for process_wait */
     struct semaphore exit_sema;         /* Semaphore before process_exit */
+    struct file *executable;
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */

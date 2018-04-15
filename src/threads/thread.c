@@ -493,6 +493,8 @@ init_thread (struct thread *t, const char *name, int priority)
 
   t->parent_tid = 0;
   list_init (&t->files);
+  sema_init (&t->load_begin_sema, 0);
+  sema_init (&t->load_end_sema, 0);
   sema_init (&t->wait_sema, 0);
   sema_init (&t->exit_sema, 0);
 

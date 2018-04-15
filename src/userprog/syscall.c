@@ -106,13 +106,10 @@ syscall_exit (struct intr_frame *f UNUSED)
   if (exit_status >= PHYS_BASE)
   {
     syscall_exit_by_status (-1);
-	f->eax = -1;
-	return;
+    return;
   }
 
   syscall_exit_by_status (exit_status);
-
-  f->eax = exit_status;
 }
 
 static void
@@ -163,7 +160,6 @@ syscall_remove (struct intr_frame *f UNUSED)
   }
 
   f->eax = filesys_remove (name);
-  return;
 }
 
 static void

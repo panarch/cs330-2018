@@ -51,6 +51,13 @@ process_execute (const char *file_name)
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy);
 
+  struct thread *t = thread_find (tid);
+  sema_down (&t->load_begin_sema);
+  sema_up (&t->load_end_sema);
+
+  if (t->exit_status == -1)
+    tid = -1;
+
   return tid;
 }
 
@@ -70,12 +77,21 @@ start_process (void *file_name_)
   if_.eflags = FLAG_IF | FLAG_MBS;
   success = load (file_name, &if_.eip, &if_.esp);
 
+  struct thread *cur = thread_current ();
+
   /* If load failed, quit. */
   palloc_free_page (file_name);
   if (!success)
   {
+    cur->exit_status = -1;
+    sema_up (&cur->load_begin_sema);
+    sema_down (&cur->load_end_sema);
+
     thread_exit ();
   }
+
+  sema_up (&cur->load_begin_sema);
+  sema_down (&cur->load_end_sema);
 
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in
@@ -126,6 +142,7 @@ process_exit (void)
 
   sema_up (&cur->wait_sema);
 
+  file_close (cur->executable);
   printf ("%s: exit(%d)\n", cur->name, cur->exit_status);
 
   if (cur->parent_tid > 0)
@@ -271,6 +288,8 @@ load (const char *cmdline_, void (**eip) (void), void **esp)
       goto done; 
     }
 
+  file_deny_write (file);
+
   /* Read and verify executable header. */
   if (file_read (file, &ehdr, sizeof ehdr) != sizeof ehdr
       || memcmp (ehdr.e_ident, "\177ELF\1\1\1", 7)
@@ -351,10 +370,11 @@ load (const char *cmdline_, void (**eip) (void), void **esp)
   *eip = (void (*) (void)) ehdr.e_entry;
 
   success = true;
+  t->executable = file;
 
  done:
   /* We arrive here whether the load is successful or not. */
-  file_close (file);
+  if (!success) file_close (file);
   return success;
 }
 
