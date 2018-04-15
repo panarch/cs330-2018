@@ -588,6 +588,12 @@ thread_file_add (struct file *file)
   return file->fd;
 }
 
+void
+thread_file_remove (struct file *file)
+{
+  list_remove (&file->elem);
+}
+
 struct file *
 thread_file_find (int fd)
 {

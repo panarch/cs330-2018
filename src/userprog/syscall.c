@@ -75,9 +75,9 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_TELL:
       syscall_tell(f);
       break;
-	case SYS_CLOSE:
-//	  syscall_close(f);
-	  break;
+    case SYS_CLOSE:
+      syscall_close(f);
+      break;
     default:
       printf ("system call! %d\n", *syscall_number);
       break;
@@ -282,4 +282,16 @@ syscall_tell (struct intr_frame *f UNUSED)
   struct file *file = thread_file_find (fd);
 
   f->eax = file_tell (file);
+}
+
+static void
+syscall_close (struct intr_frame *f UNUSED)
+{
+  int *esp = f->esp;
+  int fd = *(esp + 1);
+
+  struct file *file = thread_file_find (fd);
+
+  thread_file_remove (file);
+  file_close (file);
 }
