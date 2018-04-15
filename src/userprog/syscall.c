@@ -136,6 +136,7 @@ syscall_create (struct intr_frame *f UNUSED)
 
   if (!name)
   {
+    syscall_exit_by_status (-1);
     f->eax = -1;
     return;
   }
