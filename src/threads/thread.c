@@ -491,8 +491,10 @@ init_thread (struct thread *t, const char *name, int priority)
   t->priority = priority;
   t->magic = THREAD_MAGIC;
 
+  t->parent_tid = 0;
   list_init (&t->files);
   sema_init (&t->wait_sema, 0);
+  sema_init (&t->exit_sema, 0);
 
   list_push_back (&all_list, &t->allelem);
 }

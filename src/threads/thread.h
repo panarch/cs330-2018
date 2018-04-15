@@ -95,9 +95,11 @@ struct thread
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
 
+    tid_t parent_tid;                   /* Parent TID */
     int exit_status;                    /* Exit status for process_exit */
     struct list files;                  /* Opened files */
     struct semaphore wait_sema;         /* Semaphore for process_wait */
+    struct semaphore exit_sema;         /* Semaphore before process_exit */
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */

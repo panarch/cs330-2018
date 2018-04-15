@@ -118,7 +118,7 @@ syscall_wait (struct intr_frame *f UNUSED)
   int *esp = f->esp;
   tid_t tid = *(esp + 1);
 
-  process_wait (tid);
+  f->eax = process_wait (tid);
 }
 
 static void

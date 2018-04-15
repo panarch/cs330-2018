@@ -100,9 +100,20 @@ process_wait (tid_t child_tid UNUSED)
 {
   struct thread *t = thread_find (child_tid);
 
+  if (t->parent_tid > 0)
+  {
+    return -1;
+  }
+
+  t->parent_tid = thread_current()->tid;
+
   sema_down (&t->wait_sema);
 
-  return -1;
+  int exit_status = t->exit_status;
+
+  sema_up (&t->exit_sema);
+
+  return exit_status;
 }
 
 /* Free the current process's resources. */
@@ -112,12 +123,14 @@ process_exit (void)
   struct thread *cur = thread_current ();
   uint32_t *pd;
 
-  while (!list_empty (&cur->wait_sema.waiters))
-  {
-    sema_up (&cur->wait_sema);
-  }
+  sema_up (&cur->wait_sema);
 
   printf ("%s: exit(%d)\n", cur->name, cur->exit_status);
+
+  if (cur->parent_tid > 0)
+  {
+    sema_down (&cur->exit_sema);
+  }
 
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */
