@@ -91,14 +91,20 @@ syscall_halt (struct intr_frame *f UNUSED)
   shutdown_power_off();
 }
 
+void
+syscall_exit_by_status (int exit_status)
+{
+  thread_current()->exit_status = exit_status;
+  thread_exit();
+}
+
 static void
 syscall_exit (struct intr_frame *f UNUSED)
 {
   int *esp = f->esp;
   int exit_status = *(esp + 1);
 
-  thread_current()->exit_status = exit_status;
-  thread_exit();
+  syscall_exit_by_status (exit_status);
 
   f->eax = exit_status;
 }
