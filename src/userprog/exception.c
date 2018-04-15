@@ -5,6 +5,7 @@
 #include "userprog/syscall.h"
 #include "threads/interrupt.h"
 #include "threads/thread.h"
+#include "threads/vaddr.h"
 
 /* Number of page faults processed. */
 static long long page_fault_cnt;
@@ -152,6 +153,10 @@ page_fault (struct intr_frame *f)
   if (not_present)
   {
     syscall_exit_by_status (-1);
+  }
+  if (fault_addr >= PHYS_BASE)
+  {
+   syscall_exit_by_status (-1);
   }
 
   /* To implement virtual memory, delete the rest of the function
