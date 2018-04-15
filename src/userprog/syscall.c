@@ -7,7 +7,7 @@
 #include "threads/thread.h"
 #include "filesys/file.h"
 #include "filesys/filesys.h"
-
+#include "threads/vaddr.h"
 
 static void syscall_handler (struct intr_frame *);
 
@@ -103,6 +103,12 @@ syscall_exit (struct intr_frame *f UNUSED)
 {
   int *esp = f->esp;
   int exit_status = *(esp + 1);
+  if (exit_status >= PHYS_BASE)
+  {
+    syscall_exit_by_status (-1);
+	f->eax = -1;
+	return;
+  }
 
   syscall_exit_by_status (exit_status);
 
@@ -208,6 +214,13 @@ syscall_read (struct intr_frame *f UNUSED)
   unsigned size = *(esp + 3);
 
   struct file *file = thread_file_find (fd);
+
+  if (buffer >= PHYS_BASE)
+  {
+	syscall_exit_by_status (-1);
+    f->eax = -1;
+    return;
+  }
 
   if (!file)
   {
