@@ -14,6 +14,7 @@
 #include "threads/flags.h"
 #include "threads/init.h"
 #include "threads/interrupt.h"
+#include "threads/malloc.h"
 #include "threads/palloc.h"
 #include "threads/thread.h"
 #include "threads/synch.h"
@@ -48,6 +49,7 @@ process_execute (const char *file_name)
 
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (thread_name, PRI_DEFAULT, start_process, fn_copy);
+  free (cmdline);
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy);
 
@@ -145,14 +147,19 @@ process_exit (void)
 
   file_close (cur->executable);
 
-  struct thread *child;
+  while (!list_empty (&cur->files))
+  {
+    struct file *file = list_entry (list_pop_front (&cur->files), struct file, elem);
+    file_close (file);
+  }
+
   struct list_elem *elem;
 
   for (elem = list_begin (&cur->child_threads);
        elem != list_end (&cur->child_threads);
        elem = list_next (elem))
   {
-    child = list_entry (elem, struct thread, childelem);
+    struct thread *child = list_entry (elem, struct thread, childelem);
     sema_up (&child->exit_sema);
   }
 
@@ -256,7 +263,7 @@ struct Elf32_Phdr
 #define PF_W 2          /* Writable. */
 #define PF_R 4          /* Readable. */
 
-static bool setup_stack (void **esp, char *file_name, char *argv_ptr);
+static bool setup_stack (void **esp, const char *file_name, char *argv_ptr);
 static bool validate_segment (const struct Elf32_Phdr *, struct file *);
 static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
                           uint32_t read_bytes, uint32_t zero_bytes,
@@ -387,6 +394,8 @@ load (const char *cmdline_, void (**eip) (void), void **esp)
   {
     file_close (file);
   }
+
+  free (cmdline);
   return success;
 }
 
@@ -499,7 +508,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 }
 
 static void
-setup_stack_esp (void **esp, char *file_name, char *argv_ptr)
+setup_stack_esp (void **esp, const char *file_name, char *argv_ptr)
 {
   char *token, *save_ptr;
   size_t token_length;
@@ -563,7 +572,7 @@ setup_stack_esp (void **esp, char *file_name, char *argv_ptr)
 /* Create a minimal stack by mapping a zeroed page at the top of
    user virtual memory. */
 static bool
-setup_stack (void **esp, char *file_name, char *argv_ptr)
+setup_stack (void **esp, const char *file_name, char *argv_ptr)
 {
   uint8_t *kpage;
   bool success = false;
