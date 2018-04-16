@@ -258,18 +258,17 @@ thread_name (void)
 }
 
 struct thread *
-thread_find (tid_t tid)
+thread_child (tid_t child_tid)
 {
-  struct thread *t;
+  struct thread *cur = thread_current ();
   struct list_elem *elem;
 
-  for (elem = list_begin (&all_list);
-       elem != list_end (&all_list);
+  for (elem = list_begin (&cur->child_threads);
+       elem != list_end (&cur->child_threads);
        elem = list_next (elem))
   {
-    t = list_entry (elem, struct thread, allelem);
-
-    if (t->tid == tid)
+    struct thread *t = list_entry (elem, struct thread, childelem);
+    if (t->tid == child_tid)
     {
       return t;
     }
@@ -491,14 +490,17 @@ init_thread (struct thread *t, const char *name, int priority)
   t->priority = priority;
   t->magic = THREAD_MAGIC;
 
-  t->parent_tid = 0;
   t->parent_thread = running_thread();
+  list_init (&t->child_threads);
   list_init (&t->files);
   sema_init (&t->load_begin_sema, 0);
   sema_init (&t->load_end_sema, 0);
   sema_init (&t->wait_sema, 0);
   sema_init (&t->exit_sema, 0);
 
+  t->is_parent_waiting = false;
+
+  list_push_back (&t->parent_thread->child_threads, &t->childelem);
   list_push_back (&all_list, &t->allelem);
 }
 

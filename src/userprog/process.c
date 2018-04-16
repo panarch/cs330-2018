@@ -86,8 +86,8 @@ start_process (void *file_name_)
   if (!success)
   {
     cur->exit_status = -1;
-	cur->parent_thread->load_success = -1;
-	sema_up (&cur->parent_thread->load_begin_sema);
+    cur->parent_thread->load_success = -1;
+    sema_up (&cur->parent_thread->load_begin_sema);
     thread_exit ();
   }
 
@@ -115,33 +115,21 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
-  struct thread *t = thread_find (child_tid);
+  struct thread *child = thread_child (child_tid);
   struct thread *cur = thread_current();
 
-  if (t == NULL || cur->child_exit_success ==1)
+  if (child == NULL || child->is_parent_waiting)
   {
-	if (cur->child_exit_success == 1)
-	{
-	  cur->child_exit_success = -1; // for reuse, put dummy value
-	  return cur->child_exit_status;
-	}
-	else
-	{
-	  return -1;
-	}
+    return -1;
   }
 
-  if (t->parent_tid > 0)
-  {
-  //  return -1;
-  }
-
-  t->parent_tid = thread_current()->tid;
+  child->is_parent_waiting = true;
 
   sema_down (&cur->wait_sema);
 
-  int exit_status = cur->child_exit_status;
-  cur->child_exit_status = -9876; // for reuse, put dummy value but i'm not sure whether it works
+  int exit_status = child->exit_status;
+
+  sema_up (&child->exit_sema);
 
   return exit_status;
 }
@@ -156,24 +144,21 @@ process_exit (void)
 
   sema_up (&parent->wait_sema);
 
-  if (cur->exit_status != -1)
-  {
-	parent->child_exit_success = 1;
-  }
-  else
-  {
-	parent->child_exit_success = 0;
-  }
-
-  parent->child_exit_status = cur->exit_status;
-
-
   file_close (cur->executable);
   printf ("%s: exit(%d)\n", cur->name, cur->exit_status);
 
-  if (cur->parent_tid > 0)
+  struct thread *child;
+  struct list_elem *elem;
+
+  for (elem = list_begin (&cur->child_threads);
+       elem != list_end (&cur->child_threads);
+       elem = list_next (elem))
   {
+    child = list_entry (elem, struct thread, childelem);
+    sema_up (&child->exit_sema);
   }
+
+  sema_down (&parent->exit_sema);
 
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */

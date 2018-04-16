@@ -108,8 +108,9 @@ syscall_halt (struct intr_frame *f UNUSED)
 void
 syscall_exit_by_status (int exit_status)
 {
-  thread_current()->exit_status = exit_status;
-  thread_current()->parent_thread->child_exit_success = exit_status;
+  struct thread *cur = thread_current ();
+
+  cur->exit_status = exit_status;
   thread_exit();
 }
 

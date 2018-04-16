@@ -95,7 +95,9 @@ struct thread
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
 
-    tid_t parent_tid;                   /* Parent TID */
+    struct list_elem childelem;
+    struct list child_threads;
+
     int exit_status;                    /* Exit status for process_exit */
     struct list files;                  /* Opened files */
     struct semaphore load_begin_sema;         /* Se */
@@ -104,10 +106,9 @@ struct thread
     struct semaphore exit_sema;         /* Semaphore before process_exit */
     struct file *executable;
 
-	struct thread *parent_thread;		/* child's parent thread */
-	int load_success;					/* if child process fails to load, then -1 */
-	int child_exit_success;				/* if child successfuly work and exit, then 1*/
-	int child_exit_status;				/* store child's exit status */
+    struct thread *parent_thread;		/* child's parent thread */
+    int load_success;					/* if child process fails to load, then -1 */
+    bool is_parent_waiting;
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
@@ -135,7 +136,7 @@ tid_t thread_create (const char *name, int priority, thread_func *, void *);
 void thread_block (void);
 void thread_unblock (struct thread *);
 
-struct thread *thread_find (tid_t tid);
+struct thread *thread_child (tid_t child_tid);
 struct thread *thread_current (void);
 tid_t thread_tid (void);
 const char *thread_name (void);
