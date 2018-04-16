@@ -492,6 +492,7 @@ init_thread (struct thread *t, const char *name, int priority)
   t->magic = THREAD_MAGIC;
 
   t->parent_tid = 0;
+  t->parent_thread = running_thread();
   list_init (&t->files);
   sema_init (&t->load_begin_sema, 0);
   sema_init (&t->load_end_sema, 0);

@@ -104,6 +104,11 @@ struct thread
     struct semaphore exit_sema;         /* Semaphore before process_exit */
     struct file *executable;
 
+	struct thread *parent_thread;		/* child's parent thread */
+	int load_success;					/* if child process fails to load, then -1 */
+	int child_exit_success;				/* if child successfuly work and exit, then 1*/
+	int child_exit_status;				/* store child's exit status */
+
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */

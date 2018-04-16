@@ -51,12 +51,14 @@ process_execute (const char *file_name)
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy);
 
-  struct thread *t = thread_find (tid);
-  sema_down (&t->load_begin_sema);
-  sema_up (&t->load_end_sema);
+  struct thread *cur = thread_current();
+  sema_down (&cur->load_begin_sema);
 
-  if (t->exit_status == -1)
-    tid = -1;
+  if (cur->load_success == -1)
+  {
+	tid = -1;
+	cur -> load_success = 0; // just dummy value. nothing important
+  }
 
   return tid;
 }
@@ -84,14 +86,12 @@ start_process (void *file_name_)
   if (!success)
   {
     cur->exit_status = -1;
-    sema_up (&cur->load_begin_sema);
-    sema_down (&cur->load_end_sema);
-
+	cur->parent_thread->load_success = -1;
+	sema_up (&cur->parent_thread->load_begin_sema);
     thread_exit ();
   }
 
-  sema_up (&cur->load_begin_sema);
-  sema_down (&cur->load_end_sema);
+  sema_up (&cur->parent_thread->load_begin_sema);
 
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in
@@ -116,19 +116,32 @@ int
 process_wait (tid_t child_tid UNUSED) 
 {
   struct thread *t = thread_find (child_tid);
+  struct thread *cur = thread_current();
+
+  if (t == NULL || cur->child_exit_success ==1)
+  {
+	if (cur->child_exit_success == 1)
+	{
+	  cur->child_exit_success = -1; // for reuse, put dummy value
+	  return cur->child_exit_status;
+	}
+	else
+	{
+	  return -1;
+	}
+  }
 
   if (t->parent_tid > 0)
   {
-    return -1;
+  //  return -1;
   }
 
   t->parent_tid = thread_current()->tid;
 
-  sema_down (&t->wait_sema);
+  sema_down (&cur->wait_sema);
 
-  int exit_status = t->exit_status;
-
-  sema_up (&t->exit_sema);
+  int exit_status = cur->child_exit_status;
+  cur->child_exit_status = -9876; // for reuse, put dummy value but i'm not sure whether it works
 
   return exit_status;
 }
@@ -138,16 +151,28 @@ void
 process_exit (void)
 {
   struct thread *cur = thread_current ();
+  struct thread *parent = cur->parent_thread;
   uint32_t *pd;
 
-  sema_up (&cur->wait_sema);
+  sema_up (&parent->wait_sema);
+
+  if (cur->exit_status != -1)
+  {
+	parent->child_exit_success = 1;
+  }
+  else
+  {
+	parent->child_exit_success = 0;
+  }
+
+  parent->child_exit_status = cur->exit_status;
+
 
   file_close (cur->executable);
   printf ("%s: exit(%d)\n", cur->name, cur->exit_status);
 
   if (cur->parent_tid > 0)
   {
-    sema_down (&cur->exit_sema);
   }
 
   /* Destroy the current process's page directory and switch back
@@ -374,7 +399,10 @@ load (const char *cmdline_, void (**eip) (void), void **esp)
 
  done:
   /* We arrive here whether the load is successful or not. */
-  if (!success) file_close (file);
+  if (!success)
+  {
+    file_close (file);
+  }
   return success;
 }
 
