@@ -263,7 +263,7 @@ struct Elf32_Phdr
 #define PF_W 2          /* Writable. */
 #define PF_R 4          /* Readable. */
 
-static bool setup_stack (void **esp, const char *file_name, char *argv_ptr);
+static bool setup_stack (void **esp, const char *cmdline);
 static bool validate_segment (const struct Elf32_Phdr *, struct file *);
 static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
                           uint32_t read_bytes, uint32_t zero_bytes,
@@ -301,9 +301,11 @@ load (const char *cmdline_, void (**eip) (void), void **esp)
   if (file == NULL) 
     {
       printf ("load: %s: open failed\n", file_name);
+      free (cmdline);
       goto done; 
     }
 
+  free (cmdline);
   file_deny_write (file);
 
   /* Read and verify executable header. */
@@ -315,7 +317,7 @@ load (const char *cmdline_, void (**eip) (void), void **esp)
       || ehdr.e_phentsize != sizeof (struct Elf32_Phdr)
       || ehdr.e_phnum > 1024) 
     {
-      printf ("load: %s: error loading executable\n", file_name);
+      printf ("load: %s: error loading executable\n", cmdline_);
       goto done; 
     }
 
@@ -379,7 +381,7 @@ load (const char *cmdline_, void (**eip) (void), void **esp)
     }
 
   /* Set up stack. */
-  if (!setup_stack (esp, file_name, argv_ptr))
+  if (!setup_stack (esp, cmdline_))
     goto done;
 
   /* Start address. */
@@ -395,7 +397,6 @@ load (const char *cmdline_, void (**eip) (void), void **esp)
     file_close (file);
   }
 
-  free (cmdline);
   return success;
 }
 
@@ -508,13 +509,21 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 }
 
 static void
-setup_stack_esp (void **esp, const char *file_name, char *argv_ptr)
+setup_stack_esp (void **esp, const char *cmdline_)
 {
   char *token, *save_ptr;
   size_t token_length;
   size_t argv_length = 0;
   int argc = 0;
   int i;
+
+  char *file_name, *argv_ptr;
+
+  size_t cmdline_length = strlen (cmdline_) + 1;
+  char *cmdline = malloc (cmdline_length);
+  memcpy (cmdline, cmdline_, cmdline_length);
+
+  file_name = strtok_r (cmdline, " ", &argv_ptr);
 
   *esp = PHYS_BASE;
 
@@ -536,6 +545,8 @@ setup_stack_esp (void **esp, const char *file_name, char *argv_ptr)
 
   // save argv_ptr stored in esp
   argv_ptr = *esp;
+
+  free (cmdline);
 
   // word-align
   *esp -= 4 - argv_length % 4;
@@ -572,7 +583,7 @@ setup_stack_esp (void **esp, const char *file_name, char *argv_ptr)
 /* Create a minimal stack by mapping a zeroed page at the top of
    user virtual memory. */
 static bool
-setup_stack (void **esp, const char *file_name, char *argv_ptr)
+setup_stack (void **esp, const char *cmdline)
 {
   uint8_t *kpage;
   bool success = false;
@@ -583,7 +594,7 @@ setup_stack (void **esp, const char *file_name, char *argv_ptr)
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
       if (success)
       {
-        setup_stack_esp(esp, file_name, argv_ptr);
+        setup_stack_esp(esp, cmdline);
       }
       else
         palloc_free_page (kpage);
