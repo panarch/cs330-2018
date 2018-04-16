@@ -116,7 +116,6 @@ int
 process_wait (tid_t child_tid UNUSED) 
 {
   struct thread *child = thread_child (child_tid);
-  struct thread *cur = thread_current();
 
   if (child == NULL || child->is_parent_waiting)
   {
@@ -125,7 +124,7 @@ process_wait (tid_t child_tid UNUSED)
 
   child->is_parent_waiting = true;
 
-  sema_down (&cur->wait_sema);
+  sema_down (&child->wait_sema);
 
   int exit_status = child->exit_status;
 
@@ -142,10 +141,9 @@ process_exit (void)
   struct thread *parent = cur->parent_thread;
   uint32_t *pd;
 
-  sema_up (&parent->wait_sema);
+  sema_up (&cur->wait_sema);
 
   file_close (cur->executable);
-  printf ("%s: exit(%d)\n", cur->name, cur->exit_status);
 
   struct thread *child;
   struct list_elem *elem;
@@ -158,6 +156,7 @@ process_exit (void)
     sema_up (&child->exit_sema);
   }
 
+  printf ("%s: exit(%d)\n", cur->name, cur->exit_status);
   sema_down (&parent->exit_sema);
 
   /* Destroy the current process's page directory and switch back
