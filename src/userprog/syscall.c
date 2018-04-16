@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <syscall-nr.h>
 #include "devices/shutdown.h"
+#include "devices/input.h"
 #include "threads/interrupt.h"
 #include "threads/thread.h"
 #include "filesys/file.h"
@@ -28,12 +29,14 @@ static void syscall_close (struct intr_frame *);
 
 struct lock file_lock;
 
-void syscall_file_lock_acquire ()
+static void
+syscall_file_lock_acquire (void)
 {
   lock_acquire (&file_lock);
 }
 
-void syscall_file_lock_release ()
+static void
+syscall_file_lock_release (void)
 {
   lock_release (&file_lock);
 }
@@ -233,7 +236,7 @@ syscall_read (struct intr_frame *f UNUSED)
 
   if (buffer >= PHYS_BASE)
   {
-	syscall_exit_by_status (-1);
+    syscall_exit_by_status (-1);
     f->eax = -1;
     return;
   }
@@ -241,6 +244,19 @@ syscall_read (struct intr_frame *f UNUSED)
   if (!file)
   {
     f->eax = -1;
+    return;
+  }
+
+  if (fd == 0)
+  {
+    unsigned _size = size;
+    while (_size--)
+    {
+      *buffer = input_getc();
+      buffer++;
+    }
+
+    f->eax = size;
     return;
   }
 
