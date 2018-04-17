@@ -494,11 +494,11 @@ init_thread (struct thread *t, const char *name, int priority)
   t->parent_thread = running_thread();
   list_init (&t->child_threads);
   list_init (&t->files);
-  sema_init (&t->load_begin_sema, 0);
-  sema_init (&t->load_end_sema, 0);
+  sema_init (&t->load_sema, 0);
   sema_init (&t->wait_sema, 0);
   sema_init (&t->exit_sema, 0);
 
+  t->is_load_success = true;
   t->is_parent_waiting = false;
 
   list_push_back (&t->parent_thread->child_threads, &t->childelem);

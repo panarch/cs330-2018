@@ -53,12 +53,11 @@ process_execute (const char *file_name)
     palloc_free_page (fn_copy);
 
   struct thread *cur = thread_current();
-  sema_down (&cur->load_begin_sema);
+  sema_down (&cur->load_sema);
 
-  if (cur->load_success == -1)
+  if (cur->is_load_success == false)
   {
-	tid = -1;
-	cur -> load_success = 0; // just dummy value. nothing important
+    tid = -1;
   }
 
   return tid;
@@ -87,12 +86,12 @@ start_process (void *file_name_)
   if (!success)
   {
     cur->exit_status = -1;
-    cur->parent_thread->load_success = -1;
-    sema_up (&cur->parent_thread->load_begin_sema);
+    cur->parent_thread->is_load_success = false;
+    sema_up (&cur->parent_thread->load_sema);
     thread_exit ();
   }
 
-  sema_up (&cur->parent_thread->load_begin_sema);
+  sema_up (&cur->parent_thread->load_sema);
 
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in

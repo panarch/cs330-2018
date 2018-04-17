@@ -100,14 +100,13 @@ struct thread
 
     int exit_status;                    /* Exit status for process_exit */
     struct list files;                  /* Opened files */
-    struct semaphore load_begin_sema;         /* Se */
-    struct semaphore load_end_sema;
+    struct semaphore load_sema;         /* Semaphore for load process */
     struct semaphore wait_sema;         /* Semaphore for process_wait */
     struct semaphore exit_sema;         /* Semaphore before process_exit */
     struct file *executable;
 
-    struct thread *parent_thread;		/* child's parent thread */
-    int load_success;					/* if child process fails to load, then -1 */
+    struct thread *parent_thread;       /* child's parent thread */
+    bool is_load_success;
     bool is_parent_waiting;
 
 #ifdef USERPROG
