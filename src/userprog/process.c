@@ -40,16 +40,15 @@ process_execute (const char *file_name)
     return TID_ERROR;
   strlcpy (fn_copy, file_name, PGSIZE);
 
-  size_t cmdline_length = strlen (file_name) + 1;
-  char *cmdline = malloc (cmdline_length);
-  memcpy (cmdline, file_name, cmdline_length);
+  char *cmdline = palloc_get_page (0);
+  strlcpy (cmdline, fn_copy, PGSIZE);
 
   char *thread_name, *save_ptr;
   thread_name = strtok_r (cmdline, " ", &save_ptr);
 
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (thread_name, PRI_DEFAULT, start_process, fn_copy);
-  free (cmdline);
+  palloc_free_page (cmdline);
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy);
 
@@ -140,7 +139,6 @@ void
 process_exit (void)
 {
   struct thread *cur = thread_current ();
-  struct thread *parent = cur->parent_thread;
   uint32_t *pd;
 
   sema_up (&cur->wait_sema);
@@ -155,16 +153,15 @@ process_exit (void)
 
   struct list_elem *elem;
 
-  for (elem = list_begin (&cur->child_threads);
-       elem != list_end (&cur->child_threads);
-       elem = list_next (elem))
+  while (!list_empty (&cur->child_threads))
   {
+    elem = list_pop_front (&cur->child_threads);
     struct thread *child = list_entry (elem, struct thread, childelem);
     sema_up (&child->exit_sema);
   }
 
   printf ("%s: exit(%d)\n", cur->name, cur->exit_status);
-  sema_down (&parent->exit_sema);
+  sema_down (&cur->exit_sema);
 
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */
@@ -299,13 +296,17 @@ load (const char *cmdline_, void (**eip) (void), void **esp)
   /* Open executable file. */
   file = filesys_open (file_name);
   if (file == NULL) 
-    {
-      printf ("load: %s: open failed\n", file_name);
-      free (cmdline);
-      goto done; 
-    }
+  {
+    printf ("load: %s: open failed\n", file_name);
+  }
 
   free (cmdline);
+
+  if (file == NULL)
+  {
+    goto done;
+  }
+
   file_deny_write (file);
 
   /* Read and verify executable header. */
