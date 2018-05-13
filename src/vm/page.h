@@ -1,6 +1,7 @@
 #include <list.h>
 #include <hash.h>
 #include "threads/thread.h"
+#include "threads/palloc.h"
 
 struct page
   {
@@ -8,6 +9,7 @@ struct page
     bool is_swapped;
     bool is_loaded;
 
+    enum palloc_flags flags;
     void *uaddr;
     void *kaddr;
 

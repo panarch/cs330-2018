@@ -1,4 +1,5 @@
 #include "vm/vm.h"
+#include "vm/frame.h"
 #include "threads/malloc.h"
 #include "userprog/pagedir.h"
 
@@ -34,20 +35,21 @@ struct page *
 vm_get_page_instant (enum palloc_flags flags, void *upage, bool writable)
 {
   struct page *page;
-  void *kpage = palloc_get_page (flags);
-
-  if (kpage == NULL)
-    return NULL;
 
   page = (struct page *) malloc (sizeof (struct page));
   page->writable = writable;
   page->is_swapped = false;
-  page->is_loaded = true;
 
+  page->flags = flags;
   page->uaddr = upage;
-  page->kaddr = kpage;
 
   page->owner = thread_current ();
+
+  if (!frame_load_page (page))
+    {
+      free (page);
+      return NULL;
+    }
 
   hash_insert (&page->owner->vm, &page->vm_elem);
 

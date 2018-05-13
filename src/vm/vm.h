@@ -1,6 +1,10 @@
-#include "vm/page.h"
 #include <hash.h>
 #include "threads/palloc.h"
+
+#ifndef VM_PAGE
+#define VM_PAGE
+#include "vm/page.h"
+#endif
 
 void vm_init (struct hash *vm);
 void vm_destroy (struct hash *vm);
