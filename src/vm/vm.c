@@ -1,8 +1,10 @@
 #include "vm/vm.h"
+#include "threads/malloc.h"
 #include "userprog/pagedir.h"
 
 static unsigned vm_hash_hash_func (const struct hash_elem *a, void *aux);
 static bool vm_hash_less_func (const struct hash_elem *a, const struct hash_elem *b, void *aux);
+static void vm_hash_free_func (struct hash_elem *a, void *aux);
 
 static bool install_page (void *upage, void *kpage, bool writable);
 
@@ -15,23 +17,47 @@ vm_init (struct hash *vm)
 void
 vm_destroy (struct hash *vm)
 {
-  hash_destroy (vm, NULL);
+  hash_destroy (vm, vm_hash_free_func);
 }
 
 bool
 vm_get_and_install_page (enum palloc_flags flags, void *upage, bool writable)
 {
+  struct page *page = vm_get_page_instant (flags, upage, writable);
+  if (page == NULL)
+    return false;
+
+  return vm_install_page (page);
+}
+
+struct page *
+vm_get_page_instant (enum palloc_flags flags, void *upage, bool writable)
+{
+  struct page *page;
   void *kpage = palloc_get_page (flags);
 
-  if (kpage != NULL) 
-    {
-      if (install_page (upage, kpage, writable))
-        return true;
-      else
-        palloc_free_page (kpage);
-    }
+  if (kpage == NULL)
+    return NULL;
 
-  return false;
+  page = (struct page *) malloc (sizeof (struct page));
+  page->writable = writable;
+  page->is_swapped = false;
+  page->is_loaded = true;
+
+  page->uaddr = upage;
+  page->kaddr = kpage;
+
+  page->owner = thread_current ();
+
+  hash_insert (&page->owner->vm, &page->vm_elem);
+
+  return page;
+}
+
+bool
+vm_install_page (struct page *page)
+{
+  return install_page (page->uaddr, page->kaddr, page->writable);
 }
 
 /*
@@ -76,5 +102,13 @@ vm_hash_less_func (const struct hash_elem *a, const struct hash_elem *b, void *a
   struct page *page_b = hash_entry (b, struct page, vm_elem);
 
   return page_a->uaddr < page_b->uaddr;
+}
+
+static void
+vm_hash_free_func (struct hash_elem *a, void *aux UNUSED)
+{
+  struct page *page = hash_entry (a, struct page, vm_elem);
+
+  free (page);
 }
 

@@ -403,8 +403,6 @@ load (const char *cmdline_, void (**eip) (void), void **esp)
 
 /* load() helpers. */
 
-static bool install_page (void *upage, void *kpage, bool writable);
-
 /* Checks whether PHDR describes a valid, loadable segment in
    FILE and returns true if so, false otherwise. */
 static bool
@@ -481,10 +479,12 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
       size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
-      /* Get a page of memory. */
-      uint8_t *kpage = palloc_get_page (PAL_USER);
-      if (kpage == NULL)
+      // START
+      struct page *page = vm_get_page_instant (PAL_USER, upage, writable);
+      if (page == NULL)
         return false;
+
+      void *kpage = page->kaddr;
 
       /* Load this page. */
       if (file_read (file, kpage, page_read_bytes) != (int) page_read_bytes)
@@ -494,11 +494,10 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
         }
       memset (kpage + page_read_bytes, 0, page_zero_bytes);
 
-      /* Add the page to the process's address space. */
-      if (!install_page (upage, kpage, writable)) 
+      if (!vm_install_page (page))
         {
           palloc_free_page (kpage);
-          return false; 
+          return false;
         }
 
       /* Advance. */
@@ -586,27 +585,9 @@ setup_stack_esp (void **esp, const char *cmdline_)
 static bool
 setup_stack (void **esp, const char *cmdline)
 {
-  // uint8_t *kpage;
   uint8_t *upage = ((uint8_t *) PHYS_BASE) - PGSIZE;
-  bool success = false;
 
-  // kpage = vm_get_page_instant (PAL_USER | PAL_ZERO);
-  success = vm_get_and_install_page (PAL_USER | PAL_ZERO, upage, true);
-
-  /*
-  kpage = palloc_get_page (PAL_USER | PAL_ZERO);
-  if (kpage != NULL) 
-    {
-      // success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
-      success = install_page (upage, kpage, true);
-      if (success)
-      {
-        setup_stack_esp(esp, cmdline);
-      }
-      else
-        palloc_free_page (kpage);
-    }
-  */
+  bool success = vm_get_and_install_page (PAL_USER | PAL_ZERO, upage, true);
 
   if (success)
     setup_stack_esp (esp, cmdline);
@@ -614,22 +595,3 @@ setup_stack (void **esp, const char *cmdline)
   return success;
 }
 
-/* Adds a mapping from user virtual address UPAGE to kernel
-   virtual address KPAGE to the page table.
-   If WRITABLE is true, the user process may modify the page;
-   otherwise, it is read-only.
-   UPAGE must not already be mapped.
-   KPAGE should probably be a page obtained from the user pool
-   with palloc_get_page().
-   Returns true on success, false if UPAGE is already mapped or
-   if memory allocation fails. */
-static bool
-install_page (void *upage, void *kpage, bool writable)
-{
-  struct thread *t = thread_current ();
-
-  /* Verify that there's not already a page at that virtual
-     address, then map our page there. */
-  return (pagedir_get_page (t->pagedir, upage) == NULL
-          && pagedir_set_page (t->pagedir, upage, kpage, writable));
-}
