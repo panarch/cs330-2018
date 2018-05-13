@@ -19,6 +19,7 @@
 #include "threads/thread.h"
 #include "threads/synch.h"
 #include "threads/vaddr.h"
+#include "vm/vm.h"
 
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
@@ -585,13 +586,19 @@ setup_stack_esp (void **esp, const char *cmdline_)
 static bool
 setup_stack (void **esp, const char *cmdline)
 {
-  uint8_t *kpage;
+  // uint8_t *kpage;
+  uint8_t *upage = ((uint8_t *) PHYS_BASE) - PGSIZE;
   bool success = false;
 
+  // kpage = vm_get_page_instant (PAL_USER | PAL_ZERO);
+  success = vm_get_and_install_page (PAL_USER | PAL_ZERO, upage, true);
+
+  /*
   kpage = palloc_get_page (PAL_USER | PAL_ZERO);
   if (kpage != NULL) 
     {
-      success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
+      // success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
+      success = install_page (upage, kpage, true);
       if (success)
       {
         setup_stack_esp(esp, cmdline);
@@ -599,6 +606,11 @@ setup_stack (void **esp, const char *cmdline)
       else
         palloc_free_page (kpage);
     }
+  */
+
+  if (success)
+    setup_stack_esp (esp, cmdline);
+
   return success;
 }
 

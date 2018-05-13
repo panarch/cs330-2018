@@ -14,6 +14,7 @@
 #ifdef USERPROG
 #include "userprog/process.h"
 #endif
+#include "vm/vm.h"
 
 /* Random value for struct thread's `magic' member.
    Used to detect stack overflow.  See the big comment at the top
@@ -184,6 +185,9 @@ thread_create (const char *name, int priority,
   init_thread (t, name, priority);
   tid = t->tid = allocate_tid ();
 
+  /* Initialize vm hash */
+  vm_init (&t->vm);
+
   /* Prepare thread for first run by initializing its stack.
      Do this atomically so intermediate values for the 'stack' 
      member cannot be observed. */
@@ -318,6 +322,7 @@ thread_exit (void)
      and schedule another process.  That process will destroy us
      when it calls thread_schedule_tail(). */
   intr_disable ();
+  vm_destroy (&thread_current()->vm);
   list_remove (&thread_current()->allelem);
   list_remove (&thread_current()->childelem);
   thread_current ()->status = THREAD_DYING;

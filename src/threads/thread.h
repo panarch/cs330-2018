@@ -3,6 +3,7 @@
 
 #include <debug.h>
 #include <list.h>
+#include <hash.h>
 #include <stdint.h>
 #include "filesys/file.h"
 #include "threads/synch.h"
@@ -113,6 +114,8 @@ struct thread
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */
 #endif
+
+    struct hash vm;                     /* VM includes struct page of vm/vm.c */
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */

@@ -6,6 +6,9 @@
 #include "threads/interrupt.h"
 #include "threads/thread.h"
 #include "threads/vaddr.h"
+#include "vm/vm.h"
+
+#define USER_PAGE_SIZE (4 * 1024 * 1024)
 
 /* Number of page faults processed. */
 static long long page_fault_cnt;
@@ -152,12 +155,18 @@ page_fault (struct intr_frame *f)
 
   if (not_present)
   {
-    syscall_exit_by_status (-1);
+    if (!is_user_vaddr (fault_addr) ||
+        fault_addr < PHYS_BASE - USER_PAGE_SIZE)
+      {
+        syscall_exit_by_status (-1);
+      }
+
+    void *uaddr = pg_round_down (fault_addr);
+    vm_get_and_install_page (PAL_USER | PAL_ZERO, uaddr, true);
+    return;
   }
-  if (fault_addr >= PHYS_BASE)
-  {
-   syscall_exit_by_status (-1);
-  }
+
+  syscall_exit_by_status (-1);
 
   /* To implement virtual memory, delete the rest of the function
      body, and replace it with code that brings in the page to
