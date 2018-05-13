@@ -13,6 +13,8 @@ struct page
     void *uaddr;
     void *kaddr;
 
+    size_t swap_idx;
+
     struct thread *owner;
 
     struct hash_elem vm_elem;

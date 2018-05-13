@@ -13,3 +13,5 @@ bool vm_get_and_install_page (enum palloc_flags flags, void *upage, bool writabl
 struct page * vm_get_page_instant (enum palloc_flags flags, void *upage, bool writable);
 bool vm_install_page (struct page *page);
 
+struct page * vm_find_page (void *upage);
+

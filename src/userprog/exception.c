@@ -153,6 +153,8 @@ page_fault (struct intr_frame *f)
   write = (f->error_code & PF_W) != 0;
   user = (f->error_code & PF_U) != 0;
 
+  struct page *page = vm_find_page (fault_addr);
+
   if (not_present)
   {
     if (!is_user_vaddr (fault_addr) ||
