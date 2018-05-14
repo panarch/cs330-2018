@@ -33,7 +33,7 @@ vm_get_and_install_page (enum palloc_flags flags, void *upage, bool writable)
   return vm_install_page (page);
 }
 
-struct page *
+static struct page *
 vm_find_page (void *upage)
 {
   struct page key_page;
@@ -48,10 +48,17 @@ vm_find_page (void *upage)
   return hash_entry (elem, struct page, vm_elem);
 }
 
+bool
+vm_has_page (void *upage)
+{
+  return vm_find_page (upage) != NULL;
+}
+
 struct page *
 vm_get_page_instant (enum palloc_flags flags, void *upage, bool writable)
 {
   struct page *page = vm_find_page (upage);
+  void *uaddr = pg_round_down (upage);
 
   if (page == NULL)
     {
@@ -60,7 +67,7 @@ vm_get_page_instant (enum palloc_flags flags, void *upage, bool writable)
       page->is_swapped = false;
 
       page->flags = flags;
-      page->uaddr = upage;
+      page->uaddr = uaddr;
 
       page->owner = thread_current ();
     }

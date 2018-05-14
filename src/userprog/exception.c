@@ -113,6 +113,15 @@ kill (struct intr_frame *f)
     }
 }
 
+static bool
+check_stack_growth (void *addr)
+{
+  return (
+    is_user_vaddr (addr) &&
+    addr > PHYS_BASE - USER_PAGE_SIZE
+  );
+}
+
 /* Page fault handler.  This is a skeleton that must be filled in
    to implement virtual memory.  Some solutions to project 2 may
    also require modifying this code.
@@ -153,20 +162,18 @@ page_fault (struct intr_frame *f)
   write = (f->error_code & PF_W) != 0;
   user = (f->error_code & PF_U) != 0;
 
-  struct page *page = vm_find_page (fault_addr);
+  if (not_present &&
+      !vm_has_page (fault_addr) &&
+      !check_stack_growth (fault_addr))
+    {
+      syscall_exit_by_status (-1);
+    }
 
   if (not_present)
-  {
-    if (!is_user_vaddr (fault_addr) ||
-        fault_addr < PHYS_BASE - USER_PAGE_SIZE)
-      {
-        syscall_exit_by_status (-1);
-      }
-
-    void *uaddr = pg_round_down (fault_addr);
-    vm_get_and_install_page (PAL_USER | PAL_ZERO, uaddr, true);
-    return;
-  }
+    {
+      vm_get_and_install_page (PAL_USER | PAL_ZERO, fault_addr, true);
+      return;
+    }
 
   syscall_exit_by_status (-1);
 
