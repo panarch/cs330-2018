@@ -15,3 +15,5 @@ bool vm_install_page (struct page *page);
 
 bool vm_has_page (void *upage);
 
+int vm_mmap (void *upage, struct file *file);
+

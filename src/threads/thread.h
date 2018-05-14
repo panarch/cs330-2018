@@ -116,6 +116,7 @@ struct thread
 #endif
 
     struct hash vm;                     /* VM includes struct page of vm/vm.c */
+    struct list mfiles;                 /* VM, memory mapped files */
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
@@ -161,5 +162,8 @@ int thread_get_load_avg (void);
 int thread_file_add (struct file *file);
 void thread_file_remove (struct file *file);
 struct file *thread_file_find (int fd);
+
+int thread_mfile_add (struct file *file);
+struct file *thread_mfile_pop (int mapid);
 
 #endif /* threads/thread.h */

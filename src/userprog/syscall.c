@@ -26,6 +26,8 @@ static void syscall_write (struct intr_frame *);
 static void syscall_seek (struct intr_frame *);
 static void syscall_tell (struct intr_frame *);
 static void syscall_close (struct intr_frame *);
+static void syscall_mmap (struct intr_frame *);
+static void syscall_munmap (struct intr_frame *);
 
 struct lock file_lock;
 
@@ -94,6 +96,12 @@ syscall_handler (struct intr_frame *f UNUSED)
       break;
     case SYS_CLOSE:
       syscall_close(f);
+      break;
+    case SYS_MMAP:
+      syscall_mmap(f);
+      break;
+    case SYS_MUNMAP:
+      syscall_munmap(f);
       break;
     default:
       printf ("system call! %d\n", *syscall_number);
@@ -330,4 +338,25 @@ syscall_close (struct intr_frame *f UNUSED)
 
   thread_file_remove (file);
   file_close (file);
+}
+
+static void
+syscall_mmap (struct intr_frame *f UNUSED)
+{
+  int *esp = f->esp;
+  int fd = *(esp + 1);
+  void *upage = *(esp + 2);
+
+  struct file *file = thread_file_find (fd);
+
+  syscall_file_lock_acquire ();
+  int mapid = vm_mmap (upage, file);
+  syscall_file_lock_release ();
+
+  f->eax = mapid;
+}
+
+static void
+syscall_munmap (struct intr_frame *f UNUSED)
+{
 }

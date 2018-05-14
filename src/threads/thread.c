@@ -499,6 +499,7 @@ init_thread (struct thread *t, const char *name, int priority)
   t->parent_thread = running_thread();
   list_init (&t->child_threads);
   list_init (&t->files);
+  list_init (&t->mfiles);
   sema_init (&t->load_sema, 0);
   sema_init (&t->wait_sema, 0);
   sema_init (&t->exit_sema, 0);
@@ -622,6 +623,44 @@ thread_file_find (int fd)
       return file;
     }
   }
+
+  return NULL;
+}
+
+int
+thread_mfile_add (struct file *file)
+{
+  struct thread *cur = running_thread ();
+
+  int mapid = (
+    list_empty (&cur->mfiles) ?
+    1 :
+    (list_entry (list_back (&cur->mfiles), struct file, elem))->mapid + 1
+  );
+
+  list_push_back (&cur->mfiles, &file->elem);
+
+  return mapid;
+}
+
+struct file *
+thread_mfile_pop (int mapid)
+{
+  struct thread *cur = running_thread ();
+  struct file *file;
+  struct list_elem *elem;
+
+  for (elem = list_begin (&cur->mfiles);
+       elem != list_end (&cur->mfiles);
+       elem = list_next (elem))
+    {
+      file = list_entry (elem, struct file, elem);
+      if (file->mapid == mapid)
+        {
+          list_remove (elem);
+          return file;
+        }
+    }
 
   return NULL;
 }

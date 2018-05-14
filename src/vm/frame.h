@@ -5,4 +5,5 @@
 
 void frame_init (void);
 bool frame_load_page (struct page *page);
+void frame_free_page (struct page *page);
 

@@ -2,6 +2,7 @@
 #include <hash.h>
 #include "threads/thread.h"
 #include "threads/palloc.h"
+#include "filesys/file.h"
 
 struct page
   {
@@ -16,6 +17,7 @@ struct page
     size_t swap_idx;
 
     struct thread *owner;
+    struct file *file;
 
     struct hash_elem vm_elem;
     struct list_elem frame_elem;

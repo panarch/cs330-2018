@@ -2,7 +2,9 @@
 #include "vm/swap.h"
 #include <stdio.h>
 #include <list.h>
+#include "threads/vaddr.h"
 #include "threads/palloc.h"
+#include "filesys/file.h"
 
 static struct lock lock;
 static struct list page_list;
@@ -35,6 +37,13 @@ frame_load_page (struct page *page)
     {
       swap_in (page);
     }
+  else if (page->file != NULL)
+    {
+      int pos = file_tell (page->file);
+
+      file_read (page->file, page->kaddr, PGSIZE);
+      file_seek (page->file, pos);
+    }
 
   page->is_loaded = true;
 
@@ -44,6 +53,16 @@ frame_load_page (struct page *page)
   lock_release (&lock);
 
   return true;
+}
+
+void
+frame_free_page (struct page *page)
+{
+  if (!page->is_swapped)
+    return;
+
+  list_remove (&page->frame_elem);
+  swap_free (page);
 }
 
 static struct page *

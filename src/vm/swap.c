@@ -75,3 +75,14 @@ swap_out (struct page *page)
   lock_release (&lock);
 }
 
+void
+swap_free (struct page *page)
+{
+  lock_acquire (&lock);
+
+  bitmap_reset (used_map, page->swap_idx);
+  page->is_swapped = false;
+
+  lock_release (&lock);
+}
+

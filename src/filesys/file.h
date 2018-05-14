@@ -4,6 +4,11 @@
 #include <list.h>
 #include "filesys/off_t.h"
 
+#ifndef VM_PAGE
+#define VM_PAGE
+#include "vm/page.h"
+#endif
+
 struct inode;
 
 /* An open file. */
@@ -14,7 +19,10 @@ struct file
     bool deny_write;            /* Has file_deny_write() been called? */
 
     int fd;                     /* File descriptor */
-    struct list_elem elem;      /* List element for thread->files. */
+    struct list_elem elem;      /* List element for thread->files or thread->mfiles */
+
+    int mapid;                  /* Memory mapped file id */
+    struct page *page;          /* vm/page which mmap this file */
   };
 
 /* Opening and closing files. */

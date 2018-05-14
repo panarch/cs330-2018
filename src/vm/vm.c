@@ -54,22 +54,34 @@ vm_has_page (void *upage)
   return vm_find_page (upage) != NULL;
 }
 
+static struct page *
+vm_create_page (enum palloc_flags flags, void *upage, bool writable)
+{
+  void *uaddr = pg_round_down (upage);
+  struct page *page = (struct page *) malloc (sizeof (struct page));
+
+  page->writable = writable;
+  page->is_swapped = false;
+
+  page->flags = flags;
+  page->uaddr = uaddr;
+  page->file = NULL;
+
+  page->owner = thread_current ();
+
+  hash_insert (&page->owner->vm, &page->vm_elem);
+
+  return page;
+}
+
 struct page *
 vm_get_page_instant (enum palloc_flags flags, void *upage, bool writable)
 {
   struct page *page = vm_find_page (upage);
-  void *uaddr = pg_round_down (upage);
 
   if (page == NULL)
     {
-      page = (struct page *) malloc (sizeof (struct page));
-      page->writable = writable;
-      page->is_swapped = false;
-
-      page->flags = flags;
-      page->uaddr = uaddr;
-
-      page->owner = thread_current ();
+      page = vm_create_page (flags, upage, writable);
     }
   else
     {
@@ -82,9 +94,41 @@ vm_get_page_instant (enum palloc_flags flags, void *upage, bool writable)
       return NULL;
     }
 
-  hash_insert (&page->owner->vm, &page->vm_elem);
-
   return page;
+}
+
+int
+vm_mmap (void *upage, struct file *file)
+{
+  void *uaddr = pg_round_down (upage);
+  enum palloc_flags flags = PAL_USER;
+  bool writable = true;
+
+  unsigned size = file_length (file);
+
+  int mapid;
+  unsigned i;
+
+  for (i = 0;
+       i <= size / PGSIZE;
+       i++)
+    {
+      struct page *page = vm_create_page (flags, uaddr + i * PGSIZE, writable);
+
+      struct file *_file = file_reopen (file);
+      int _mapid = thread_mfile_add (_file);
+
+      if (i == 0)
+        mapid = _mapid;
+
+      _file->pos = i * PGSIZE;
+      _file->mapid = mapid;
+
+      page->file = _file;
+      page->is_loaded = false;
+    }
+
+  return mapid;
 }
 
 bool
@@ -92,13 +136,6 @@ vm_install_page (struct page *page)
 {
   return install_page (page->uaddr, page->kaddr, page->writable);
 }
-
-/*
-void
-vm_get_page_lazy (enum palloc_flags flags)
-{
-}
-*/
 
 /* Adds a mapping from user virtual address UPAGE to kernel
    virtual address KPAGE to the page table.
@@ -142,6 +179,7 @@ vm_hash_free_func (struct hash_elem *a, void *aux UNUSED)
 {
   struct page *page = hash_entry (a, struct page, vm_elem);
 
+  frame_free_page (page);
   free (page);
 }
 
