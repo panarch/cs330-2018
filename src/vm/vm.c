@@ -100,7 +100,7 @@ vm_get_page_instant (enum palloc_flags flags, void *upage, bool writable)
 int
 vm_mmap (void *uaddr, struct file *file)
 {
-  if (uaddr == NULL || pg_ofs (uaddr) != 0)
+  if (uaddr == NULL || pg_ofs (uaddr) != 0 || vm_find_page(uaddr) != NULL)
     return -1;
 
   enum palloc_flags flags = PAL_USER;
