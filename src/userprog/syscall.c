@@ -359,4 +359,10 @@ syscall_mmap (struct intr_frame *f UNUSED)
 static void
 syscall_munmap (struct intr_frame *f UNUSED)
 {
+  int *esp = f->esp;
+  int mapid = *(esp + 1);
+
+  syscall_file_lock_acquire ();
+  vm_munmap (mapid);
+  syscall_file_lock_release ();
 }

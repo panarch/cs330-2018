@@ -33,7 +33,8 @@ frame_load_page (struct page *page)
 
   page->kaddr = kpage;
 
-  if (page->is_swapped)
+  if (page->is_swapped &&
+      (page->file == NULL || (page->file != NULL && page->file->mapid <= 0)))
     {
       swap_in (page);
     }
@@ -43,6 +44,8 @@ frame_load_page (struct page *page)
 
       file_read (page->file, page->kaddr, PGSIZE);
       file_seek (page->file, pos);
+
+      page->is_swapped = false;
     }
 
   page->is_loaded = true;
@@ -62,7 +65,9 @@ frame_free_page (struct page *page)
     return;
 
   list_remove (&page->frame_elem);
-  swap_free (page);
+
+  if (page->is_loaded)
+    swap_free (page);
 }
 
 static struct page *

@@ -4,6 +4,7 @@
 #include "devices/block.h"
 #include "threads/vaddr.h"
 #include "userprog/pagedir.h"
+#include "filesys/file.h"
 
 #define BLOCK_SECTORS_PER_PAGE (PGSIZE / BLOCK_SECTOR_SIZE)
 
@@ -52,22 +53,33 @@ swap_out (struct page *page)
 {
   lock_acquire (&lock);
 
-  size_t swap_idx = bitmap_scan_and_flip (used_map, 0, 1, false);
-
-  int i;
-
-  for (i = 0; i < BLOCK_SECTORS_PER_PAGE; i++)
+  if (page->file != NULL && page->file->mapid > 0) // mmap file
     {
-      block_sector_t sector = swap_idx * BLOCK_SECTORS_PER_PAGE + i;
-      const void *buffer = page->kaddr + BLOCK_SECTOR_SIZE * i;
+      int pos = file_tell (page->file);
 
-      block_write (block, sector, buffer);
+      file_write (page->file, page->kaddr, PGSIZE);
+      file_seek (page->file, pos);
+    }
+  else
+    {
+      size_t swap_idx = bitmap_scan_and_flip (used_map, 0, 1, false);
+
+      int i;
+
+      for (i = 0; i < BLOCK_SECTORS_PER_PAGE; i++)
+        {
+          block_sector_t sector = swap_idx * BLOCK_SECTORS_PER_PAGE + i;
+          const void *buffer = page->kaddr + BLOCK_SECTOR_SIZE * i;
+
+          block_write (block, sector, buffer);
+        }
+
+      page->swap_idx = swap_idx;
     }
 
   pagedir_clear_page (page->owner->pagedir, page->uaddr);
   palloc_free_page (page->kaddr);
 
-  page->swap_idx = swap_idx;
   page->kaddr = NULL;
   page->is_loaded = false;
   page->is_swapped = true;

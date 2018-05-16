@@ -123,12 +123,49 @@ vm_mmap (void *upage, struct file *file)
 
       _file->pos = i * PGSIZE;
       _file->mapid = mapid;
+      _file->page = page;
 
       page->file = _file;
       page->is_loaded = false;
     }
 
   return mapid;
+}
+
+void
+vm_munmap (int mapid)
+{
+  struct file *file = thread_mfile_pop (mapid);
+
+  while (file != NULL)
+    {
+      struct page *page = file->page;
+
+      if (page->is_loaded)
+        file_write (file, page->kaddr, PGSIZE);
+
+      frame_free_page (page);
+      hash_delete (&page->owner->vm, &page->vm_elem);
+      file_close (file);
+
+      file = thread_mfile_pop (mapid);
+    }
+}
+
+void
+vm_munmap_all (void)
+{
+  struct thread *cur = thread_current ();
+
+  while (!list_empty (&cur->mfiles))
+    {
+      struct file *file = list_entry (list_pop_front (&cur->mfiles), struct file, elem);
+      if (!file->page->is_loaded)
+        continue;
+
+      file_write (file, file->page->kaddr, PGSIZE);
+      file_close (file);
+    }
 }
 
 bool

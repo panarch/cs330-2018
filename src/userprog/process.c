@@ -141,6 +141,8 @@ process_exit (void)
   struct thread *cur = thread_current ();
   uint32_t *pd;
 
+  vm_munmap_all ();
+
   sema_up (&cur->wait_sema);
 
   file_close (cur->executable);
