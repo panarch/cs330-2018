@@ -100,6 +100,9 @@ vm_get_page_instant (enum palloc_flags flags, void *upage, bool writable)
 int
 vm_mmap (void *upage, struct file *file)
 {
+  if (upage == NULL)
+    return -1;
+
   void *uaddr = pg_round_down (upage);
   enum palloc_flags flags = PAL_USER;
   bool writable = true;
