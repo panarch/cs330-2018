@@ -665,6 +665,22 @@ thread_mfile_pop (int mapid)
   return NULL;
 }
 
+void *
+thread_get_esp (void)
+{
+  struct thread *cur = thread_current ();
+
+  return cur->esp;
+}
+
+void
+thread_set_esp (void *esp)
+{
+  struct thread *cur = thread_current ();
+
+  cur->esp = esp;
+}
+
 /* Schedules a new process.  At entry, interrupts must be off and
    the running process's state must have been changed from
    running to some other state.  This function finds another

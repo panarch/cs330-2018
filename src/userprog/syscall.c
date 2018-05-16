@@ -55,6 +55,8 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f UNUSED) 
 {
+  thread_set_esp (f->esp);
+
   int *syscall_number = f->esp;
 
   switch (*syscall_number)

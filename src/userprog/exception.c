@@ -114,10 +114,11 @@ kill (struct intr_frame *f)
 }
 
 static bool
-check_stack_growth (void *addr)
+check_stack_growth (void *addr, void *esp)
 {
   return (
     is_user_vaddr (addr) &&
+    esp - addr <= 32 &&
     addr > PHYS_BASE - USER_PAGE_SIZE
   );
 }
@@ -162,9 +163,11 @@ page_fault (struct intr_frame *f)
   write = (f->error_code & PF_W) != 0;
   user = (f->error_code & PF_U) != 0;
 
+  void *esp = user ? f->esp : thread_get_esp ();
+
   if (not_present &&
       !vm_has_page (fault_addr) &&
-      !check_stack_growth (fault_addr))
+      !check_stack_growth (fault_addr, esp))
     {
       syscall_exit_by_status (-1);
     }

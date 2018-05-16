@@ -118,6 +118,8 @@ struct thread
     struct hash vm;                     /* VM includes struct page of vm/vm.c */
     struct list mfiles;                 /* VM, memory mapped files */
 
+    void *esp;                          /* VM, for stack growth handling on page fault in the kernel */
+
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
   };
@@ -165,5 +167,8 @@ struct file *thread_file_find (int fd);
 
 int thread_mfile_add (struct file *file);
 struct file *thread_mfile_pop (int mapid);
+
+void *thread_get_esp (void);
+void thread_set_esp (void *esp);
 
 #endif /* threads/thread.h */
