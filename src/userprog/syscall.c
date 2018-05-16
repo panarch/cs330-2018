@@ -350,6 +350,12 @@ syscall_mmap (struct intr_frame *f UNUSED)
 
   struct file *file = thread_file_find (fd);
 
+  if (file == NULL)
+    {
+      syscall_exit_by_status (-1);
+      return;
+    }
+
   syscall_file_lock_acquire ();
   int mapid = vm_mmap (upage, file);
   syscall_file_lock_release ();
