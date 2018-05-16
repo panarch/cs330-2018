@@ -9,6 +9,7 @@
 #include "filesys/file.h"
 #include "filesys/filesys.h"
 #include "threads/vaddr.h"
+#include "vm/vm.h"
 
 static void syscall_handler (struct intr_frame *);
 
