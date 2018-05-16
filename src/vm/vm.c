@@ -141,7 +141,7 @@ vm_munmap (int mapid)
     {
       struct page *page = file->page;
 
-      if (page->is_loaded)
+      if (page->is_loaded && pagedir_is_dirty (page->owner->pagedir, page->uaddr))
         file_write (file, page->kaddr, PGSIZE);
 
       frame_free_page (page);
@@ -160,10 +160,11 @@ vm_munmap_all (void)
   while (!list_empty (&cur->mfiles))
     {
       struct file *file = list_entry (list_pop_front (&cur->mfiles), struct file, elem);
-      if (!file->page->is_loaded)
-        continue;
+      struct page *page = file->page;
 
-      file_write (file, file->page->kaddr, PGSIZE);
+      if (page->is_loaded && pagedir_is_dirty (page->owner->pagedir, page->uaddr))
+        file_write (file, page->kaddr, PGSIZE);
+
       file_close (file);
     }
 }

@@ -4,6 +4,7 @@
 #include <list.h>
 #include "threads/vaddr.h"
 #include "threads/palloc.h"
+#include "userprog/pagedir.h"
 #include "filesys/file.h"
 
 static struct lock lock;
@@ -47,6 +48,9 @@ frame_load_page (struct page *page)
 
       page->is_swapped = false;
     }
+
+  pagedir_set_dirty (page->owner->pagedir, page->uaddr, false);
+  pagedir_set_accessed (page->owner->pagedir, page->uaddr, false);
 
   page->is_loaded = true;
 
