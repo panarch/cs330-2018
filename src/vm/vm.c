@@ -108,6 +108,8 @@ vm_mmap (void *upage, struct file *file)
   bool writable = true;
 
   unsigned size = file_length (file);
+  if (size == 0)
+    return -1;
 
   int mapid;
   unsigned i;
