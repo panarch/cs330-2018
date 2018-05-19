@@ -104,6 +104,7 @@ block_get_by_name (const char *name)
 static void
 check_sector (struct block *block, block_sector_t sector)
 {
+//  printf ("check_sector start \n");
   if (sector >= block->size)
     {
       /* We do not use ASSERT because we want to panic here
@@ -120,7 +121,9 @@ check_sector (struct block *block, block_sector_t sector)
 void
 block_read (struct block *block, block_sector_t sector, void *buffer)
 {
+ // printf ("block_read start \n");
   check_sector (block, sector);
+ // printf ("block_read after check_sector\n");
   block->ops->read (block->aux, sector, buffer);
   block->read_cnt++;
 }

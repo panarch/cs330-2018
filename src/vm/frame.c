@@ -37,6 +37,7 @@ frame_load_page (struct page *page)
   if (page->is_swapped &&
       (page->file == NULL || (page->file != NULL && page->file->mapid <= 0)))
     {
+//	  printf ("frame_load_page, swap in?\n");
       swap_in (page);
     }
   else if (page->file != NULL)

@@ -171,4 +171,7 @@ struct file *thread_mfile_pop (int mapid);
 void *thread_get_esp (void);
 void thread_set_esp (void *esp);
 
+void thread_printf (void);
+
+
 #endif /* threads/thread.h */

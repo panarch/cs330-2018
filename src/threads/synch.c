@@ -192,12 +192,15 @@ lock_init (struct lock *lock)
 void
 lock_acquire (struct lock *lock)
 {
+
   ASSERT (lock != NULL);
   ASSERT (!intr_context ());
   ASSERT (!lock_held_by_current_thread (lock));
 
   sema_down (&lock->semaphore);
   lock->holder = thread_current ();
+//  printf ("lock_acquire, thread name is %s\n", thread_current()->name);
+
 }
 
 /* Tries to acquires LOCK and returns true if successful or false

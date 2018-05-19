@@ -28,7 +28,9 @@ swap_init (void)
 void
 swap_in (struct page *page)
 {
+//  printf ("swap_in before acquire, thread name : %s\n", thread_current ()->name);
   lock_acquire (&lock);
+//  printf ("swap_in after acquire, thread name : %s\n", thread_current ()->name);
 
   int i;
 
@@ -36,8 +38,14 @@ swap_in (struct page *page)
     {
       block_sector_t sector = page->swap_idx * BLOCK_SECTORS_PER_PAGE + i;
       void *buffer = page->kaddr + BLOCK_SECTOR_SIZE * i;
+	  
+//	  printf ("swap in, for loop before block_read here %d\n", i);
 
       block_read (block, sector, buffer);
+
+//	  printf ("swap in, for loop after block_read here %d\n", i);
+
+
     }
 
   bitmap_reset (used_map, page->swap_idx);

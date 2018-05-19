@@ -58,6 +58,7 @@ syscall_handler (struct intr_frame *f UNUSED)
   thread_set_esp (f->esp);
 
   int *syscall_number = f->esp;
+//  printf ("syscall number : %d\n", *syscall_number);
 
   switch (*syscall_number)
   {
@@ -131,6 +132,7 @@ syscall_exit_by_status (int exit_status)
 static void
 syscall_exit (struct intr_frame *f UNUSED)
 {
+//  printf ("syscall exit here?\n");
   int *esp = f->esp;
   int exit_status = *(esp + 1);
   if (exit_status >= PHYS_BASE)
@@ -159,7 +161,9 @@ syscall_wait (struct intr_frame *f UNUSED)
   int *esp = f->esp;
   tid_t tid = *(esp + 1);
 
+//  syscall_file_lock_acquire ();
   f->eax = process_wait (tid);
+//  syscall_file_lock_release ();
 }
 
 static void
@@ -175,8 +179,10 @@ syscall_create (struct intr_frame *f UNUSED)
     f->eax = -1;
     return;
   }
-
+  
+  syscall_file_lock_acquire ();
   f->eax = filesys_create (name, initial_size);
+  syscall_file_lock_release ();
 }
 
 static void
@@ -213,10 +219,12 @@ syscall_open (struct intr_frame *f UNUSED)
   if (!file)
   {
     f->eax = -1;
+//	syscall_file_lock_release ();;
     return;
   }
 
   f->eax = thread_file_add (file);
+//  syscall_file_lock_release ();
 }
 
 static void
@@ -231,8 +239,10 @@ syscall_filesize (struct intr_frame *f UNUSED)
     f->eax = -1;
     return;
   }
-
+  
+  syscall_file_lock_acquire ();
   f->eax = file_length (file);
+  syscall_file_lock_release ();
 }
 
 static void
@@ -252,11 +262,14 @@ syscall_read (struct intr_frame *f UNUSED)
     return;
   }
 
+  
+
   if (!file)
   {
     f->eax = -1;
     return;
   }
+  
 
   if (fd == 0)
   {
@@ -272,6 +285,17 @@ syscall_read (struct intr_frame *f UNUSED)
   }
 
   syscall_file_lock_acquire ();
+
+//  struct file *file = thread_file_find (fd);
+  /*
+  if (!file)
+  {
+	f->eax = -1;
+	syscall_file_lock_release ();
+	return ;
+  }
+  */
+
   f->eax = file_read (file, buffer, size);
   syscall_file_lock_release ();
 }
@@ -294,17 +318,19 @@ syscall_write (struct intr_frame *f UNUSED)
     f->eax = -1;
     return;
   }
-
+  
+//  syscall_file_lock_acquire ();
   struct file *file = thread_file_find (fd);
 
   if (!file)
   {
     f->eax = -1;
+//	syscall_file_lock_release ();
     return;
   }
-
   syscall_file_lock_acquire ();
   f->eax = file_write (file, buffer, size);
+  
   syscall_file_lock_release ();
 }
 
@@ -315,9 +341,11 @@ syscall_seek (struct intr_frame *f UNUSED)
   int fd = *(esp + 1);
   unsigned position = *(esp + 2);
 
+ 
+  syscall_file_lock_acquire ();
   struct file *file = thread_file_find (fd);
-
   file_seek (file, position);
+  syscall_file_lock_release ();
 }
 
 static void
@@ -325,7 +353,7 @@ syscall_tell (struct intr_frame *f UNUSED)
 {
   int *esp = f->esp;
   int fd = *(esp + 1);
-
+  
   struct file *file = thread_file_find (fd);
 
   f->eax = file_tell (file);
@@ -340,7 +368,10 @@ syscall_close (struct intr_frame *f UNUSED)
   struct file *file = thread_file_find (fd);
 
   thread_file_remove (file);
+
+  syscall_file_lock_acquire ();
   file_close (file);
+  syscall_file_lock_release ();
 }
 
 static void

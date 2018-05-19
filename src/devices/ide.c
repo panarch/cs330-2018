@@ -346,7 +346,12 @@ ide_read (void *d_, block_sector_t sec_no, void *buffer)
 {
   struct ata_disk *d = d_;
   struct channel *c = d->channel;
+
+  //printf ("ide_read before lock acquire\n");
+
   lock_acquire (&c->lock);
+  //printf ("ide_read after lock acquire\n");
+
   select_sector (d, sec_no);
   issue_pio_command (c, CMD_READ_SECTOR_RETRY);
   sema_down (&c->completion_wait);

@@ -20,9 +20,15 @@ main (int argc UNUSED, char *argv[])
   size_t size;
   size_t i;
 
+ // printf ("child-sort argv[1] is %s\n", argv[1]);
+
   quiet = true;
 
+  //printf ("child-sort %s, open start\n", argv[1]);
+
   CHECK ((handle = open (argv[1])) > 1, "open \"%s\"", argv[1]);
+
+//  printf ("child-sort %s, open end\n", argv[1]);
 
   size = read (handle, buf, sizeof buf);
   for (i = 0; i < size; i++)
@@ -37,6 +43,7 @@ main (int argc UNUSED, char *argv[])
   seek (handle, 0);
   write (handle, buf, size);
   close (handle);
-  
+
+//  printf ("child-sort before exit, %s\n", argv[1]);
   return 123;
 }
