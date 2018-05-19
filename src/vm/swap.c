@@ -28,7 +28,10 @@ swap_init (void)
 void
 swap_in (struct page *page)
 {
-//  printf ("swap_in before acquire, thread name : %s\n", thread_current ()->name);
+//  printf ("\nswap_in before acquire, thread name : %s %d\n\n", thread_current ()->name, thread_current()->tid);
+
+//  printf ("swap_in who is owner thread? %s %d\n", page->owner->name, page->owner->tid);
+
   lock_acquire (&lock);
 //  printf ("swap_in after acquire, thread name : %s\n", thread_current ()->name);
 
@@ -59,6 +62,8 @@ swap_in (struct page *page)
 void
 swap_out (struct page *page)
 {
+//  printf ("\nswap_out before acquire, thread name : %s %d\n\n", thread_current()->name, thread_current()->tid);
+//  printf ("swap_out who is owner thread? %s %d\n", page->owner->name, page->owner->tid);
   lock_acquire (&lock);
 
   if (page->file != NULL && page->file->mapid > 0) // mmap file

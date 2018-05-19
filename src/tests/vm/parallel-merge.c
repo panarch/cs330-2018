@@ -10,7 +10,8 @@
 #include "tests/lib.h"
 #include "tests/main.h"
 
-#define CHUNK_SIZE (128 * 1024)
+ #define CHUNK_SIZE (128 * 1024)
+//#define CHUNK_SIZE (500)
 #define CHUNK_CNT 8                             /* Number of chunks. */
 #define DATA_SIZE (CHUNK_CNT * CHUNK_SIZE)      /* Buffer size. */
 
@@ -54,31 +55,61 @@ sort_chunks (const char *subprocess, int exit_status)
       create (fn, CHUNK_SIZE);
       quiet = true;
       CHECK ((handle = open (fn)) > 1, "open \"%s\"", fn);
+
+	  printf ("sort-chunk %d before write %s %d\n", i,fn, handle);
+
       write (handle, buf1 + CHUNK_SIZE * i, CHUNK_SIZE);
+	  printf ("sort-chunk %d after write %s %d\n", i,fn, handle);
+
+	  printf ("sort-chunk %d before close %s %d\n", i, fn, handle);
       close (handle);
+	  printf ("sort-chunk %d after close %s %d\n", i, fn, handle);
 
       /* Sort with subprocess. */
       snprintf (cmd, sizeof cmd, "%s %s", subprocess, fn);
+      
+	  printf ("sort-chunk %d before exec fn : %s cmd : %s \n", i, fn, cmd);
+
       CHECK ((children[i] = exec (cmd)) != -1, "exec \"%s\"", cmd);
+	  printf ("sort-chunk %d after  exec fn : %s cmd : %s children : %d\n", i, fn, cmd, children[i]);
       quiet = false;
 
 	//  printf ("sort-chunk after exec %d ----------------------------------------\n", i);
     }
 
-//  printf ("\n\nsort-chunks first loop over\n\n");
+  printf ("\n\nsort-chunks first loop over\n\n");
+
+  int j;
+  for (j=0; j < CHUNK_CNT; j++)
+  {
+    printf ("children[i] : %d\n", children[j]);
+  }
+
 
   for (i = 0; i < CHUNK_CNT; i++) 
     {
       char fn[128];
       int handle;
 
+	  printf ("sort-chunk %d before wait children[%d] : %d\n", i, i, children[i]);
+
       CHECK (wait (children[i]) == exit_status, "wait for child %zu", i);
 
+	  printf ("sort-chunk %d after wait children[%d] : %d\n", i, i, children[i]);
       /* Read chunk back from file. */
       quiet = true;
       snprintf (fn, sizeof fn, "buf%zu", i);
+	  printf ("sort-chunk %d what is fn? %s\n", i, fn);
+
+	  printf ("sort-chunk before open %d\n",i);
       CHECK ((handle = open (fn)) > 1, "open \"%s\"", fn);
+      printf ("sort-chunk %d after open , handle is %d\n",i, handle);
+
+	  printf ("sort-chunk %d before read\n",i);
+
       read (handle, buf1 + CHUNK_SIZE * i, CHUNK_SIZE);
+
+	  printf ("sort-chunk %d after read\n",i);
       close (handle);
       quiet = false;
     }

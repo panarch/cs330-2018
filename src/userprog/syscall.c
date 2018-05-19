@@ -30,18 +30,22 @@ static void syscall_close (struct intr_frame *);
 static void syscall_mmap (struct intr_frame *);
 static void syscall_munmap (struct intr_frame *);
 
+static void syscall_lock_printf (void);
+
 struct lock file_lock;
 
 static void
 syscall_file_lock_acquire (void)
 {
   lock_acquire (&file_lock);
+  printf ("syscall_file_lock_acquire %s %d\n", thread_current ()->name , thread_current ()->tid);
 }
 
 static void
 syscall_file_lock_release (void)
 {
   lock_release (&file_lock);
+  printf ("syscall_file_lock_release %s %d\n", thread_current ()->name , thread_current ()->tid);
 }
 
 void
@@ -124,6 +128,7 @@ void
 syscall_exit_by_status (int exit_status)
 {
   struct thread *cur = thread_current ();
+  printf ("syscall_exit_by_status, what is thread name ? %s %d\n", cur->name, cur->tid);
 
   cur->exit_status = exit_status;
   thread_exit();
@@ -132,9 +137,12 @@ syscall_exit_by_status (int exit_status)
 static void
 syscall_exit (struct intr_frame *f UNUSED)
 {
-//  printf ("syscall exit here?\n");
+  printf ("\nsyscall exit here?\n\n");
   int *esp = f->esp;
   int exit_status = *(esp + 1);
+ 
+  printf ("syscall_exit, exit status : %d\n", exit_status);
+
   if (exit_status >= PHYS_BASE)
   {
     syscall_exit_by_status (-1);
@@ -150,8 +158,15 @@ syscall_exec (struct intr_frame *f UNUSED)
   int *esp = f->esp;
   char *cmdline = (char *)*(esp + 1);
 
+  printf ("syscall_exec, cur thread is %s %d\n", thread_current()->name, thread_current()->tid);
+
   syscall_file_lock_acquire ();
+  printf ("syscall_exec, lock_acquire success %s %d\n", thread_current()-> name, thread_current()->tid);
+  printf ("syscall_exec, who hold lock? %s \n", file_lock.holder->name);
+  printf ("syscall_exec, what is cmdline? %s\n", cmdline);
   f->eax = process_execute (cmdline);
+  printf ("syscall_exec, before lock_release %s  %d\n", thread_current()-> name, thread_current()->tid);
+  printf ("syscall_exec, lock_release success %s %d\n", thread_current()-> name, thread_current()->tid); 
   syscall_file_lock_release ();
 }
 
@@ -179,7 +194,8 @@ syscall_create (struct intr_frame *f UNUSED)
     f->eax = -1;
     return;
   }
-  
+
+  printf ("syscall_create before lock_acquire %s %d\n", thread_current ()->name, thread_current ()->tid);
   syscall_file_lock_acquire ();
   f->eax = filesys_create (name, initial_size);
   syscall_file_lock_release ();
@@ -212,10 +228,41 @@ syscall_open (struct intr_frame *f UNUSED)
     return;
   }
 
-  syscall_file_lock_acquire ();
-  struct file *file = filesys_open (name);
-  syscall_file_lock_release ();
+  printf ("syscall_open, cur thread is %s %d\n", thread_current()->name, thread_current()->tid);
+  printf ("syscall_open, open file name is %s\n", name);
+//  printf ("syscall_open, cur thread list file size : %d\n", list_size (&thread_current ()->files));
 
+  if (file_lock.holder !=NULL)
+  {
+    printf ("syscall_open, who holds lock? %s %d state : %d\n", file_lock.holder->name, file_lock.holder->tid, file_lock.holder->status);
+  }
+
+  syscall_lock_printf ();
+
+  /*
+  printf ("syscall_open, then how many threads are waiting lock? %d\n", list_size (&file_lock.semaphore.waiters));
+  struct thread *t;
+  struct list_elem *e;
+  for (e = list_begin (&file_lock.semaphore.waiters);
+	   e != list_end (&file_lock.semaphore.waiters);
+	   e = list_next (e))
+  {
+	  t = list_entry (e, struct thread, elem);
+	  printf ("syscall_open, waiting threads %s %d\n", t->name, t->tid);
+  }
+  */
+
+  printf ("syscall_open, before lock_acquire, current thread is %s %d\n", thread_current ()->name, thread_current()->tid);
+  syscall_file_lock_acquire ();
+  printf ("syscall_open, lock_acquire success %s %d\n", thread_current()-> name, thread_current()->tid);
+  printf ("syscall_open, who hold lock? %s %d\n", file_lock.holder->name, file_lock.holder->tid);
+  printf ("syscall_open, what is file name? %s\n", name);
+  printf ("syscall_open, curr thread is %s %d\n", thread_current ()->name, thread_current ()->tid);
+  struct file *file = filesys_open (name);
+  printf ("syscall_open, before lock_release %s  %d\n", thread_current()-> name, thread_current()->tid);
+  syscall_lock_printf ();
+  syscall_file_lock_release ();
+  printf ("syscall_open, lock_release success %s %d\n", thread_current()-> name, thread_current()->tid);
   if (!file)
   {
     f->eax = -1;
@@ -253,23 +300,12 @@ syscall_read (struct intr_frame *f UNUSED)
   char *buffer = (char *)*(esp + 2);
   unsigned size = *(esp + 3);
 
-  struct file *file = thread_file_find (fd);
-
   if (buffer >= PHYS_BASE)
   {
     syscall_exit_by_status (-1);
     f->eax = -1;
     return;
   }
-
-  
-
-  if (!file)
-  {
-    f->eax = -1;
-    return;
-  }
-  
 
   if (fd == 0)
   {
@@ -283,8 +319,28 @@ syscall_read (struct intr_frame *f UNUSED)
     f->eax = size;
     return;
   }
+  
+  printf ("syscall_read what is cur thread ? %s %d\n", thread_current()->name, thread_current()->tid);
+
+  struct file *file = thread_file_find (fd);
+
+  if (!file)
+  {
+	printf ("syscall_read file is NULL? %s %d\n", thread_current ()->name, thread_current()->tid);
+    f->eax = -1;
+    return;
+  }
+
+  printf ("syscall_read before lock acquire %s %d\n", thread_current ()->name ,thread_current()->tid);
+
+  if (file_lock.holder !=NULL)
+  {
+    printf ("syscall_read, who holds lock? %s %d state : %d\n", file_lock.holder->name, file_lock.holder->tid, file_lock.holder->status);
+  }
 
   syscall_file_lock_acquire ();
+
+  printf ("syscall_read, lock acquire success %s %d\n",thread_current()->name, thread_current()->tid);
 
 //  struct file *file = thread_file_find (fd);
   /*
@@ -296,8 +352,12 @@ syscall_read (struct intr_frame *f UNUSED)
   }
   */
 
+  printf ("syscall_read file pos : %d\n", file->pos);
   f->eax = file_read (file, buffer, size);
+
+  printf ("syscall_read before lock release %s %d\n", thread_current()->name, thread_current()->tid);
   syscall_file_lock_release ();
+  printf ("syscall_read after lock release %s %d\n", thread_current ()->name, thread_current()->tid);
 }
 
 static void
@@ -307,6 +367,8 @@ syscall_write (struct intr_frame *f UNUSED)
   int fd = *(esp + 1);
   char *buffer = (char *)*(esp + 2);
   unsigned size = *(esp + 3);
+
+//  thread_printf();
 
   if (fd == 1)
   {
@@ -406,3 +468,21 @@ syscall_munmap (struct intr_frame *f UNUSED)
   vm_munmap (mapid);
   syscall_file_lock_release ();
 }
+
+static void
+syscall_lock_printf (void)
+{
+  printf ("syscall_lock_printf, then how many threads are waiting lock? %d\n", list_size (&file_lock.semaphore.waiters));
+  printf ("syscall_lock_printf, curr thread %s %d\n", thread_current()->name, thread_current ()->tid);
+  struct thread *t;
+  struct list_elem *e;
+  for (e = list_begin (&file_lock.semaphore.waiters);
+	   e != list_end (&file_lock.semaphore.waiters);
+	   e = list_next (e))
+  {
+	  t = list_entry (e, struct thread, elem);
+	  printf ("syscall_lock_printf, waiting threads %s %d\n", t->name, t->tid);
+  }
+ 
+}
+

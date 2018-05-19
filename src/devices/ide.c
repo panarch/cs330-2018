@@ -10,6 +10,8 @@
 #include "threads/interrupt.h"
 #include "threads/synch.h"
 
+#include "threads/thread.h"
+
 /* The code in this file is an interface to an ATA (IDE)
    controller.  It attempts to comply to [ATA-3]. */
 
@@ -336,6 +338,8 @@ descramble_ata_string (char *string, int size)
 
   return string;
 }
+
+static int lock_flag = 0;
 
 /* Reads sector SEC_NO from disk D into BUFFER, which must have
    room for BLOCK_SECTOR_SIZE bytes.
@@ -349,16 +353,29 @@ ide_read (void *d_, block_sector_t sec_no, void *buffer)
 
   //printf ("ide_read before lock acquire\n");
 
+//  printf ("ide_read, cur thread is %s %d\n", thread_current ()->name, thread_current()->tid);
+//  printf ("ide_read, lock_acquire %s %d\n",  thread_current ()->name, thread_current()->tid);
+  ASSERT (lock_flag == 0);
   lock_acquire (&c->lock);
+  lock_flag ++;
   //printf ("ide_read after lock acquire\n");
-
+  ASSERT (lock_flag == 1);
   select_sector (d, sec_no);
   issue_pio_command (c, CMD_READ_SECTOR_RETRY);
   sema_down (&c->completion_wait);
   if (!wait_while_busy (d))
     PANIC ("%s: disk read failed, sector=%"PRDSNu, d->name, sec_no);
   input_sector (c, buffer);
+
+  ASSERT (lock_flag == 1);
   lock_release (&c->lock);
+  ASSERT (lock_flag == 1);
+  lock_flag --;
+  ASSERT (lock_flag == 0);
+
+//  printf ("ide_read, lock_release %s %d\n", thread_current ()->name, thread_current ()->tid);
+
+
 }
 
 /* Write sector SEC_NO to disk D from BUFFER, which must contain
@@ -371,14 +388,25 @@ ide_write (void *d_, block_sector_t sec_no, const void *buffer)
 {
   struct ata_disk *d = d_;
   struct channel *c = d->channel;
+  
+  ASSERT (lock_flag == 0);
+
   lock_acquire (&c->lock);
+  lock_flag ++;
+  ASSERT (lock_flag == 1);
+
   select_sector (d, sec_no);
   issue_pio_command (c, CMD_WRITE_SECTOR_RETRY);
   if (!wait_while_busy (d))
     PANIC ("%s: disk write failed, sector=%"PRDSNu, d->name, sec_no);
   output_sector (c, buffer);
   sema_down (&c->completion_wait);
+
+  ASSERT (lock_flag == 1);
   lock_release (&c->lock);
+  ASSERT (lock_flag == 1);
+  lock_flag--;
+  ASSERT (lock_flag == 0);
 }
 
 static struct block_operations ide_operations =

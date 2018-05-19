@@ -315,7 +315,9 @@ thread_exit (void)
   ASSERT (!intr_context ());
 
 #ifdef USERPROG
+  printf ("thread_exit, before process exit %s %d\n", thread_current()->name, thread_current()->tid);
   process_exit ();
+  printf ("thread_exit, after process exit %s %d\n", thread_current()->name, thread_current()->tid);
 #endif
 
   /* Remove thread from all threads list, set our status to dying,
@@ -612,6 +614,8 @@ thread_file_find (int fd)
   struct thread *cur = running_thread ();
   struct file *file;
   struct list_elem *elem;
+
+  printf ("thread_file_find, list size is %d\n", list_size (&cur->files));
 
   for (elem = list_begin (&cur->files);
        elem != list_end (&cur->files);

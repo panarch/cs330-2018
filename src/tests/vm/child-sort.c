@@ -7,6 +7,7 @@
 #include "tests/lib.h"
 #include "tests/main.h"
 
+
 const char *test_name = "child-sort";
 
 unsigned char buf[128 * 1024];
@@ -20,17 +21,23 @@ main (int argc UNUSED, char *argv[])
   size_t size;
   size_t i;
 
- // printf ("child-sort argv[1] is %s\n", argv[1]);
+  printf ("child-sort main start, argv[1] is %s\n", argv[1]);
+
 
   quiet = true;
 
-  //printf ("child-sort %s, open start\n", argv[1]);
+  printf ("child-sort %s, open start\n", argv[1]);
 
   CHECK ((handle = open (argv[1])) > 1, "open \"%s\"", argv[1]);
 
-//  printf ("child-sort %s, open end\n", argv[1]);
+  printf ("child-sort %s, open end\n", argv[1]);
+
+  printf ("child-sort %s, before read\n", argv[1]);
 
   size = read (handle, buf, sizeof buf);
+
+  printf ("child-sort %s, after read\n", argv[1]);
+
   for (i = 0; i < size; i++)
     histogram[buf[i]]++;
   p = buf;
@@ -40,10 +47,19 @@ main (int argc UNUSED, char *argv[])
       while (j-- > 0)
         *p++ = i;
     }
-  seek (handle, 0);
-  write (handle, buf, size);
-  close (handle);
 
-//  printf ("child-sort before exit, %s\n", argv[1]);
+  printf ("child-sort %s, before seek\n", argv[1]);
+  seek (handle, 0);
+  printf ("child-sort %s, after seek\n", argv[1]);
+
+  printf ("child-sort %s, before write\n", argv[1]);
+  write (handle, buf, size);
+  printf ("child-sort %s, after write \n", argv[1]);
+
+  printf ("child-sort %s, before close \n", argv[1]);
+  close (handle);
+  printf ("child-sort %s, after close \n", argv[1]);
+
+  printf ("child-sort before exit, %s\n", argv[1]);
   return 123;
 }

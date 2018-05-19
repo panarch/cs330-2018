@@ -54,6 +54,24 @@ process_execute (const char *file_name)
     palloc_free_page (fn_copy);
 
   struct thread *cur = thread_current();
+
+
+  printf ("process_execute created tid %d\n", tid);
+
+  struct thread *t;
+  struct list_elem *e;
+  for (e = list_begin (&cur->child_threads);
+	   e != list_end (&cur->child_threads);
+	   e = list_next (e))
+  {
+    t = list_entry (e, struct thread, childelem);
+    printf ("process_execute curr thread'child is %s %d\n", t->name, t->tid);
+  }
+
+  printf ("process_execute before sema down %s %d\n",cur->name,cur->tid);
+
+  
+
   sema_down (&cur->load_sema);
 
   if (cur->is_load_success == false)
@@ -118,10 +136,20 @@ process_wait (tid_t child_tid UNUSED)
 {
   struct thread *child = thread_child (child_tid);
 
+  if(child == NULL)
+  {
+	printf ("process wait, child is null\n");
+  }
+  printf ("process wait, child is not null\n");
+
   if (child == NULL || child->is_parent_waiting)
   {
     return -1;
   }
+
+  printf ("process waiting or here?\n");
+//  thread_printf();
+  printf ("process waiting, what is child thread? %s %d\n", child->name, child-> tid);
 
   child->is_parent_waiting = true;
 
@@ -163,8 +191,10 @@ process_exit (void)
   }
 
   printf ("%s: exit(%d)\n", cur->name, cur->exit_status);
-  sema_down (&cur->exit_sema);
 
+  printf ("process_exit, before sema_down exit sema, %s %d\n",cur->name, cur->tid);
+  sema_down (&cur->exit_sema);
+  printf ("process_exit, after sema_down exit sema, %s %d\n",cur->name, cur->tid);
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */
   pd = cur->pagedir;

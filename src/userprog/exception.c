@@ -137,6 +137,8 @@ check_stack_growth (void *addr, void *esp)
 static void
 page_fault (struct intr_frame *f) 
 {
+//  printf ("\npage_fault\n\n");
+//  printf ("page_fault, thread is %s %d\n", thread_current()->name, thread_current()->tid);
   bool not_present;  /* True: not-present page, false: writing r/o page. */
   bool write;        /* True: access was write, false: access was read. */
   bool user;         /* True: access by user, false: access by kernel. */

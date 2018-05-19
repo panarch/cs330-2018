@@ -78,6 +78,7 @@ frame_free_page (struct page *page)
 static struct page *
 pop_victim (void)
 {
+  ASSERT (list_empty (&page_list) != true);
   // FIFO
   struct page *page = list_entry (list_pop_front (&page_list), struct page, frame_elem);
 
