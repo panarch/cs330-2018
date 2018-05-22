@@ -61,16 +61,12 @@ vm_pin_pages (void *upage, off_t size)
   if (upage != uaddr)
     num_pages++;
 
-  // printf ("size, PGSIZE, num_pages %d %d, %d\n", size, PGSIZE, num_pages);
-
   int i;
   for (i = 0; i < num_pages; i++)
     {
       struct page *page = vm_find_page (uaddr + PGSIZE * i);
-      // TODO: uncomment below makes pt-read-bad fail
       if (page == NULL)
-        continue;
-        //page = vm_create_page (PAL_USER, uaddr + PGSIZE * i, true);
+        page = vm_create_page (PAL_USER, uaddr + PGSIZE * i, true);
 
       page->is_pinned = true;
 
