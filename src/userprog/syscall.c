@@ -273,6 +273,10 @@ syscall_read (struct intr_frame *f UNUSED)
     return;
   }
 
+  // check stack_growth (exception.c check_stack_growth function)
+  if (f->esp - (void *) buffer > 32)
+    syscall_exit_by_status (-1);
+
   vm_pin_pages (buffer, size);
 
   syscall_file_lock_acquire ();
