@@ -176,7 +176,9 @@ syscall_create (struct intr_frame *f UNUSED)
     return;
   }
 
+  syscall_file_lock_acquire ();
   f->eax = filesys_create (name, initial_size);
+  syscall_file_lock_release ();
 }
 
 static void
