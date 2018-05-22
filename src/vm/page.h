@@ -9,6 +9,7 @@ struct page
     bool writable;
     bool is_swapped;
     bool is_loaded;
+    bool is_pinned;
 
     enum palloc_flags flags;
     void *uaddr;

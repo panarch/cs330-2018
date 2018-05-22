@@ -9,6 +9,8 @@ static unsigned vm_hash_hash_func (const struct hash_elem *a, void *aux);
 static bool vm_hash_less_func (const struct hash_elem *a, const struct hash_elem *b, void *aux);
 static void vm_hash_free_func (struct hash_elem *a, void *aux);
 
+static struct page * vm_find_page (void *upage);
+static struct page * vm_create_page (enum palloc_flags flags, void *upage, bool writable);
 static bool install_page (void *upage, void *kpage, bool writable);
 
 void
@@ -31,6 +33,58 @@ vm_get_and_install_page (enum palloc_flags flags, void *upage, bool writable)
     return false;
 
   return vm_install_page (page);
+}
+
+void
+vm_unpin_pages (void *upage, off_t size)
+{
+  void *uaddr = pg_round_down (upage);
+
+  int num_pages = size / PGSIZE;
+  if (upage != pg_round_down (upage))
+    num_pages++;
+
+  int i;
+  for (i = 0; i < num_pages; i++)
+    {
+      struct page *page = vm_find_page (uaddr + PGSIZE * i);
+      page->is_pinned = false;
+    }
+}
+
+bool
+vm_pin_pages (void *upage, off_t size)
+{
+  void *uaddr = pg_round_down (upage);
+
+  int num_pages = size / PGSIZE;
+  if (upage != uaddr)
+    num_pages++;
+
+  // printf ("size, PGSIZE, num_pages %d %d, %d\n", size, PGSIZE, num_pages);
+
+  int i;
+  for (i = 0; i < num_pages; i++)
+    {
+      struct page *page = vm_find_page (uaddr + PGSIZE * i);
+      // TODO: uncomment below makes pt-read-bad fail
+      if (page == NULL)
+        continue;
+        //page = vm_create_page (PAL_USER, uaddr + PGSIZE * i, true);
+
+      page->is_pinned = true;
+
+      if (!page->is_loaded)
+      {
+        vm_get_and_install_page (page->flags, uaddr + PGSIZE * i, page->writable);
+      }
+
+      ASSERT (page->is_pinned);
+      ASSERT (page->is_loaded);
+      ASSERT (!page->is_swapped);
+    }
+
+  return true;
 }
 
 static struct page *
@@ -61,7 +115,9 @@ vm_create_page (enum palloc_flags flags, void *upage, bool writable)
   struct page *page = (struct page *) malloc (sizeof (struct page));
 
   page->writable = writable;
+  page->is_loaded = false;
   page->is_swapped = false;
+  page->is_pinned = false;
 
   page->flags = flags;
   page->uaddr = uaddr;

@@ -15,6 +15,9 @@ bool vm_install_page (struct page *page);
 
 bool vm_has_page (void *upage);
 
+bool vm_pin_pages (void *upage, off_t size);
+void vm_unpin_pages (void *upage, off_t size);
+
 int vm_mmap (void *upage, struct file *file);
 void vm_munmap (int mapid);
 void vm_munmap_all (void);

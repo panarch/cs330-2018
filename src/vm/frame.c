@@ -80,6 +80,17 @@ pop_victim (void)
   // FIFO
   struct page *page = list_entry (list_pop_front (&page_list), struct page, frame_elem);
 
+  ASSERT (page != NULL);
+  ASSERT (page->is_loaded);
+  ASSERT (!page->is_swapped);
+
+  if (page->is_pinned)
+    {
+      list_push_back (&page_list, &page->frame_elem);
+      return pop_victim ();
+    }
+
+  ASSERT (!page->is_pinned);
   return page;
 }
 

@@ -273,9 +273,13 @@ syscall_read (struct intr_frame *f UNUSED)
     return;
   }
 
+  vm_pin_pages (buffer, size);
+
   syscall_file_lock_acquire ();
   f->eax = file_read (file, buffer, size);
   syscall_file_lock_release ();
+
+  vm_unpin_pages (buffer, size);
 }
 
 static void
