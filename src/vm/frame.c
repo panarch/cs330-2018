@@ -65,10 +65,11 @@ frame_load_page (struct page *page)
 void
 frame_free_page (struct page *page)
 {
+  if (page->writable && page->is_loaded && !page->is_swapped)
+    list_remove (&page->frame_elem);
+
   if (!page->is_swapped)
     return;
-
-  list_remove (&page->frame_elem);
 
   if (page->is_loaded)
     swap_free (page);
