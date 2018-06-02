@@ -38,10 +38,6 @@ struct inode
     bool removed;                       /* True if deleted, false otherwise. */
     int deny_write_cnt;                 /* 0: writes ok, >0: deny writes. */
     struct inode_disk data;             /* Inode content. */
-
-    /* TODO: new struct required for cache */
-    struct list_elem cache_elem;
-    int cache_idx;
   };
 
 /* Returns the block device sector that contains byte offset POS
