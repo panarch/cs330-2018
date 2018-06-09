@@ -10,7 +10,6 @@
 #include "filesys/file.h"
 #include "filesys/directory.h"
 #include "filesys/filesys.h"
-#include "filesys/free-map.h"
 #include "threads/vaddr.h"
 #include "vm/vm.h"
 
@@ -435,18 +434,10 @@ syscall_mkdir (struct intr_frame *f)
 {
   int *esp = f->esp;
   char *dirname = (char *)*(esp + 1);
-  block_sector_t sector;
 
   syscall_file_lock_acquire ();
 
-  free_map_allocate(1, &sector);
-  dir_create (sector, 16);
-
-  struct thread *cur = thread_current ();
-
-  ASSERT (cur->dir != NULL);
-
-  dir_add (cur->dir, dirname, sector);
+  filesys_mkdir (dirname);
 
   syscall_file_lock_release ();
 }

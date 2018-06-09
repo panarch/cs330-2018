@@ -109,6 +109,28 @@ filesys_remove (const char *name)
 
   return success;
 }
+
+bool
+filesys_mkdir (const char *name)
+{
+  block_sector_t sector;
+  free_map_allocate(1, &sector);
+  dir_create (sector, 16);
+
+  char *filename = NULL;
+  struct dir *dir = extract_dir (name, &filename);
+  struct thread *cur = thread_current ();
+
+  ASSERT (dir != NULL);
+
+  dir_add (dir, filename, sector);
+
+  if (dir != cur->dir)
+    dir_close (dir);
+
+  return true;
+}
+
 
 /* Formats the file system. */
 static void
@@ -126,17 +148,25 @@ static struct dir *
 extract_dir (const char *_name, char **filename)
 {
   struct thread *cur = thread_current ();
-
-  if (cur->dir == NULL)
-    cur->dir = dir_open_root ();
-
-  struct dir *dir = cur->dir;
+  struct dir *dir;
   struct inode *inode;
   char *token, *save_ptr;
   char *prev_token = NULL;
   size_t name_length = strlen (_name) + 1;
-  char *name = malloc (name_length);
-  memcpy (name, _name, name_length);
+  char *pre_name = malloc (name_length);
+  memcpy (pre_name, _name, name_length);
+
+  char *name = pre_name;
+
+  if (cur->dir == NULL || name[0] == '/')
+    {
+      cur->dir = dir_open_root ();
+
+      if (pre_name[0] == '/')
+        name++;
+    }
+
+  dir = cur->dir;
 
   for (token = strtok_r (name, "/", &save_ptr); token != NULL;
        token = strtok_r (NULL, "/", &save_ptr))
@@ -162,6 +192,6 @@ extract_dir (const char *_name, char **filename)
 
   ASSERT (dir != NULL);
 
-  free (name);
+  free (pre_name);
   return dir;
 }
