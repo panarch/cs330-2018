@@ -1,6 +1,7 @@
 #include "userprog/syscall.h"
 #include "userprog/process.h"
 #include <stdio.h>
+#include <string.h>
 #include <syscall-nr.h>
 #include "devices/shutdown.h"
 #include "devices/input.h"
@@ -169,7 +170,7 @@ syscall_create (struct intr_frame *f UNUSED)
   char *name = (char *)*(esp + 1);
   int32_t initial_size = *(esp + 2);
 
-  if (!name)
+  if (!name || strlen (name) == 0)
   {
     syscall_exit_by_status (-1);
     f->eax = -1;
@@ -202,7 +203,7 @@ syscall_open (struct intr_frame *f UNUSED)
   int *esp = f->esp;
   char *name = (char *)*(esp + 1);
 
-  if (!name)
+  if (!name || strlen (name) == 0)
   {
     f->eax = -1;
     return;
