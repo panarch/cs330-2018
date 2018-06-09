@@ -6,6 +6,7 @@
 #include <hash.h>
 #include <stdint.h>
 #include "filesys/file.h"
+#include "filesys/directory.h"
 #include "threads/synch.h"
 
 /* States in a thread's life cycle. */
@@ -119,6 +120,8 @@ struct thread
     struct list mfiles;                 /* VM, memory mapped files */
 
     void *esp;                          /* VM, for stack growth handling on page fault in the kernel */
+
+    struct dir *dir;                    /* Current working directory */
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */

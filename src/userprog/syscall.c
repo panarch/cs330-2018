@@ -8,13 +8,14 @@
 #include "threads/interrupt.h"
 #include "threads/thread.h"
 #include "filesys/file.h"
+#include "filesys/directory.h"
 #include "filesys/filesys.h"
+#include "filesys/free-map.h"
 #include "threads/vaddr.h"
 #include "vm/vm.h"
 
 static void syscall_handler (struct intr_frame *);
 
-/*young : total 13 system calls*/
 static void syscall_halt (struct intr_frame *);
 static void syscall_exit (struct intr_frame *);
 static void syscall_exec (struct intr_frame *);
@@ -30,6 +31,11 @@ static void syscall_tell (struct intr_frame *);
 static void syscall_close (struct intr_frame *);
 static void syscall_mmap (struct intr_frame *);
 static void syscall_munmap (struct intr_frame *);
+static void syscall_chdir (struct intr_frame *);
+static void syscall_mkdir (struct intr_frame *);
+static void syscall_readdir (struct intr_frame *);
+static void syscall_isdir (struct intr_frame *);
+static void syscall_inumber (struct intr_frame *);
 
 struct lock file_lock;
 
@@ -107,8 +113,23 @@ syscall_handler (struct intr_frame *f UNUSED)
     case SYS_MUNMAP:
       syscall_munmap(f);
       break;
+    case SYS_CHDIR:
+      syscall_chdir(f);
+      break;
+    case SYS_MKDIR:
+      syscall_mkdir(f);
+      break;
+    case SYS_READDIR:
+      syscall_readdir(f);
+      break;
+    case SYS_ISDIR:
+      syscall_isdir(f);
+      break;
+    case SYS_INUMBER:
+      syscall_inumber(f);
+      break;
     default:
-      printf ("system call! %d\n", *syscall_number);
+      ASSERT (false);
       break;
   }
 
@@ -385,4 +406,69 @@ syscall_munmap (struct intr_frame *f UNUSED)
   syscall_file_lock_acquire ();
   vm_munmap (mapid);
   syscall_file_lock_release ();
+}
+
+static void
+syscall_chdir (struct intr_frame *f)
+{
+  int *esp = f->esp;
+  char *dirname = (char *)*(esp + 1);
+
+  syscall_file_lock_acquire ();
+
+  struct thread *cur = thread_current ();
+  struct inode *inode;
+
+  ASSERT (cur->dir != NULL);
+
+  dir_lookup (cur->dir, dirname, &inode);
+  dir_close (cur->dir);
+  cur->dir = dir_open (inode);
+
+  ASSERT (cur->dir != NULL);
+
+  syscall_file_lock_release ();
+}
+
+static void
+syscall_mkdir (struct intr_frame *f)
+{
+  int *esp = f->esp;
+  char *dirname = (char *)*(esp + 1);
+  block_sector_t sector;
+
+  syscall_file_lock_acquire ();
+
+  free_map_allocate(1, &sector);
+  dir_create (sector, 16);
+
+  struct thread *cur = thread_current ();
+
+  ASSERT (cur->dir != NULL);
+
+  dir_add (cur->dir, dirname, sector);
+
+  syscall_file_lock_release ();
+}
+
+static void
+syscall_readdir (struct intr_frame *f)
+{
+  int *esp = f->esp;
+  int fd = *(esp + 1);
+  char *name = (char *)*(esp + 2);
+}
+
+static void
+syscall_isdir (struct intr_frame *f)
+{
+  int *esp = f->esp;
+  int fd = *(esp + 1);
+}
+
+static void
+syscall_inumber (struct intr_frame *f)
+{
+  int *esp = f->esp;
+  int fd = *(esp + 1);
 }

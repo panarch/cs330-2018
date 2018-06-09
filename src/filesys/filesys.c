@@ -2,6 +2,7 @@
 #include <debug.h>
 #include <stdio.h>
 #include <string.h>
+#include "threads/malloc.h"
 #include "filesys/file.h"
 #include "filesys/free-map.h"
 #include "filesys/inode.h"
@@ -12,6 +13,7 @@
 struct block *fs_device;
 
 static void do_format (void);
+static struct dir *extract_dir (const char *name, char **filename);
 
 /* Initializes the file system module.
    If FORMAT is true, reformats the file system. */
@@ -47,15 +49,24 @@ filesys_done (void)
 bool
 filesys_create (const char *name, off_t initial_size) 
 {
+  char *filename = NULL;
   block_sector_t inode_sector = 0;
-  struct dir *dir = dir_open_root ();
+  struct dir *dir = extract_dir (name, &filename);
+
+  ASSERT (dir != NULL);
+  ASSERT (filename != NULL);
+
   bool success = (dir != NULL
                   && free_map_allocate (1, &inode_sector)
                   && inode_create (inode_sector, initial_size)
-                  && dir_add (dir, name, inode_sector));
+                  && dir_add (dir, filename, inode_sector));
+
   if (!success && inode_sector != 0) 
     free_map_release (inode_sector, 1);
-  dir_close (dir);
+
+  struct thread *cur = thread_current ();
+  if (dir != cur->dir)
+    dir_close (dir);
 
   return success;
 }
@@ -68,12 +79,19 @@ filesys_create (const char *name, off_t initial_size)
 struct file *
 filesys_open (const char *name)
 {
-  struct dir *dir = dir_open_root ();
+  char *filename = NULL;
+  struct dir *dir = extract_dir (name, &filename);
   struct inode *inode = NULL;
 
+  ASSERT (dir != NULL);
+  ASSERT (filename != NULL);
+
   if (dir != NULL)
-    dir_lookup (dir, name, &inode);
-  dir_close (dir);
+    dir_lookup (dir, filename, &inode);
+
+  struct thread *cur = thread_current ();
+  if (dir != cur->dir)
+    dir_close (dir);
 
   return file_open (inode);
 }
@@ -102,4 +120,48 @@ do_format (void)
     PANIC ("root directory creation failed");
   free_map_close ();
   printf ("done.\n");
+}
+
+static struct dir *
+extract_dir (const char *_name, char **filename)
+{
+  struct thread *cur = thread_current ();
+
+  if (cur->dir == NULL)
+    cur->dir = dir_open_root ();
+
+  struct dir *dir = cur->dir;
+  struct inode *inode;
+  char *token, *save_ptr;
+  char *prev_token = NULL;
+  size_t name_length = strlen (_name) + 1;
+  char *name = malloc (name_length);
+  memcpy (name, _name, name_length);
+
+  for (token = strtok_r (name, "/", &save_ptr); token != NULL;
+       token = strtok_r (NULL, "/", &save_ptr))
+  {
+    if (prev_token != NULL)
+      {
+        dir_lookup (dir, prev_token, &inode);
+
+        if (dir != cur->dir)
+          dir_close (dir);
+
+        dir = dir_open (inode);
+      }
+
+    prev_token = token;
+  }
+
+  ASSERT (prev_token != NULL);
+
+  name_length = strlen (prev_token) + 1;
+  *filename = malloc (name_length);
+  memcpy (*filename, prev_token, name_length);
+
+  ASSERT (dir != NULL);
+
+  free (name);
+  return dir;
 }
