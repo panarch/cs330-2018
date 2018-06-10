@@ -9,7 +9,8 @@
 #include "threads/malloc.h"
 
 /* Identifies an inode. */
-#define INODE_MAGIC 0x494e4f44
+#define INODE_FILE_MAGIC 0x494e4f44
+#define INODE_DIR_MAGIC 0x494d4f34
 
 #define TOTAL_SECTORS 127
 #define DIRECT_SECTORS 123
@@ -106,7 +107,7 @@ byte_to_sector (struct inode *inode, off_t pos, size_t size, bool is_write)
 
       cache_read (fs_device, sector_idx, indirect_disk_inode);
 
-      ASSERT (indirect_disk_inode->magic == INODE_MAGIC);
+      ASSERT (indirect_disk_inode->magic == INODE_FILE_MAGIC || indirect_disk_inode->magic == INODE_DIR_MAGIC);
 
       if (idx >= TOTAL_SECTORS)
         idx -= TOTAL_SECTORS;
@@ -138,7 +139,7 @@ inode_init (void)
    Returns true if successful.
    Returns false if memory or disk allocation fails. */
 bool
-inode_create (block_sector_t sector, off_t length)
+inode_create (block_sector_t sector, off_t length, bool is_dir)
 {
   ASSERT (length < (DIRECT_SECTORS + INDIRECT_SECTORS * TOTAL_SECTORS) * BLOCK_SECTOR_SIZE);
 
@@ -156,7 +157,7 @@ inode_create (block_sector_t sector, off_t length)
     {
       size_t sectors = bytes_to_sectors (length);
       disk_inode->length = length;
-      disk_inode->magic = INODE_MAGIC;
+      disk_inode->magic = is_dir ? INODE_DIR_MAGIC : INODE_FILE_MAGIC;
 
       static char zeros[BLOCK_SECTOR_SIZE];
       size_t i, j;
@@ -177,7 +178,7 @@ inode_create (block_sector_t sector, off_t length)
           for (i = 0; i < min_indirect_sectors; i++)
             {
               struct indirect_inode_disk *indirect_disk_inode = calloc (1, sizeof *indirect_disk_inode);
-              indirect_disk_inode->magic = INODE_MAGIC;
+              indirect_disk_inode->magic = INODE_FILE_MAGIC;
 
               free_map_allocate (1, &disk_inode->indirect_sectors[i]);
 
@@ -447,4 +448,16 @@ off_t
 inode_length (const struct inode *inode)
 {
   return inode->data.length;
+}
+
+static bool
+inode_disk_isdir (const struct inode_disk *disk_inode)
+{
+  return disk_inode->magic == INODE_DIR_MAGIC;
+}
+
+bool
+inode_isdir (const struct inode *inode)
+{
+  return inode_disk_isdir (&inode->data);
 }
