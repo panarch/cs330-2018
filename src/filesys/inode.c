@@ -14,7 +14,7 @@
 
 #define TOTAL_SECTORS 127
 #define DIRECT_SECTORS 123
-#define INDIRECT_SECTORS 2
+#define INDIRECT_SECTORS 3
 
 /* On-disk inode.
    Must be exactly BLOCK_SECTOR_SIZE bytes long. */
@@ -24,19 +24,12 @@ struct inode_disk
     unsigned magic;                                       /* Magic number. */
     block_sector_t sectors[DIRECT_SECTORS];               /* Sector -> blob */
     block_sector_t indirect_sectors[INDIRECT_SECTORS];    /* Indirect_inode_disk -> sector -> blob */
-    block_sector_t double_indirect_sector;                /* Double_indirect_inode_disk -> indirect_inode_disk -> sector -> block */
   };
 
 struct indirect_inode_disk
   {
     unsigned magic;
     block_sector_t sectors[TOTAL_SECTORS];
-  };
-
-struct double_indirect_inode_disk
-  {
-    unsigned magic;
-    block_sector_t indirect_sectors[TOTAL_SECTORS];
   };
 
 /* Returns the number of sectors to allocate for an inode SIZE
@@ -139,7 +132,6 @@ byte_to_sector (struct inode *inode, off_t pos, size_t size, bool is_write)
   off_t idx = pos / BLOCK_SECTOR_SIZE;
   size_t oft = pos % BLOCK_SECTOR_SIZE;
 
-  // TODO: update required for supporting indirect & double_indirect
   if (is_write && pos >= inode->data.length)
     {
       size_t max_size = BLOCK_SECTOR_SIZE - oft;
@@ -159,7 +151,7 @@ byte_to_sector (struct inode *inode, off_t pos, size_t size, bool is_write)
       indirect_disk_inode = calloc (1, sizeof *indirect_disk_inode);
 
       idx -= direct_max_idx;
-      sector = inode->data.indirect_sectors[idx < TOTAL_SECTORS ? 0 : 1];
+      sector = inode->data.indirect_sectors[idx / TOTAL_SECTORS];
 
       cache_read (fs_device, sector, indirect_disk_inode);
 
@@ -229,7 +221,7 @@ inode_create (block_sector_t sector, off_t length, bool is_dir)
         {
           sectors -= DIRECT_SECTORS;
 
-          size_t min_indirect_sectors = TOTAL_SECTORS < sectors ? 2 : 1;
+          size_t min_indirect_sectors = sectors / TOTAL_SECTORS + 1;
 
           for (i = 0; i < min_indirect_sectors; i++)
             {
