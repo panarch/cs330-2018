@@ -206,7 +206,7 @@ dir_remove (struct dir *dir, const char *name)
     {
       struct dir *target_dir = dir_open (inode);
       char target_name[NAME_MAX + 1];
-      target_dir->pos = 0;
+      dir_seek (target_dir, 0);
 
       if (dir_readdir (target_dir, target_name))
         {
@@ -247,4 +247,10 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1])
         } 
     }
   return false;
+}
+
+void
+dir_seek (struct dir *dir, off_t pos)
+{
+  dir->pos = pos;
 }

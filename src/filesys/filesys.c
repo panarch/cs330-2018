@@ -111,6 +111,9 @@ filesys_remove (const char *name)
   struct dir *dir = extract_dir (name, &filename);
   struct thread *cur = thread_current ();
 
+  if (dir == NULL)
+    return false;
+
   bool success = dir != NULL && dir_remove (dir, filename);
 
   if (dir != cur->dir)
@@ -122,13 +125,22 @@ filesys_remove (const char *name)
 bool
 filesys_mkdir (const char *name)
 {
+  char *filename = NULL;
+  char entry_name[NAME_MAX + 1];
+  struct dir *dir = extract_dir (name, &filename);
+  struct thread *cur = thread_current ();
+
+  dir_seek (dir, 0);
+
+  while (dir_readdir (dir, entry_name))
+    {
+      if (strcmp (filename, entry_name) == 0)
+        return false;
+    }
+
   block_sector_t sector;
   free_map_allocate(1, &sector);
   dir_create (sector, 16);
-
-  char *filename = NULL;
-  struct dir *dir = extract_dir (name, &filename);
-  struct thread *cur = thread_current ();
 
   ASSERT (dir != NULL);
 
