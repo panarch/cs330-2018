@@ -1,4 +1,4 @@
-TOTAL TESTING SCORE: 78.4%
+TOTAL TESTING SCORE: 81.1%
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -6,7 +6,7 @@ SUMMARY BY TEST SET
 
 Test Set                                      Pts Max  % Ttl  % Max
 --------------------------------------------- --- --- ------ ------
-tests/filesys/extended/Rubric.functionality    26/ 34  22.9%/ 30.0%
+tests/filesys/extended/Rubric.functionality    29/ 34  25.6%/ 30.0%
 tests/filesys/extended/Rubric.robustness        7/ 10  10.5%/ 15.0%
 tests/filesys/extended/Rubric.persistence       0/ 23   0.0%/ 20.0%
 tests/filesys/base/Rubric                      30/ 30  20.0%/ 20.0%
@@ -15,7 +15,7 @@ tests/userprog/Rubric.robustness               88/ 88   5.0%/  5.0%
 tests/vm/Rubric.functionality                  55/ 55   8.0%/  8.0%
 tests/vm/Rubric.robustness                     28/ 28   2.0%/  2.0%
 --------------------------------------------- --- --- ------ ------
-Total                                                  78.4%/110.0%
+Total                                                  81.1%/110.0%
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -35,7 +35,7 @@ Functionality of extended file system (tests/filesys/extended/Rubric.functionali
 	     1/ 1 tests/filesys/extended/grow-create
 	     1/ 1 tests/filesys/extended/grow-seq-sm
 	     3/ 3 tests/filesys/extended/grow-seq-lg
-	  ** 0/ 3 tests/filesys/extended/grow-sparse
+	     3/ 3 tests/filesys/extended/grow-sparse
 	     3/ 3 tests/filesys/extended/grow-two-files
 	     1/ 1 tests/filesys/extended/grow-tell
 	     1/ 1 tests/filesys/extended/grow-file-size
@@ -49,8 +49,8 @@ Functionality of extended file system (tests/filesys/extended/Rubric.functionali
 	     5/ 5 tests/filesys/extended/syn-rw
 
 	- Section summary.
-	     14/ 16 tests passed
-	     26/ 34 points subtotal
+	     15/ 16 tests passed
+	     29/ 34 points subtotal
 
 Robustness of file system (tests/filesys/extended/Rubric.robustness):
 	     1/ 1 tests/filesys/extended/dir-empty-name
@@ -301,7 +301,7 @@ OUTPUT FROM tests/filesys/extended/dir-vine:
 
 Copying tests/filesys/extended/dir-vine to scratch partition...
 Copying tests/filesys/extended/tar to scratch partition...
-qemu -hda /tmp/qytZXM8Ah8.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/yNQ93dwKTN.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q -f extract run dir-vine
@@ -331,70 +331,11 @@ Executing 'dir-vine':
 dir-vine: exit(1)
 Execution of 'dir-vine' complete.
 Timer: 82 ticks
-Thread: 4 idle ticks, 77 kernel ticks, 1 user ticks
-hdb1 (filesys): 40 reads, 464 writes
+Thread: 1 idle ticks, 79 kernel ticks, 2 user ticks
+hdb1 (filesys): 39 reads, 464 writes
 hda2 (scratch): 242 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
 Console: 1150 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/grow-sparse FAILURE:
-
-run: 1 bytes read starting at offset 1 in "testfile" differ from expected: FAILED
-
-OUTPUT FROM tests/filesys/extended/grow-sparse:
-
-Copying tests/filesys/extended/grow-sparse to scratch partition...
-Copying tests/filesys/extended/tar to scratch partition...
-qemu -hda /tmp/2d9CniTrA_.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q -f extract run grow-sparse
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  419,020,800 loops/s.
-hda: 9,072 sectors (4 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 240 sectors (120 kB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Formatting file system...done.
-Boot complete.
-Extracting ustar archive from scratch device into file system...
-Putting 'grow-sparse' into the file system...
-Putting 'tar' into the file system...
-Erasing ustar archive...
-Executing 'grow-sparse':
-(grow-sparse) begin
-(grow-sparse) create "testfile"
-(grow-sparse) open "testfile"
-(grow-sparse) seek "testfile"
-(grow-sparse) write "testfile"
-(grow-sparse) close "testfile"
-(grow-sparse) open "testfile" for verification
-(grow-sparse) 1 bytes read starting at offset 1 in "testfile" differ from expected.
-(grow-sparse) Data actually read:
-00000000     02                                           | .              |
-(grow-sparse) Expected data:
-00000000     00                                           | .              |
-(grow-sparse) 1 bytes read starting at offset 1 in "testfile" differ from expected: FAILED
-grow-sparse: exit(1)
-Execution of 'grow-sparse' complete.
-Timer: 84 ticks
-Thread: 2 idle ticks, 78 kernel ticks, 4 user ticks
-hdb1 (filesys): 37 reads, 479 writes
-hda2 (scratch): 239 reads, 2 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1673 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
@@ -427,7 +368,7 @@ OUTPUT FROM tests/filesys/extended/dir-rm-cwd:
 
 Copying tests/filesys/extended/dir-rm-cwd to scratch partition...
 Copying tests/filesys/extended/tar to scratch partition...
-qemu -hda /tmp/o0aCl43BYG.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/EDjAgAlrWo.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q -f extract run dir-rm-cwd
@@ -459,7 +400,7 @@ The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.
 Timer: 81 ticks
-Thread: 3 idle ticks, 77 kernel ticks, 1 user ticks
+Thread: 4 idle ticks, 77 kernel ticks, 0 user ticks
 hdb1 (filesys): 37 reads, 457 writes
 hda2 (scratch): 243 reads, 2 writes
 hda3 (swap): 0 reads, 0 writes
@@ -488,7 +429,7 @@ Translation of call stack:
 
 OUTPUT FROM tests/filesys/extended/dir-empty-name-persistence:
 
-qemu -hda /tmp/DAmTs1TfN5.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/1JJ0WCKplr.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
@@ -521,7 +462,7 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/dir-empty-name.tar out of /tmp/DAmTs1TfN5.dsk...
+Copying tests/filesys/extended/dir-empty-name.tar out of /tmp/1JJ0WCKplr.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -543,7 +484,7 @@ Translation of call stack:
 
 OUTPUT FROM tests/filesys/extended/dir-mk-tree-persistence:
 
-qemu -hda /tmp/oKzowwZ8fI.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/XA3iYL22tF.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
@@ -567,8 +508,8 @@ Call stack: 0xc0028770 0xc002c520 0xc002c72f 0xc002bd34 0xc0021ccd 0xc0021dff 0x
 The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.
-Timer: 73 ticks
-Thread: 0 idle ticks, 72 kernel ticks, 1 user ticks
+Timer: 74 ticks
+Thread: 0 idle ticks, 73 kernel ticks, 1 user ticks
 hdb1 (filesys): 35 reads, 1 writes
 hda2 (scratch): 0 reads, 0 writes
 hda3 (swap): 0 reads, 0 writes
@@ -576,7 +517,7 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/dir-mk-tree.tar out of /tmp/oKzowwZ8fI.dsk...
+Copying tests/filesys/extended/dir-mk-tree.tar out of /tmp/XA3iYL22tF.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -598,14 +539,14 @@ Translation of call stack:
 
 OUTPUT FROM tests/filesys/extended/dir-mkdir-persistence:
 
-qemu -hda /tmp/3hknfhjceZ.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/_obW3z27O_.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
 Pintos booting with 3,968 kB RAM...
 367 pages available in kernel pool.
 367 pages available in user pool.
-Calibrating timer...  314,163,200 loops/s.
+Calibrating timer...  419,020,800 loops/s.
 hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
 hda1: 163 sectors (81 kB), Pintos OS kernel (20)
 hda2: 2,048 sectors (1 MB), Pintos scratch (22)
@@ -631,7 +572,7 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/dir-mkdir.tar out of /tmp/3hknfhjceZ.dsk...
+Copying tests/filesys/extended/dir-mkdir.tar out of /tmp/_obW3z27O_.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -653,7 +594,7 @@ Translation of call stack:
 
 OUTPUT FROM tests/filesys/extended/dir-open-persistence:
 
-qemu -hda /tmp/5j30JfH499.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/IhulptiJdA.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
@@ -686,7 +627,7 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/dir-open.tar out of /tmp/5j30JfH499.dsk...
+Copying tests/filesys/extended/dir-open.tar out of /tmp/IhulptiJdA.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -708,7 +649,7 @@ Translation of call stack:
 
 OUTPUT FROM tests/filesys/extended/dir-over-file-persistence:
 
-qemu -hda /tmp/PzTNpFL0A5.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/7SWhsI574_.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
@@ -741,7 +682,7 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/dir-over-file.tar out of /tmp/PzTNpFL0A5.dsk...
+Copying tests/filesys/extended/dir-over-file.tar out of /tmp/7SWhsI574_.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -751,7 +692,7 @@ Prerequisite test tests/filesys/extended/dir-rm-cwd failed.
 
 OUTPUT FROM tests/filesys/extended/dir-rm-cwd-persistence:
 
-qemu -hda /tmp/BxcKYwCoui.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/YyJFXImOzi.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
@@ -784,7 +725,7 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/dir-rm-cwd.tar out of /tmp/BxcKYwCoui.dsk...
+Copying tests/filesys/extended/dir-rm-cwd.tar out of /tmp/YyJFXImOzi.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -806,14 +747,14 @@ Translation of call stack:
 
 OUTPUT FROM tests/filesys/extended/dir-rm-parent-persistence:
 
-qemu -hda /tmp/kF0616vIdK.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/DnzkBOngJv.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
 Pintos booting with 3,968 kB RAM...
 367 pages available in kernel pool.
 367 pages available in user pool.
-Calibrating timer...  314,163,200 loops/s.
+Calibrating timer...  419,020,800 loops/s.
 hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
 hda1: 163 sectors (81 kB), Pintos OS kernel (20)
 hda2: 2,048 sectors (1 MB), Pintos scratch (22)
@@ -830,8 +771,8 @@ Call stack: 0xc0028770 0xc002c520 0xc002c72f 0xc002bd34 0xc0021ccd 0xc0021dff 0x
 The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.
-Timer: 74 ticks
-Thread: 0 idle ticks, 73 kernel ticks, 1 user ticks
+Timer: 73 ticks
+Thread: 0 idle ticks, 72 kernel ticks, 1 user ticks
 hdb1 (filesys): 35 reads, 1 writes
 hda2 (scratch): 0 reads, 0 writes
 hda3 (swap): 0 reads, 0 writes
@@ -839,7 +780,7 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/dir-rm-parent.tar out of /tmp/kF0616vIdK.dsk...
+Copying tests/filesys/extended/dir-rm-parent.tar out of /tmp/DnzkBOngJv.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -861,14 +802,14 @@ Translation of call stack:
 
 OUTPUT FROM tests/filesys/extended/dir-rm-root-persistence:
 
-qemu -hda /tmp/GsRpd7bHkG.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/MkRE7pXYj1.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
 Pintos booting with 3,968 kB RAM...
 367 pages available in kernel pool.
 367 pages available in user pool.
-Calibrating timer...  419,020,800 loops/s.
+Calibrating timer...  314,163,200 loops/s.
 hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
 hda1: 163 sectors (81 kB), Pintos OS kernel (20)
 hda2: 2,048 sectors (1 MB), Pintos scratch (22)
@@ -885,8 +826,8 @@ Call stack: 0xc0028770 0xc002c520 0xc002c72f 0xc002bd34 0xc0021ccd 0xc0021dff 0x
 The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.
-Timer: 73 ticks
-Thread: 0 idle ticks, 72 kernel ticks, 1 user ticks
+Timer: 74 ticks
+Thread: 0 idle ticks, 73 kernel ticks, 1 user ticks
 hdb1 (filesys): 35 reads, 1 writes
 hda2 (scratch): 0 reads, 0 writes
 hda3 (swap): 0 reads, 0 writes
@@ -894,7 +835,7 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/dir-rm-root.tar out of /tmp/GsRpd7bHkG.dsk...
+Copying tests/filesys/extended/dir-rm-root.tar out of /tmp/MkRE7pXYj1.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -916,14 +857,14 @@ Translation of call stack:
 
 OUTPUT FROM tests/filesys/extended/dir-rm-tree-persistence:
 
-qemu -hda /tmp/zV6IA5Dhqp.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/cTrs43uz5c.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
 Pintos booting with 3,968 kB RAM...
 367 pages available in kernel pool.
 367 pages available in user pool.
-Calibrating timer...  419,020,800 loops/s.
+Calibrating timer...  314,163,200 loops/s.
 hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
 hda1: 163 sectors (81 kB), Pintos OS kernel (20)
 hda2: 2,048 sectors (1 MB), Pintos scratch (22)
@@ -940,8 +881,8 @@ Call stack: 0xc0028770 0xc002c520 0xc002c72f 0xc002bd34 0xc0021ccd 0xc0021dff 0x
 The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.
-Timer: 73 ticks
-Thread: 0 idle ticks, 72 kernel ticks, 1 user ticks
+Timer: 74 ticks
+Thread: 0 idle ticks, 73 kernel ticks, 1 user ticks
 hdb1 (filesys): 35 reads, 1 writes
 hda2 (scratch): 0 reads, 0 writes
 hda3 (swap): 0 reads, 0 writes
@@ -949,7 +890,7 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/dir-rm-tree.tar out of /tmp/zV6IA5Dhqp.dsk...
+Copying tests/filesys/extended/dir-rm-tree.tar out of /tmp/cTrs43uz5c.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -971,7 +912,7 @@ Translation of call stack:
 
 OUTPUT FROM tests/filesys/extended/dir-rmdir-persistence:
 
-qemu -hda /tmp/BMeGGQq3OZ.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/yn4rwBoyIf.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
@@ -1004,7 +945,7 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/dir-rmdir.tar out of /tmp/BMeGGQq3OZ.dsk...
+Copying tests/filesys/extended/dir-rmdir.tar out of /tmp/yn4rwBoyIf.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -1026,14 +967,14 @@ Translation of call stack:
 
 OUTPUT FROM tests/filesys/extended/dir-under-file-persistence:
 
-qemu -hda /tmp/zms7VlODs4.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/xtXxDpVHkB.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
 Pintos booting with 3,968 kB RAM...
 367 pages available in kernel pool.
 367 pages available in user pool.
-Calibrating timer...  314,163,200 loops/s.
+Calibrating timer...  419,020,800 loops/s.
 hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
 hda1: 163 sectors (81 kB), Pintos OS kernel (20)
 hda2: 2,048 sectors (1 MB), Pintos scratch (22)
@@ -1050,8 +991,8 @@ Call stack: 0xc0028770 0xc002c520 0xc002c72f 0xc002bd34 0xc0021ccd 0xc0021dff 0x
 The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.
-Timer: 74 ticks
-Thread: 0 idle ticks, 73 kernel ticks, 1 user ticks
+Timer: 73 ticks
+Thread: 0 idle ticks, 72 kernel ticks, 1 user ticks
 hdb1 (filesys): 35 reads, 1 writes
 hda2 (scratch): 0 reads, 0 writes
 hda3 (swap): 0 reads, 0 writes
@@ -1059,7 +1000,7 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/dir-under-file.tar out of /tmp/zms7VlODs4.dsk...
+Copying tests/filesys/extended/dir-under-file.tar out of /tmp/xtXxDpVHkB.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -1069,7 +1010,7 @@ Prerequisite test tests/filesys/extended/dir-vine failed.
 
 OUTPUT FROM tests/filesys/extended/dir-vine-persistence:
 
-qemu -hda /tmp/9er3zG9M0j.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/Bg3oSdSNcB.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
@@ -1102,7 +1043,7 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/dir-vine.tar out of /tmp/9er3zG9M0j.dsk...
+Copying tests/filesys/extended/dir-vine.tar out of /tmp/Bg3oSdSNcB.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -1124,7 +1065,7 @@ Translation of call stack:
 
 OUTPUT FROM tests/filesys/extended/grow-create-persistence:
 
-qemu -hda /tmp/GTXLORAEAY.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/ODEh1hXMOJ.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
@@ -1157,7 +1098,7 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/grow-create.tar out of /tmp/GTXLORAEAY.dsk...
+Copying tests/filesys/extended/grow-create.tar out of /tmp/ODEh1hXMOJ.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -1179,7 +1120,7 @@ Translation of call stack:
 
 OUTPUT FROM tests/filesys/extended/grow-dir-lg-persistence:
 
-qemu -hda /tmp/x5c3LH3ahY.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/Em4LKMbgmU.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
@@ -1212,7 +1153,7 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/grow-dir-lg.tar out of /tmp/x5c3LH3ahY.dsk...
+Copying tests/filesys/extended/grow-dir-lg.tar out of /tmp/Em4LKMbgmU.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -1234,14 +1175,14 @@ Translation of call stack:
 
 OUTPUT FROM tests/filesys/extended/grow-file-size-persistence:
 
-qemu -hda /tmp/E_7xhfZvzY.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/MT9bjG76qO.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
 Pintos booting with 3,968 kB RAM...
 367 pages available in kernel pool.
 367 pages available in user pool.
-Calibrating timer...  314,163,200 loops/s.
+Calibrating timer...  419,020,800 loops/s.
 hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
 hda1: 163 sectors (81 kB), Pintos OS kernel (20)
 hda2: 2,048 sectors (1 MB), Pintos scratch (22)
@@ -1258,8 +1199,8 @@ Call stack: 0xc0028770 0xc002c520 0xc002c72f 0xc002bd34 0xc0021ccd 0xc0021dff 0x
 The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.
-Timer: 74 ticks
-Thread: 0 idle ticks, 73 kernel ticks, 1 user ticks
+Timer: 73 ticks
+Thread: 0 idle ticks, 72 kernel ticks, 1 user ticks
 hdb1 (filesys): 35 reads, 1 writes
 hda2 (scratch): 0 reads, 0 writes
 hda3 (swap): 0 reads, 0 writes
@@ -1267,7 +1208,7 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/grow-file-size.tar out of /tmp/E_7xhfZvzY.dsk...
+Copying tests/filesys/extended/grow-file-size.tar out of /tmp/MT9bjG76qO.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -1289,14 +1230,14 @@ Translation of call stack:
 
 OUTPUT FROM tests/filesys/extended/grow-root-lg-persistence:
 
-qemu -hda /tmp/3z8BPNH8in.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/eRUF5zdibD.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
 Pintos booting with 3,968 kB RAM...
 367 pages available in kernel pool.
 367 pages available in user pool.
-Calibrating timer...  419,020,800 loops/s.
+Calibrating timer...  314,163,200 loops/s.
 hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
 hda1: 163 sectors (81 kB), Pintos OS kernel (20)
 hda2: 2,048 sectors (1 MB), Pintos scratch (22)
@@ -1313,8 +1254,8 @@ Call stack: 0xc0028770 0xc002c520 0xc002c72f 0xc002bd34 0xc0021ccd 0xc0021dff 0x
 The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.
-Timer: 73 ticks
-Thread: 0 idle ticks, 72 kernel ticks, 1 user ticks
+Timer: 74 ticks
+Thread: 0 idle ticks, 73 kernel ticks, 1 user ticks
 hdb1 (filesys): 36 reads, 1 writes
 hda2 (scratch): 0 reads, 0 writes
 hda3 (swap): 0 reads, 0 writes
@@ -1322,7 +1263,7 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/grow-root-lg.tar out of /tmp/3z8BPNH8in.dsk...
+Copying tests/filesys/extended/grow-root-lg.tar out of /tmp/eRUF5zdibD.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -1344,7 +1285,7 @@ Translation of call stack:
 
 OUTPUT FROM tests/filesys/extended/grow-root-sm-persistence:
 
-qemu -hda /tmp/bXiux3W60J.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/cwLFv2fz23.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
@@ -1377,7 +1318,7 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/grow-root-sm.tar out of /tmp/bXiux3W60J.dsk...
+Copying tests/filesys/extended/grow-root-sm.tar out of /tmp/cwLFv2fz23.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -1399,7 +1340,7 @@ Translation of call stack:
 
 OUTPUT FROM tests/filesys/extended/grow-seq-lg-persistence:
 
-qemu -hda /tmp/NDV5q_FURU.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/iUY3slhhHT.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
@@ -1424,7 +1365,7 @@ The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.
 Timer: 74 ticks
-Thread: 0 idle ticks, 74 kernel ticks, 0 user ticks
+Thread: 0 idle ticks, 73 kernel ticks, 1 user ticks
 hdb1 (filesys): 35 reads, 1 writes
 hda2 (scratch): 0 reads, 0 writes
 hda3 (swap): 0 reads, 0 writes
@@ -1432,7 +1373,7 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/grow-seq-lg.tar out of /tmp/NDV5q_FURU.dsk...
+Copying tests/filesys/extended/grow-seq-lg.tar out of /tmp/iUY3slhhHT.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -1454,50 +1395,7 @@ Translation of call stack:
 
 OUTPUT FROM tests/filesys/extended/grow-seq-sm-persistence:
 
-qemu -hda /tmp/jT1_QVKj7j.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  419,020,800 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../filesys/filesys.c:211 in extract_dir(): assertion `prev_token != NULL' failed.
-Call stack: 0xc0028770 0xc002c520 0xc002c72f 0xc002bd34 0xc0021ccd 0xc0021dff 0x804aae9 0x8048158 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 73 ticks
-Thread: 0 idle ticks, 72 kernel ticks, 1 user ticks
-hdb1 (filesys): 35 reads, 1 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1175 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/grow-seq-sm.tar out of /tmp/jT1_QVKj7j.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/grow-sparse-persistence FAILURE:
-
-Prerequisite test tests/filesys/extended/grow-sparse failed.
-
-OUTPUT FROM tests/filesys/extended/grow-sparse-persistence:
-
-qemu -hda /tmp/TdnkIcDHrG.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/2McIOuyKUw.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
@@ -1530,7 +1428,62 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/grow-sparse.tar out of /tmp/TdnkIcDHrG.dsk...
+Copying tests/filesys/extended/grow-seq-sm.tar out of /tmp/2McIOuyKUw.dsk...
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+DETAILS OF tests/filesys/extended/grow-sparse-persistence FAILURE:
+
+Kernel panic in file system extraction run: PANIC at ../../filesys/filesys.c:211 in extract_dir(): assertion `prev_token != NULL' failed.
+Call stack: 0xc0028770 0xc002c520 0xc002c72f 0xc002bd34 0xc0021ccd 0xc0021dff 0x804aae9 0x8048158 0x804846c 0x8048c22
+Translation of call stack:
+0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002c520: extract_dir (.../../filesys/filesys.c:213)
+0xc002c72f: filesys_open (..../../filesys/filesys.c:83)
+0xc002bd34: syscall_open (...../userprog/syscall.c:233)
+0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
+0xc0021dff: intr_entry (threads/intr-stubs.S:38)
+0x0804aae9: (unknown)
+0x08048158: (unknown)
+0x0804846c: (unknown)
+0x08048c22: (unknown)
+
+OUTPUT FROM tests/filesys/extended/grow-sparse-persistence:
+
+qemu -hda /tmp/oe7SOMMdKW.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+PiLo hda1
+Loading..........
+Kernel command line: -q run 'tar fs.tar /' append fs.tar
+Pintos booting with 3,968 kB RAM...
+367 pages available in kernel pool.
+367 pages available in user pool.
+Calibrating timer...  314,163,200 loops/s.
+hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
+hda1: 163 sectors (81 kB), Pintos OS kernel (20)
+hda2: 2,048 sectors (1 MB), Pintos scratch (22)
+hda3: 8,192 sectors (4 MB), Pintos swap (23)
+hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
+hdb1: 4,096 sectors (2 MB), Pintos file system (21)
+filesys: using hdb1
+scratch: using hda2
+swap: using hda3
+Boot complete.
+Executing 'tar fs.tar /':
+Kernel PANIC at ../../filesys/filesys.c:211 in extract_dir(): assertion `prev_token != NULL' failed.
+Call stack: 0xc0028770 0xc002c520 0xc002c72f 0xc002bd34 0xc0021ccd 0xc0021dff 0x804aae9 0x8048158 0x804846c 0x8048c22.
+The `backtrace' program can make call stacks useful.
+Read "Backtraces" in the "Debugging Tools" chapter
+of the Pintos documentation for more information.
+Timer: 74 ticks
+Thread: 0 idle ticks, 73 kernel ticks, 1 user ticks
+hdb1 (filesys): 35 reads, 1 writes
+hda2 (scratch): 0 reads, 0 writes
+hda3 (swap): 0 reads, 0 writes
+Console: 1175 characters output
+Keyboard: 0 keys pressed
+Exception: 0 page faults
+Powering off...
+Copying tests/filesys/extended/grow-sparse.tar out of /tmp/oe7SOMMdKW.dsk...
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -1552,117 +1505,7 @@ Translation of call stack:
 
 OUTPUT FROM tests/filesys/extended/grow-tell-persistence:
 
-qemu -hda /tmp/_nOpxD06Or.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  314,163,200 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../filesys/filesys.c:211 in extract_dir(): assertion `prev_token != NULL' failed.
-Call stack: 0xc0028770 0xc002c520 0xc002c72f 0xc002bd34 0xc0021ccd 0xc0021dff 0x804aae9 0x8048158 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 74 ticks
-Thread: 0 idle ticks, 73 kernel ticks, 1 user ticks
-hdb1 (filesys): 35 reads, 1 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1175 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/grow-tell.tar out of /tmp/_nOpxD06Or.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/grow-two-files-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../filesys/filesys.c:211 in extract_dir(): assertion `prev_token != NULL' failed.
-Call stack: 0xc0028770 0xc002c520 0xc002c72f 0xc002bd34 0xc0021ccd 0xc0021dff 0x804aae9 0x8048158 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002c520: extract_dir (.../../filesys/filesys.c:213)
-0xc002c72f: filesys_open (..../../filesys/filesys.c:83)
-0xc002bd34: syscall_open (...../userprog/syscall.c:233)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804aae9: (unknown)
-0x08048158: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/grow-two-files-persistence:
-
-qemu -hda /tmp/TWcgIYKUzD.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  314,163,200 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../filesys/filesys.c:211 in extract_dir(): assertion `prev_token != NULL' failed.
-Call stack: 0xc0028770 0xc002c520 0xc002c72f 0xc002bd34 0xc0021ccd 0xc0021dff 0x804aae9 0x8048158 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 74 ticks
-Thread: 0 idle ticks, 73 kernel ticks, 1 user ticks
-hdb1 (filesys): 35 reads, 1 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1175 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/grow-two-files.tar out of /tmp/TWcgIYKUzD.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/syn-rw-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../filesys/filesys.c:211 in extract_dir(): assertion `prev_token != NULL' failed.
-Call stack: 0xc0028770 0xc002c520 0xc002c72f 0xc002bd34 0xc0021ccd 0xc0021dff 0x804aae9 0x8048158 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc002c520: extract_dir (.../../filesys/filesys.c:213)
-0xc002c72f: filesys_open (..../../filesys/filesys.c:83)
-0xc002bd34: syscall_open (...../userprog/syscall.c:233)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804aae9: (unknown)
-0x08048158: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/syn-rw-persistence:
-
-qemu -hda /tmp/gThe5qABdZ.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/Ki7GjLwAI1.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
@@ -1695,4 +1538,114 @@ Console: 1175 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
-Copying tests/filesys/extended/syn-rw.tar out of /tmp/gThe5qABdZ.dsk...
+Copying tests/filesys/extended/grow-tell.tar out of /tmp/Ki7GjLwAI1.dsk...
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+DETAILS OF tests/filesys/extended/grow-two-files-persistence FAILURE:
+
+Kernel panic in file system extraction run: PANIC at ../../filesys/filesys.c:211 in extract_dir(): assertion `prev_token != NULL' failed.
+Call stack: 0xc0028770 0xc002c520 0xc002c72f 0xc002bd34 0xc0021ccd 0xc0021dff 0x804aae9 0x8048158 0x804846c 0x8048c22
+Translation of call stack:
+0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002c520: extract_dir (.../../filesys/filesys.c:213)
+0xc002c72f: filesys_open (..../../filesys/filesys.c:83)
+0xc002bd34: syscall_open (...../userprog/syscall.c:233)
+0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
+0xc0021dff: intr_entry (threads/intr-stubs.S:38)
+0x0804aae9: (unknown)
+0x08048158: (unknown)
+0x0804846c: (unknown)
+0x08048c22: (unknown)
+
+OUTPUT FROM tests/filesys/extended/grow-two-files-persistence:
+
+qemu -hda /tmp/RtA_mzmnyj.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+PiLo hda1
+Loading..........
+Kernel command line: -q run 'tar fs.tar /' append fs.tar
+Pintos booting with 3,968 kB RAM...
+367 pages available in kernel pool.
+367 pages available in user pool.
+Calibrating timer...  419,020,800 loops/s.
+hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
+hda1: 163 sectors (81 kB), Pintos OS kernel (20)
+hda2: 2,048 sectors (1 MB), Pintos scratch (22)
+hda3: 8,192 sectors (4 MB), Pintos swap (23)
+hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
+hdb1: 4,096 sectors (2 MB), Pintos file system (21)
+filesys: using hdb1
+scratch: using hda2
+swap: using hda3
+Boot complete.
+Executing 'tar fs.tar /':
+Kernel PANIC at ../../filesys/filesys.c:211 in extract_dir(): assertion `prev_token != NULL' failed.
+Call stack: 0xc0028770 0xc002c520 0xc002c72f 0xc002bd34 0xc0021ccd 0xc0021dff 0x804aae9 0x8048158 0x804846c 0x8048c22.
+The `backtrace' program can make call stacks useful.
+Read "Backtraces" in the "Debugging Tools" chapter
+of the Pintos documentation for more information.
+Timer: 73 ticks
+Thread: 0 idle ticks, 72 kernel ticks, 1 user ticks
+hdb1 (filesys): 35 reads, 1 writes
+hda2 (scratch): 0 reads, 0 writes
+hda3 (swap): 0 reads, 0 writes
+Console: 1175 characters output
+Keyboard: 0 keys pressed
+Exception: 0 page faults
+Powering off...
+Copying tests/filesys/extended/grow-two-files.tar out of /tmp/RtA_mzmnyj.dsk...
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+DETAILS OF tests/filesys/extended/syn-rw-persistence FAILURE:
+
+Kernel panic in file system extraction run: PANIC at ../../filesys/filesys.c:211 in extract_dir(): assertion `prev_token != NULL' failed.
+Call stack: 0xc0028770 0xc002c520 0xc002c72f 0xc002bd34 0xc0021ccd 0xc0021dff 0x804aae9 0x8048158 0x804846c 0x8048c22
+Translation of call stack:
+0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
+0xc002c520: extract_dir (.../../filesys/filesys.c:213)
+0xc002c72f: filesys_open (..../../filesys/filesys.c:83)
+0xc002bd34: syscall_open (...../userprog/syscall.c:233)
+0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
+0xc0021dff: intr_entry (threads/intr-stubs.S:38)
+0x0804aae9: (unknown)
+0x08048158: (unknown)
+0x0804846c: (unknown)
+0x08048c22: (unknown)
+
+OUTPUT FROM tests/filesys/extended/syn-rw-persistence:
+
+qemu -hda /tmp/Wp8IB18nc6.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+PiLo hda1
+Loading..........
+Kernel command line: -q run 'tar fs.tar /' append fs.tar
+Pintos booting with 3,968 kB RAM...
+367 pages available in kernel pool.
+367 pages available in user pool.
+Calibrating timer...  419,020,800 loops/s.
+hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
+hda1: 163 sectors (81 kB), Pintos OS kernel (20)
+hda2: 2,048 sectors (1 MB), Pintos scratch (22)
+hda3: 8,192 sectors (4 MB), Pintos swap (23)
+hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
+hdb1: 4,096 sectors (2 MB), Pintos file system (21)
+filesys: using hdb1
+scratch: using hda2
+swap: using hda3
+Boot complete.
+Executing 'tar fs.tar /':
+Kernel PANIC at ../../filesys/filesys.c:211 in extract_dir(): assertion `prev_token != NULL' failed.
+Call stack: 0xc0028770 0xc002c520 0xc002c72f 0xc002bd34 0xc0021ccd 0xc0021dff 0x804aae9 0x8048158 0x804846c 0x8048c22.
+The `backtrace' program can make call stacks useful.
+Read "Backtraces" in the "Debugging Tools" chapter
+of the Pintos documentation for more information.
+Timer: 73 ticks
+Thread: 0 idle ticks, 72 kernel ticks, 1 user ticks
+hdb1 (filesys): 35 reads, 1 writes
+hda2 (scratch): 0 reads, 0 writes
+hda3 (swap): 0 reads, 0 writes
+Console: 1175 characters output
+Keyboard: 0 keys pressed
+Exception: 0 page faults
+Powering off...
+Copying tests/filesys/extended/syn-rw.tar out of /tmp/Wp8IB18nc6.dsk...
