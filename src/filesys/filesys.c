@@ -104,6 +104,9 @@ filesys_open (const char *name)
 bool
 filesys_remove (const char *name) 
 {
+  if (strlen (name) == 1 && name[0] == '/')
+    return false;
+
   char *filename = NULL;
   struct dir *dir = extract_dir (name, &filename);
   struct thread *cur = thread_current ();
