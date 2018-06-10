@@ -76,6 +76,7 @@ fill_inode_disk_sector (struct inode *inode, off_t idx, bool fill_before)
         return false;
 
       free_map_allocate (1, &disk_inode->sectors[idx]);
+      cache_write (fs_device, disk_inode->sectors[idx], zeros);
       cache_write (fs_device, inode->sector, disk_inode);
     }
   else if (idx < indirect_max_idx)
@@ -105,7 +106,7 @@ fill_inode_disk_sector (struct inode *inode, off_t idx, bool fill_before)
         return false;
     }
 
-  while (fill_before && --idx > 0)
+  while (fill_before && idx-- > 0)
   {
     if (!fill_inode_disk_sector (inode, idx, false))
       break;
