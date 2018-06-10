@@ -188,6 +188,15 @@ vm_mmap (void *uaddr, struct file *file)
   return mapid;
 }
 
+static size_t
+munmap_page_file_length (struct file *page_file)
+{
+  int pos = file_tell (page_file);
+  size_t size = file_length (page_file) - pos;
+
+  return size < PGSIZE ? size : PGSIZE;
+}
+
 void
 vm_munmap (int mapid)
 {
@@ -198,7 +207,10 @@ vm_munmap (int mapid)
       struct page *page = file->page;
 
       if (page->is_loaded && pagedir_is_dirty (page->owner->pagedir, page->uaddr))
-        file_write (file, page->kaddr, PGSIZE);
+        {
+          size_t size = munmap_page_file_length (page->file);
+          file_write (file, page->kaddr, size);
+        }
 
       frame_free_page (page);
       hash_delete (&page->owner->vm, &page->vm_elem);
@@ -219,7 +231,10 @@ vm_munmap_all (void)
       struct page *page = file->page;
 
       if (page->is_loaded && pagedir_is_dirty (page->owner->pagedir, page->uaddr))
-        file_write (file, page->kaddr, PGSIZE);
+        {
+          size_t size = munmap_page_file_length (page->file);
+          file_write (file, page->kaddr, size);
+        }
 
       file_close (file);
     }
