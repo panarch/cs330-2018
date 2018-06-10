@@ -424,9 +424,14 @@ syscall_chdir (struct intr_frame *f)
   dir_close (cur->dir);
   cur->dir = dir_open (inode);
 
-  ASSERT (cur->dir != NULL);
+  if (!cur->dir)
+    {
+      f->eax = false;
+      return;
+    }
 
   syscall_file_lock_release ();
+  return true;
 }
 
 static void
