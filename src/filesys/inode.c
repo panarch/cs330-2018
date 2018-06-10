@@ -70,53 +70,79 @@ byte_to_sector (struct inode *inode, off_t pos, size_t size, bool is_write)
   if (pos > inode->data.length || (!is_write && pos == inode->data.length))
     return -1;
 
+  off_t direct_max_idx = DIRECT_SECTORS;
+  off_t indirect_max_idx = direct_max_idx + INDIRECT_SECTORS * TOTAL_SECTORS;
+  block_sector_t sector;
+  struct indirect_inode_disk *indirect_disk_inode = NULL;
+
   off_t idx = pos / BLOCK_SECTOR_SIZE;
   size_t oft = pos % BLOCK_SECTOR_SIZE;
+
+  off_t indirect_idx = (idx - direct_max_idx) / TOTAL_SECTORS;
+  off_t indirect_sector_idx = (idx - direct_max_idx) & TOTAL_SECTORS;
 
   // TODO: update required for supporting indirect & double_indirect
   if (is_write && pos == inode->data.length)
     {
+      static char zeros[BLOCK_SECTOR_SIZE];
       size_t max_size = BLOCK_SECTOR_SIZE - oft;
       inode->data.length += size < max_size ? size : max_size;
 
-      ASSERT (idx < DIRECT_SECTORS);
+      ASSERT (idx < DIRECT_SECTORS + TOTAL_SECTORS * INDIRECT_SECTORS);
 
       if (oft == 0)
-        free_map_allocate (1, &inode->data.sectors[idx]);
+        {
+          if (idx < direct_max_idx)
+            free_map_allocate (1, &inode->data.sectors[idx]);
+          else if (idx < indirect_max_idx)
+            {
+              indirect_disk_inode = calloc (1, sizeof *indirect_disk_inode);
+
+              if (indirect_sector_idx == 0) // Create new indirect_disk_inode
+                {
+                  indirect_disk_inode->magic = INODE_FILE_MAGIC;
+                  free_map_allocate (1, &inode->data.indirect_sectors[indirect_idx]);
+
+                  cache_write (fs_device, inode->data.indirect_sectors[indirect_idx], zeros);
+                }
+              else // Load existing
+                cache_read (fs_device, inode->data.indirect_sectors[indirect_idx], indirect_disk_inode);
+
+              ASSERT (indirect_disk_inode->magic == INODE_FILE_MAGIC);
+
+              free_map_allocate (1, &indirect_disk_inode->sectors[indirect_sector_idx]);
+              cache_write (fs_device, indirect_disk_inode->sectors[indirect_sector_idx], zeros);
+              cache_write (fs_device, inode->data.indirect_sectors[indirect_idx], indirect_disk_inode);
+            }
+        }
 
       cache_write (fs_device, inode->sector, &inode->data);
     }
 
-  off_t direct_max_idx = DIRECT_SECTORS;
-  off_t indirect_max_idx = direct_max_idx + INDIRECT_SECTORS * TOTAL_SECTORS;
-
-  block_sector_t sector_idx;
-  struct indirect_inode_disk *indirect_disk_inode = NULL;
-
   if (idx < direct_max_idx)
-    sector_idx = inode->data.sectors[idx];
+    sector = inode->data.sectors[idx];
   else if (idx < indirect_max_idx)
     {
       indirect_disk_inode = calloc (1, sizeof *indirect_disk_inode);
 
       idx -= direct_max_idx;
-      sector_idx = inode->data.indirect_sectors[idx < TOTAL_SECTORS ? 0 : 1];
+      sector = inode->data.indirect_sectors[idx < TOTAL_SECTORS ? 0 : 1];
 
-      cache_read (fs_device, sector_idx, indirect_disk_inode);
+      cache_read (fs_device, sector, indirect_disk_inode);
 
       ASSERT (indirect_disk_inode->magic == INODE_FILE_MAGIC || indirect_disk_inode->magic == INODE_DIR_MAGIC);
 
       if (idx >= TOTAL_SECTORS)
         idx -= TOTAL_SECTORS;
 
-      sector_idx = indirect_disk_inode->sectors[idx];
+      sector = indirect_disk_inode->sectors[idx];
 
       free (indirect_disk_inode);
     }
   else
-    sector_idx = -1;
+    sector = -1;
 
-  return sector_idx;
+  return sector;
 }
 
 /* List of open inodes, so that opening a single inode twice
