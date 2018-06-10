@@ -71,24 +71,21 @@ byte_to_sector (struct inode *inode, off_t pos, size_t size, bool is_write)
     return -1;
 
   off_t idx = pos / BLOCK_SECTOR_SIZE;
-
-  /*
-  TODO: update required for supporting indirect & double_indirect
   size_t oft = pos % BLOCK_SECTOR_SIZE;
 
-  if (is_write && pos == inode->data.length && oft == 0)
+  // TODO: update required for supporting indirect & double_indirect
+  if (is_write && pos == inode->data.length)
     {
-      ASSERT (false);
-      if (size < BLOCK_SECTOR_SIZE)
-        inode->data.length += size;
-      else
-        inode->data.length += BLOCK_SECTOR_SIZE;
+      size_t max_size = BLOCK_SECTOR_SIZE - oft;
+      inode->data.length += size < max_size ? size : max_size;
 
-      free_map_allocate (1, &inode->data.sectors[idx]);
+      ASSERT (idx < DIRECT_SECTORS);
+
+      if (oft == 0)
+        free_map_allocate (1, &inode->data.sectors[idx]);
 
       cache_write (fs_device, inode->sector, &inode->data);
     }
-  */
 
   off_t direct_max_idx = DIRECT_SECTORS;
   off_t indirect_max_idx = direct_max_idx + INDIRECT_SECTORS * TOTAL_SECTORS;
