@@ -58,6 +58,62 @@ struct inode
     struct inode_disk data;             /* Inode content. */
   };
 
+static bool
+fill_inode_disk_sector (struct inode *inode, off_t idx, bool fill_before)
+{
+  static char zeros[BLOCK_SECTOR_SIZE];
+  struct inode_disk *disk_inode = &inode->data;
+
+  off_t direct_max_idx = DIRECT_SECTORS;
+  off_t indirect_max_idx = direct_max_idx + INDIRECT_SECTORS * TOTAL_SECTORS;
+
+  off_t indirect_idx = (idx - direct_max_idx) / TOTAL_SECTORS;
+  off_t indirect_sector_idx = (idx - direct_max_idx) % TOTAL_SECTORS;
+
+  if (idx < direct_max_idx)
+    {
+      if (disk_inode->sectors[idx] > 0)
+        return false;
+
+      free_map_allocate (1, &disk_inode->sectors[idx]);
+      cache_write (fs_device, inode->sector, disk_inode);
+    }
+  else if (idx < indirect_max_idx)
+    {
+      struct indirect_inode_disk *indirect_disk_inode;
+      indirect_disk_inode = calloc (1, sizeof *indirect_disk_inode);
+
+      if (disk_inode->indirect_sectors[indirect_idx] == 0)
+        {
+          indirect_disk_inode->magic = INODE_FILE_MAGIC;
+
+          free_map_allocate (1, &disk_inode->indirect_sectors[indirect_idx]);
+          cache_write (fs_device, disk_inode->indirect_sectors[indirect_idx], indirect_disk_inode);
+        }
+
+      cache_read (fs_device, disk_inode->indirect_sectors[indirect_idx], indirect_disk_inode);
+
+      ASSERT (indirect_disk_inode->magic == INODE_FILE_MAGIC);
+
+      if (indirect_disk_inode->sectors[indirect_sector_idx] == 0)
+        {
+          free_map_allocate (1, &indirect_disk_inode->sectors[indirect_sector_idx]);
+          cache_write (fs_device, indirect_disk_inode->sectors[indirect_sector_idx], zeros);
+          cache_write (fs_device, disk_inode->indirect_sectors[indirect_idx], indirect_disk_inode);
+        }
+      else
+        return false;
+    }
+
+  while (fill_before && --idx > 0)
+  {
+    if (!fill_inode_disk_sector (inode, idx, false))
+      break;
+  }
+
+  return true;
+}
+
 /* Returns the block device sector that contains byte offset POS
    within INODE.
    Returns -1 if INODE does not contain data for a byte at offset
@@ -67,7 +123,7 @@ byte_to_sector (struct inode *inode, off_t pos, size_t size, bool is_write)
 {
   ASSERT (inode != NULL);
 
-  if (pos > inode->data.length || (!is_write && pos == inode->data.length))
+  if (!is_write && pos >= inode->data.length)
     return -1;
 
   off_t direct_max_idx = DIRECT_SECTORS;
@@ -78,43 +134,15 @@ byte_to_sector (struct inode *inode, off_t pos, size_t size, bool is_write)
   off_t idx = pos / BLOCK_SECTOR_SIZE;
   size_t oft = pos % BLOCK_SECTOR_SIZE;
 
-  off_t indirect_idx = (idx - direct_max_idx) / TOTAL_SECTORS;
-  off_t indirect_sector_idx = (idx - direct_max_idx) & TOTAL_SECTORS;
-
   // TODO: update required for supporting indirect & double_indirect
-  if (is_write && pos == inode->data.length)
+  if (is_write && pos >= inode->data.length)
     {
-      static char zeros[BLOCK_SECTOR_SIZE];
       size_t max_size = BLOCK_SECTOR_SIZE - oft;
-      inode->data.length += size < max_size ? size : max_size;
+      inode->data.length = pos + (size < max_size ? size : max_size);
 
       ASSERT (idx < DIRECT_SECTORS + TOTAL_SECTORS * INDIRECT_SECTORS);
 
-      if (oft == 0)
-        {
-          if (idx < direct_max_idx)
-            free_map_allocate (1, &inode->data.sectors[idx]);
-          else if (idx < indirect_max_idx)
-            {
-              indirect_disk_inode = calloc (1, sizeof *indirect_disk_inode);
-
-              if (indirect_sector_idx == 0) // Create new indirect_disk_inode
-                {
-                  indirect_disk_inode->magic = INODE_FILE_MAGIC;
-                  free_map_allocate (1, &inode->data.indirect_sectors[indirect_idx]);
-
-                  cache_write (fs_device, inode->data.indirect_sectors[indirect_idx], zeros);
-                }
-              else // Load existing
-                cache_read (fs_device, inode->data.indirect_sectors[indirect_idx], indirect_disk_inode);
-
-              ASSERT (indirect_disk_inode->magic == INODE_FILE_MAGIC);
-
-              free_map_allocate (1, &indirect_disk_inode->sectors[indirect_sector_idx]);
-              cache_write (fs_device, indirect_disk_inode->sectors[indirect_sector_idx], zeros);
-              cache_write (fs_device, inode->data.indirect_sectors[indirect_idx], indirect_disk_inode);
-            }
-        }
+      fill_inode_disk_sector (inode, idx, true);
 
       cache_write (fs_device, inode->sector, &inode->data);
     }
@@ -130,7 +158,7 @@ byte_to_sector (struct inode *inode, off_t pos, size_t size, bool is_write)
 
       cache_read (fs_device, sector, indirect_disk_inode);
 
-      ASSERT (indirect_disk_inode->magic == INODE_FILE_MAGIC || indirect_disk_inode->magic == INODE_DIR_MAGIC);
+      ASSERT (indirect_disk_inode->magic == INODE_FILE_MAGIC);
 
       if (idx >= TOTAL_SECTORS)
         idx -= TOTAL_SECTORS;
