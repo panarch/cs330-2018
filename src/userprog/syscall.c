@@ -439,6 +439,7 @@ syscall_mkdir (struct intr_frame *f)
 {
   int *esp = f->esp;
   char *dirname = (char *)*(esp + 1);
+  bool success = false;
 
   if (!dirname || strlen (dirname) == 0)
   {
@@ -448,11 +449,11 @@ syscall_mkdir (struct intr_frame *f)
 
   syscall_file_lock_acquire ();
 
-  filesys_mkdir (dirname);
+  success = filesys_mkdir (dirname);
 
   syscall_file_lock_release ();
 
-  f->eax = true;
+  f->eax = success;
 }
 
 static void
