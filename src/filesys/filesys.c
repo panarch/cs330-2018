@@ -83,11 +83,12 @@ filesys_open (const char *name)
   struct dir *dir = extract_dir (name, &filename);
   struct inode *inode = NULL;
 
-  ASSERT (dir != NULL);
+  if (!dir)
+    return NULL;
+
   ASSERT (filename != NULL);
 
-  if (dir != NULL)
-    dir_lookup (dir, filename, &inode);
+  dir_lookup (dir, filename, &inode);
 
   struct thread *cur = thread_current ();
   if (dir != cur->dir)
@@ -103,9 +104,14 @@ filesys_open (const char *name)
 bool
 filesys_remove (const char *name) 
 {
-  struct dir *dir = dir_open_root ();
-  bool success = dir != NULL && dir_remove (dir, name);
-  dir_close (dir); 
+  char *filename = NULL;
+  struct dir *dir = extract_dir (name, &filename);
+  struct thread *cur = thread_current ();
+
+  bool success = dir != NULL && dir_remove (dir, filename);
+
+  if (dir != cur->dir)
+    dir_close (dir);
 
   return success;
 }
@@ -179,6 +185,9 @@ extract_dir (const char *_name, char **filename)
           dir_close (dir);
 
         dir = dir_open (inode);
+
+        if (!dir)
+          return NULL;
       }
 
     prev_token = token;
