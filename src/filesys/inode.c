@@ -52,10 +52,9 @@ struct inode
   };
 
 static bool
-fill_inode_disk_sector (struct inode *inode, off_t idx, bool fill_before)
+fill_inode_disk_sector (struct inode_disk *disk_inode, off_t idx, bool fill_before)
 {
   static char zeros[BLOCK_SECTOR_SIZE];
-  struct inode_disk *disk_inode = &inode->data;
 
   off_t direct_max_idx = DIRECT_SECTORS;
   off_t indirect_max_idx = direct_max_idx + INDIRECT_SECTORS * TOTAL_SECTORS;
@@ -70,7 +69,6 @@ fill_inode_disk_sector (struct inode *inode, off_t idx, bool fill_before)
 
       free_map_allocate (1, &disk_inode->sectors[idx]);
       cache_write (fs_device, disk_inode->sectors[idx], zeros);
-      cache_write (fs_device, inode->sector, disk_inode);
     }
   else if (idx < indirect_max_idx)
     {
@@ -105,7 +103,7 @@ fill_inode_disk_sector (struct inode *inode, off_t idx, bool fill_before)
 
   while (fill_before && idx-- > 0)
   {
-    if (!fill_inode_disk_sector (inode, idx, false))
+    if (!fill_inode_disk_sector (disk_inode, idx, false))
       break;
   }
 
@@ -139,7 +137,7 @@ byte_to_sector (struct inode *inode, off_t pos, size_t size, bool is_write)
 
       ASSERT (idx < DIRECT_SECTORS + TOTAL_SECTORS * INDIRECT_SECTORS);
 
-      fill_inode_disk_sector (inode, idx, true);
+      fill_inode_disk_sector (&inode->data, idx, true);
 
       cache_write (fs_device, inode->sector, &inode->data);
     }
@@ -207,43 +205,7 @@ inode_create (block_sector_t sector, off_t length, bool is_dir)
       disk_inode->length = length;
       disk_inode->magic = is_dir ? INODE_DIR_MAGIC : INODE_FILE_MAGIC;
 
-      static char zeros[BLOCK_SECTOR_SIZE];
-      size_t i, j;
-      size_t min_direct_sectors = DIRECT_SECTORS < sectors ? DIRECT_SECTORS : sectors;
-
-      for (i = 0; i < min_direct_sectors; i++)
-        {
-          free_map_allocate (1, &disk_inode->sectors[i]);
-          cache_write (fs_device, disk_inode->sectors[i], zeros);
-        }
-
-      if (sectors > DIRECT_SECTORS)
-        {
-          sectors -= DIRECT_SECTORS;
-
-          size_t min_indirect_sectors = sectors / TOTAL_SECTORS + 1;
-
-          for (i = 0; i < min_indirect_sectors; i++)
-            {
-              struct indirect_inode_disk *indirect_disk_inode = calloc (1, sizeof *indirect_disk_inode);
-              indirect_disk_inode->magic = INODE_FILE_MAGIC;
-
-              free_map_allocate (1, &disk_inode->indirect_sectors[i]);
-
-              size_t remain_sectors = sectors - TOTAL_SECTORS * i;
-              if (remain_sectors > TOTAL_SECTORS)
-                remain_sectors = TOTAL_SECTORS;
-
-              for (j = 0; j < remain_sectors; j++)
-                {
-                  free_map_allocate (1, &indirect_disk_inode->sectors[j]);
-                  cache_write (fs_device, indirect_disk_inode->sectors[j], zeros);
-                }
-
-              cache_write (fs_device, disk_inode->indirect_sectors[i], indirect_disk_inode);
-              free (indirect_disk_inode);
-            }
-        }
+      fill_inode_disk_sector (disk_inode, sectors - 1, true);
 
       block_write (fs_device, sector, disk_inode);
       success = true;
