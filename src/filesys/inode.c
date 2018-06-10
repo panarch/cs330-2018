@@ -101,9 +101,13 @@ fill_inode_disk_sector (struct inode *inode, off_t idx, bool fill_before)
           free_map_allocate (1, &indirect_disk_inode->sectors[indirect_sector_idx]);
           cache_write (fs_device, indirect_disk_inode->sectors[indirect_sector_idx], zeros);
           cache_write (fs_device, disk_inode->indirect_sectors[indirect_idx], indirect_disk_inode);
+          free (indirect_disk_inode);
         }
       else
-        return false;
+        {
+          free (indirect_disk_inode);
+          return false;
+        }
     }
 
   while (fill_before && idx-- > 0)
