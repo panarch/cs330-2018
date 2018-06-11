@@ -2,10 +2,15 @@
 #include <bitmap.h>
 #include <string.h>
 #include <stdio.h>
+#include "devices/timer.h"
 #include "threads/synch.h"
+#include "threads/thread.h"
+#include "threads/malloc.h"
 #include "filesys/filesys.h"
 
 #define CACHE_MAX 64
+
+static void read_ahead_async (void *aux);
 
 static char cache_entries[CACHE_MAX * BLOCK_SECTOR_SIZE];
 static block_sector_t cache_sectors[CACHE_MAX];
@@ -17,6 +22,7 @@ static struct bitmap *dirty_map;
 static size_t pop_victim (void);
 static size_t find_cache_idx (block_sector_t sector);
 
+static block_sector_t read_ahead_sector;
 static size_t victim_idx;
 
 void
@@ -28,16 +34,13 @@ cache_init (void)
   victim_idx = 0;
 
   lock_init (&lock);
+
+  thread_create ("read_ahead_async", PRI_DEFAULT, read_ahead_async, NULL);
 }
 
-void
-cache_read (struct block *block, block_sector_t sector, void *buffer)
+static size_t
+find_and_cache_read (block_sector_t sector)
 {
-  // block_read (block, sector, buffer);
-  ASSERT (block == fs_device);
-
-  lock_acquire (&lock);
-
   size_t cache_idx = find_cache_idx (sector);
   if (cache_idx == CACHE_MAX)
     {
@@ -48,15 +51,30 @@ cache_read (struct block *block, block_sector_t sector, void *buffer)
       else
         ASSERT (!bitmap_test (dirty_map, cache_idx));
 
-      block_read (block, sector, &cache_entries[cache_idx * BLOCK_SECTOR_SIZE]);
+      block_read (fs_device, sector, &cache_entries[cache_idx * BLOCK_SECTOR_SIZE]);
       cache_sectors[cache_idx] = sector;
     }
+
+  return cache_idx;
+}
+
+void
+cache_read (struct block *block, block_sector_t sector, void *buffer)
+{
+  // block_read (block, sector, buffer);
+  ASSERT (block == fs_device);
+
+  lock_acquire (&lock);
+
+  size_t cache_idx = find_and_cache_read (sector);
 
   ASSERT (cache_idx < CACHE_MAX);
 
   memcpy (buffer, &cache_entries[cache_idx * BLOCK_SECTOR_SIZE], BLOCK_SECTOR_SIZE);
 
   lock_release (&lock);
+
+  read_ahead_sector = sector + 1;
 }
 
 void
@@ -104,6 +122,8 @@ cache_flush (block_sector_t sector)
 void
 cache_flush_all ()
 {
+  read_ahead_sector = CACHE_MAX;
+
   int i;
 
   for (i = 0; i < CACHE_MAX; i++)
@@ -150,5 +170,26 @@ pop_victim ()
   incr_victim_idx ();
 
   return cache_idx;
+}
+
+static void
+read_ahead_async (void *aux UNUSED)
+{
+  block_sector_t sector;
+
+  while (true)
+    {
+      sector = read_ahead_sector;
+
+      if (sector == CACHE_MAX)
+        timer_msleep (10);
+
+      lock_acquire (&lock);
+
+      find_and_cache_read (sector);
+      read_ahead_sector = CACHE_MAX;
+
+      lock_release (&lock);
+    }
 }
 
