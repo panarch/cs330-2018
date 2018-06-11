@@ -290,14 +290,36 @@ inode_close (struct inode *inode)
       /* Deallocate blocks if removed. */
       if (inode->removed) 
         {
-          // cache_flush (inode->sector);
+          cache_flush (inode->sector);
           free_map_release (inode->sector, 1);
           size_t i;
           size_t cnt = bytes_to_sectors (inode->data.length);
-          for (i = 0; i < cnt; i++)
+          size_t direct_cnt = cnt < DIRECT_SECTORS ? cnt : DIRECT_SECTORS;
+          size_t indirect_cnt = cnt > DIRECT_SECTORS ? (cnt - DIRECT_SECTORS) / TOTAL_SECTORS : 0;
+
+          for (i = 0; i < direct_cnt; i++)
             {
-              // cache_flush (inode->data.sectors[i]);
+              cache_flush (inode->data.sectors[i]);
               free_map_release (inode->data.sectors[i], 1);
+            }
+
+          for (i = 0; i < indirect_cnt; i++)
+            {
+              size_t j;
+              size_t indirect_sector_cnt = (cnt - direct_cnt) % TOTAL_SECTORS - i * TOTAL_SECTORS;
+              struct indirect_inode_disk *indirect_disk_inode;
+              indirect_disk_inode = calloc (1, sizeof *indirect_disk_inode);
+              cache_read (fs_device, inode->data.indirect_sectors[i], indirect_disk_inode);
+
+              for (j = 0; j < indirect_sector_cnt; j++)
+                {
+                  cache_flush (indirect_disk_inode->sectors[j]);
+                  free_map_release (indirect_disk_inode->sectors[j], 1);
+                }
+
+              cache_flush (inode->data.indirect_sectors[i]);
+              free_map_release (inode->data.indirect_sectors[i], 1);
+              free (indirect_disk_inode);
             }
         }
 

@@ -33,6 +33,9 @@ cache_init (void)
 void
 cache_read (struct block *block, block_sector_t sector, void *buffer)
 {
+  // block_read (block, sector, buffer);
+  ASSERT (block == fs_device);
+
   lock_acquire (&lock);
 
   size_t cache_idx = find_cache_idx (sector);
@@ -59,6 +62,8 @@ cache_read (struct block *block, block_sector_t sector, void *buffer)
 void
 cache_write (struct block *block, block_sector_t sector, const void *buffer)
 {
+  // block_write (block, sector, buffer);
+  ASSERT (block == fs_device);
   ASSERT (block != NULL);
 
   lock_acquire (&lock);
@@ -82,6 +87,27 @@ cache_write (struct block *block, block_sector_t sector, const void *buffer)
   memcpy (&cache_entries[cache_idx * BLOCK_SECTOR_SIZE], buffer, BLOCK_SECTOR_SIZE);
 
   lock_release (&lock);
+}
+
+void
+cache_flush (block_sector_t sector)
+{
+  size_t cache_idx = find_cache_idx (sector);
+
+  if (cache_idx < CACHE_MAX)
+    {
+      victim_idx = cache_idx;
+      pop_victim ();
+    }
+}
+
+void
+cache_flush_all ()
+{
+  int i;
+
+  for (i = 0; i < CACHE_MAX; i++)
+    pop_victim ();
 }
 
 static size_t
@@ -110,8 +136,6 @@ incr_victim_idx (void)
 static size_t
 pop_victim ()
 {
-  ASSERT (bitmap_test (used_map, victim_idx) == true);
-
   bool is_dirty = bitmap_test (dirty_map, victim_idx);
   if (is_dirty)
     {
