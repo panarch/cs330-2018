@@ -1,4 +1,4 @@
-TOTAL TESTING SCORE: 85.6%
+TOTAL TESTING SCORE: 107.4%
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -6,16 +6,16 @@ SUMMARY BY TEST SET
 
 Test Set                                      Pts Max  % Ttl  % Max
 --------------------------------------------- --- --- ------ ------
-tests/filesys/extended/Rubric.functionality    29/ 34  25.6%/ 30.0%
+tests/filesys/extended/Rubric.functionality    34/ 34  30.0%/ 30.0%
 tests/filesys/extended/Rubric.robustness       10/ 10  15.0%/ 15.0%
-tests/filesys/extended/Rubric.persistence       0/ 23   0.0%/ 20.0%
+tests/filesys/extended/Rubric.persistence      20/ 23  17.4%/ 20.0%
 tests/filesys/base/Rubric                      30/ 30  20.0%/ 20.0%
 tests/userprog/Rubric.functionality           108/108  10.0%/ 10.0%
 tests/userprog/Rubric.robustness               88/ 88   5.0%/  5.0%
 tests/vm/Rubric.functionality                  55/ 55   8.0%/  8.0%
 tests/vm/Rubric.robustness                     28/ 28   2.0%/  2.0%
 --------------------------------------------- --- --- ------ ------
-Total                                                  85.6%/110.0%
+Total                                                 107.4%/110.0%
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -29,7 +29,7 @@ Functionality of extended file system (tests/filesys/extended/Rubric.functionali
 	     1/ 1 tests/filesys/extended/dir-rmdir
 	     3/ 3 tests/filesys/extended/dir-rm-tree
 
-	  ** 0/ 5 tests/filesys/extended/dir-vine
+	     5/ 5 tests/filesys/extended/dir-vine
 
 	- Test file growth.
 	     1/ 1 tests/filesys/extended/grow-create
@@ -49,8 +49,8 @@ Functionality of extended file system (tests/filesys/extended/Rubric.functionali
 	     5/ 5 tests/filesys/extended/syn-rw
 
 	- Section summary.
-	     15/ 16 tests passed
-	     29/ 34 points subtotal
+	     16/ 16 tests passed
+	     34/ 34 points subtotal
 
 Robustness of file system (tests/filesys/extended/Rubric.robustness):
 	     1/ 1 tests/filesys/extended/dir-empty-name
@@ -67,33 +67,33 @@ Robustness of file system (tests/filesys/extended/Rubric.robustness):
 	     10/ 10 points subtotal
 
 Persistence of file system (tests/filesys/extended/Rubric.persistence):
-	  ** 0/ 1 tests/filesys/extended/dir-empty-name-persistence
+	     1/ 1 tests/filesys/extended/dir-empty-name-persistence
 	  ** 0/ 1 tests/filesys/extended/dir-mk-tree-persistence
-	  ** 0/ 1 tests/filesys/extended/dir-mkdir-persistence
-	  ** 0/ 1 tests/filesys/extended/dir-open-persistence
-	  ** 0/ 1 tests/filesys/extended/dir-over-file-persistence
-	  ** 0/ 1 tests/filesys/extended/dir-rm-cwd-persistence
-	  ** 0/ 1 tests/filesys/extended/dir-rm-parent-persistence
-	  ** 0/ 1 tests/filesys/extended/dir-rm-root-persistence
-	  ** 0/ 1 tests/filesys/extended/dir-rm-tree-persistence
-	  ** 0/ 1 tests/filesys/extended/dir-rmdir-persistence
-	  ** 0/ 1 tests/filesys/extended/dir-under-file-persistence
-	  ** 0/ 1 tests/filesys/extended/dir-vine-persistence
-	  ** 0/ 1 tests/filesys/extended/grow-create-persistence
-	  ** 0/ 1 tests/filesys/extended/grow-dir-lg-persistence
-	  ** 0/ 1 tests/filesys/extended/grow-file-size-persistence
-	  ** 0/ 1 tests/filesys/extended/grow-root-lg-persistence
-	  ** 0/ 1 tests/filesys/extended/grow-root-sm-persistence
+	     1/ 1 tests/filesys/extended/dir-mkdir-persistence
+	     1/ 1 tests/filesys/extended/dir-open-persistence
+	     1/ 1 tests/filesys/extended/dir-over-file-persistence
+	     1/ 1 tests/filesys/extended/dir-rm-cwd-persistence
+	     1/ 1 tests/filesys/extended/dir-rm-parent-persistence
+	     1/ 1 tests/filesys/extended/dir-rm-root-persistence
+	     1/ 1 tests/filesys/extended/dir-rm-tree-persistence
+	     1/ 1 tests/filesys/extended/dir-rmdir-persistence
+	     1/ 1 tests/filesys/extended/dir-under-file-persistence
+	     1/ 1 tests/filesys/extended/dir-vine-persistence
+	     1/ 1 tests/filesys/extended/grow-create-persistence
+	     1/ 1 tests/filesys/extended/grow-dir-lg-persistence
+	     1/ 1 tests/filesys/extended/grow-file-size-persistence
+	     1/ 1 tests/filesys/extended/grow-root-lg-persistence
+	     1/ 1 tests/filesys/extended/grow-root-sm-persistence
 	  ** 0/ 1 tests/filesys/extended/grow-seq-lg-persistence
-	  ** 0/ 1 tests/filesys/extended/grow-seq-sm-persistence
+	     1/ 1 tests/filesys/extended/grow-seq-sm-persistence
 	  ** 0/ 1 tests/filesys/extended/grow-sparse-persistence
-	  ** 0/ 1 tests/filesys/extended/grow-tell-persistence
-	  ** 0/ 1 tests/filesys/extended/grow-two-files-persistence
-	  ** 0/ 1 tests/filesys/extended/syn-rw-persistence
+	     1/ 1 tests/filesys/extended/grow-tell-persistence
+	     1/ 1 tests/filesys/extended/grow-two-files-persistence
+	     1/ 1 tests/filesys/extended/syn-rw-persistence
 
 	- Section summary.
-	      0/ 23 tests passed
-	      0/ 23 points subtotal
+	     20/ 23 tests passed
+	     20/ 23 points subtotal
 
 Functionality of base file system (tests/filesys/base/Rubric):
 	- Test basic support for small files.
@@ -293,140 +293,37 @@ Robustness of virtual memory subsystem (tests/vm/Rubric.robustness):
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-DETAILS OF tests/filesys/extended/dir-vine FAILURE:
-
-run: readdir "." (should fail): FAILED
-
-OUTPUT FROM tests/filesys/extended/dir-vine:
-
-Copying tests/filesys/extended/dir-vine to scratch partition...
-Copying tests/filesys/extended/tar to scratch partition...
-qemu -hda /tmp/IcAWfD9w1N.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q -f extract run dir-vine
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  419,020,800 loops/s.
-hda: 9,072 sectors (4 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 243 sectors (121 kB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Formatting file system...done.
-Boot complete.
-Extracting ustar archive from scratch device into file system...
-Putting 'dir-vine' into the file system...
-Putting 'tar' into the file system...
-Erasing ustar archive...
-Executing 'dir-vine':
-(dir-vine) begin
-(dir-vine) creating many levels of files and directories...
-(dir-vine) readdir "." (should fail): FAILED
-dir-vine: exit(1)
-Execution of 'dir-vine' complete.
-Timer: 81 ticks
-Thread: 4 idle ticks, 76 kernel ticks, 1 user ticks
-hdb1 (filesys): 39 reads, 341 writes
-hda2 (scratch): 242 reads, 2 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1167 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/dir-empty-name-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/dir-empty-name-persistence:
-
-qemu -hda /tmp/slJpRqgXGv.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  314,163,200 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 89 ticks
-Thread: 5 idle ticks, 73 kernel ticks, 11 user ticks
-hdb1 (filesys): 449 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/dir-empty-name.tar out of /tmp/slJpRqgXGv.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
 DETAILS OF tests/filesys/extended/dir-mk-tree-persistence FAILURE:
 
 Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
+Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e4f8 0xc002e776 0xc002db46 0xc002dd23 0xc002de69 0xc002d160 0xc002bec8 0xc0021ccd 0xc0021dff 0x804ab29 0x80480c1 0x8048131 0x80481c7 0x8048315 0x8048315 0x8048315 0x8048315 0x804846c 0x8048c22
 Translation of call stack:
 0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
 0xc00248dd: check_sector (...../../devices/block.c:114)
 0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
+0xc002e4f8: pop_victim (...../../filesys/cache.c:146)
+0xc002e776: cache_read (.../../../filesys/cache.c:47)
+0xc002db46: fill_inode_disk_sector (.../../../filesys/inode.c:91)
+0xc002dd23: byte_to_sector (...../../filesys/inode.c:145)
+0xc002de69: inode_write_at (...../../filesys/inode.c:414)
+0xc002d160: file_write (.../../../filesys/file.c:108)
+0xc002bec8: syscall_write (...../userprog/syscall.c:339)
 0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
 0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
+0x0804ab29: (unknown)
+0x080480c1: (unknown)
+0x08048131: (unknown)
+0x080481c7: (unknown)
+0x08048315: (unknown)
+0x08048315: (unknown)
+0x08048315: (unknown)
 0x08048315: (unknown)
 0x0804846c: (unknown)
 0x08048c22: (unknown)
 
 OUTPUT FROM tests/filesys/extended/dir-mk-tree-persistence:
 
-qemu -hda /tmp/LepePZ9WBg.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/2nBoPH_Nmf.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
@@ -447,945 +344,37 @@ Boot complete.
 Executing 'tar fs.tar /':
 Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
 
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
+Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e4f8 0xc002e776 0xc002db46 0xc002dd23 0xc002de69 0xc002d160 0xc002bec8 0xc0021ccd 0xc0021dff 0x804ab29 0x80480c1 0x8048131 0x80481c7 0x8048315 0x8048315 0x8048315 0x8048315 0x804846c 0x8048c22.
 The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.
-Timer: 90 ticks
-Thread: 6 idle ticks, 73 kernel ticks, 11 user ticks
-hdb1 (filesys): 451 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/dir-mk-tree.tar out of /tmp/LepePZ9WBg.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/dir-mkdir-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/dir-mkdir-persistence:
-
-qemu -hda /tmp/qNB2tq0bLf.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+Kernel PANIC recursion at ../../devices/block.c:112 in check_sector().
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
 Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  419,020,800 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 89 ticks
-Thread: 6 idle ticks, 72 kernel ticks, 11 user ticks
-hdb1 (filesys): 449 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/dir-mkdir.tar out of /tmp/qNB2tq0bLf.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/dir-open-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/dir-open-persistence:
-
-qemu -hda /tmp/I6xCt1jlkI.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  419,020,800 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 88 ticks
-Thread: 3 idle ticks, 72 kernel ticks, 13 user ticks
-hdb1 (filesys): 449 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/dir-open.tar out of /tmp/I6xCt1jlkI.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/dir-over-file-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/dir-over-file-persistence:
-
-qemu -hda /tmp/Wfa012FZet.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  419,020,800 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 88 ticks
-Thread: 2 idle ticks, 72 kernel ticks, 14 user ticks
-hdb1 (filesys): 449 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/dir-over-file.tar out of /tmp/Wfa012FZet.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/dir-rm-cwd-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/dir-rm-cwd-persistence:
-
-qemu -hda /tmp/BUlliqL1K_.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  314,163,200 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 89 ticks
-Thread: 7 idle ticks, 73 kernel ticks, 9 user ticks
-hdb1 (filesys): 451 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1255 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/dir-rm-cwd.tar out of /tmp/BUlliqL1K_.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/dir-rm-parent-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/dir-rm-parent-persistence:
-
-qemu -hda /tmp/EeuNoG1yDw.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  419,020,800 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 90 ticks
-Thread: 1 idle ticks, 73 kernel ticks, 16 user ticks
-hdb1 (filesys): 449 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/dir-rm-parent.tar out of /tmp/EeuNoG1yDw.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/dir-rm-root-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/dir-rm-root-persistence:
-
-qemu -hda /tmp/WL7EF2pqv7.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  419,020,800 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 88 ticks
-Thread: 4 idle ticks, 72 kernel ticks, 12 user ticks
-hdb1 (filesys): 449 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/dir-rm-root.tar out of /tmp/WL7EF2pqv7.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/dir-rm-tree-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/dir-rm-tree-persistence:
-
-qemu -hda /tmp/6EQJ4ShctD.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  314,163,200 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 90 ticks
-Thread: 5 idle ticks, 73 kernel ticks, 12 user ticks
-hdb1 (filesys): 450 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/dir-rm-tree.tar out of /tmp/6EQJ4ShctD.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/dir-rmdir-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/dir-rmdir-persistence:
-
-qemu -hda /tmp/9X1Xxo_foR.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  419,020,800 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 88 ticks
-Thread: 1 idle ticks, 72 kernel ticks, 15 user ticks
-hdb1 (filesys): 449 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/dir-rmdir.tar out of /tmp/9X1Xxo_foR.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/dir-under-file-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/dir-under-file-persistence:
-
-qemu -hda /tmp/HHJ8aEhZyL.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  419,020,800 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 89 ticks
-Thread: 3 idle ticks, 73 kernel ticks, 13 user ticks
-hdb1 (filesys): 449 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/dir-under-file.tar out of /tmp/HHJ8aEhZyL.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/dir-vine-persistence FAILURE:
-
-Prerequisite test tests/filesys/extended/dir-vine failed.
-
-OUTPUT FROM tests/filesys/extended/dir-vine-persistence:
-
-qemu -hda /tmp/v6J7of6Lkn.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  419,020,800 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 89 ticks
-Thread: 4 idle ticks, 72 kernel ticks, 13 user ticks
-hdb1 (filesys): 449 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/dir-vine.tar out of /tmp/v6J7of6Lkn.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/grow-create-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/grow-create-persistence:
-
-qemu -hda /tmp/Aw0E9OFSvM.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  314,163,200 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 89 ticks
-Thread: 3 idle ticks, 73 kernel ticks, 13 user ticks
-hdb1 (filesys): 449 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/grow-create.tar out of /tmp/Aw0E9OFSvM.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/grow-dir-lg-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/grow-dir-lg-persistence:
-
-qemu -hda /tmp/Rgr_RJlrYD.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  314,163,200 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 89 ticks
-Thread: 4 idle ticks, 73 kernel ticks, 12 user ticks
-hdb1 (filesys): 449 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/grow-dir-lg.tar out of /tmp/Rgr_RJlrYD.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/grow-file-size-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/grow-file-size-persistence:
-
-qemu -hda /tmp/EoDgcRqnnL.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  314,163,200 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 89 ticks
-Thread: 4 idle ticks, 73 kernel ticks, 12 user ticks
-hdb1 (filesys): 449 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/grow-file-size.tar out of /tmp/EoDgcRqnnL.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/grow-root-lg-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/grow-root-lg-persistence:
-
-qemu -hda /tmp/b_f1rFnt5j.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  314,163,200 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 89 ticks
-Thread: 2 idle ticks, 73 kernel ticks, 14 user ticks
-hdb1 (filesys): 450 reads, 418 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/grow-root-lg.tar out of /tmp/b_f1rFnt5j.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/grow-root-sm-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/grow-root-sm-persistence:
-
-qemu -hda /tmp/ODtcf1g6nk.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  419,020,800 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 90 ticks
-Thread: 2 idle ticks, 72 kernel ticks, 16 user ticks
-hdb1 (filesys): 449 reads, 418 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/grow-root-sm.tar out of /tmp/ODtcf1g6nk.dsk...
+[...details of reboot(s) omitted...]
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 DETAILS OF tests/filesys/extended/grow-seq-lg-persistence FAILURE:
 
 Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
+Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e4f8 0xc002e776 0xc002e050 0xc002d1d8 0xc002ea3c 0xc0020970
 Translation of call stack:
 0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
 0xc00248dd: check_sector (...../../devices/block.c:114)
 0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
+0xc002e4f8: pop_victim (...../../filesys/cache.c:146)
+0xc002e776: cache_read (.../../../filesys/cache.c:47)
+0xc002e050: inode_read_at (...../../filesys/inode.c:369)
+0xc002d1d8: file_read (...d/../../filesys/file.c:80)
+0xc002ea3c: fsutil_append (..../../filesys/fsutil.c:206)
+0xc0020970: run_actions (.../../../threads/init.c:346)
 
 OUTPUT FROM tests/filesys/extended/grow-seq-lg-persistence:
 
-qemu -hda /tmp/m4kNjkWh2G.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/lkNoQytOjP.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
@@ -1404,110 +393,42 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
+tar: exit(0)
+Execution of 'tar fs.tar /' complete.
+Appending 'fs.tar' to ustar archive on scratch device...
 Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
 
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
+Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e4f8 0xc002e776 0xc002e050 0xc002d1d8 0xc002ea3c 0xc0020970.
 The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.
-Timer: 90 ticks
-Thread: 1 idle ticks, 73 kernel ticks, 16 user ticks
-hdb1 (filesys): 449 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/grow-seq-lg.tar out of /tmp/m4kNjkWh2G.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/grow-seq-sm-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/grow-seq-sm-persistence:
-
-qemu -hda /tmp/MPJ9G85xLN.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+Kernel PANIC recursion at ../../devices/block.c:112 in check_sector().
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
 Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  419,020,800 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 88 ticks
-Thread: 5 idle ticks, 72 kernel ticks, 11 user ticks
-hdb1 (filesys): 449 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/grow-seq-sm.tar out of /tmp/MPJ9G85xLN.dsk...
+[...details of reboot(s) omitted...]
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 DETAILS OF tests/filesys/extended/grow-sparse-persistence FAILURE:
 
 Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
+Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e4f8 0xc002e776 0xc002e050 0xc002d1d8 0xc002ea3c 0xc0020970
 Translation of call stack:
 0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
 0xc00248dd: check_sector (...../../devices/block.c:114)
 0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
+0xc002e4f8: pop_victim (...../../filesys/cache.c:146)
+0xc002e776: cache_read (.../../../filesys/cache.c:47)
+0xc002e050: inode_read_at (...../../filesys/inode.c:369)
+0xc002d1d8: file_read (...d/../../filesys/file.c:80)
+0xc002ea3c: fsutil_append (..../../filesys/fsutil.c:206)
+0xc0020970: run_actions (.../../../threads/init.c:346)
 
 OUTPUT FROM tests/filesys/extended/grow-sparse-persistence:
 
-qemu -hda /tmp/1mERViyd0w.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+qemu -hda /tmp/Ma1eFOIqpM.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
@@ -1526,202 +447,18 @@ scratch: using hda2
 swap: using hda3
 Boot complete.
 Executing 'tar fs.tar /':
+tar: exit(0)
+Execution of 'tar fs.tar /' complete.
+Appending 'fs.tar' to ustar archive on scratch device...
 Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
 
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
+Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e4f8 0xc002e776 0xc002e050 0xc002d1d8 0xc002ea3c 0xc0020970.
 The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.
-Timer: 90 ticks
-Thread: 4 idle ticks, 73 kernel ticks, 13 user ticks
-hdb1 (filesys): 449 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/grow-sparse.tar out of /tmp/1mERViyd0w.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/grow-tell-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/grow-tell-persistence:
-
-qemu -hda /tmp/EC2Q3zYFKy.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
+Kernel PANIC recursion at ../../devices/block.c:112 in check_sector().
 PiLo hda1
 Loading..........
 Kernel command line: -q run 'tar fs.tar /' append fs.tar
 Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  314,163,200 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 89 ticks
-Thread: 3 idle ticks, 73 kernel ticks, 13 user ticks
-hdb1 (filesys): 449 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/grow-tell.tar out of /tmp/EC2Q3zYFKy.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/grow-two-files-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/grow-two-files-persistence:
-
-qemu -hda /tmp/PTbz8ytMna.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  314,163,200 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 90 ticks
-Thread: 1 idle ticks, 73 kernel ticks, 16 user ticks
-hdb1 (filesys): 449 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/grow-two-files.tar out of /tmp/PTbz8ytMna.dsk...
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-DETAILS OF tests/filesys/extended/syn-rw-persistence FAILURE:
-
-Kernel panic in file system extraction run: PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22
-Translation of call stack:
-0xc0028770: debug_panic (.../../lib/kernel/debug.c:38)
-0xc00248dd: check_sector (...../../devices/block.c:114)
-0xc00248fa: block_write (...../../devices/block.c:137)
-0xc002e2ae: pop_victim (...../../filesys/cache.c:141)
-0xc002e50f: cache_read (.../../../filesys/cache.c:47)
-0xc002df10: inode_read_at (...../../filesys/inode.c:342)
-0xc002d0f8: file_read (...d/../../filesys/file.c:77)
-0xc002be42: syscall_read (...../userprog/syscall.c:304)
-0xc0021ccd: intr_handler (..../threads/interrupt.c:367)
-0xc0021dff: intr_entry (threads/intr-stubs.S:38)
-0x0804ab11: (unknown)
-0x0804820e: (unknown)
-0x08048315: (unknown)
-0x0804846c: (unknown)
-0x08048c22: (unknown)
-
-OUTPUT FROM tests/filesys/extended/syn-rw-persistence:
-
-qemu -hda /tmp/hhsAwN1DKU.dsk -hdb tmp.dsk -m 4 -net none -nographic -monitor null
-PiLo hda1
-Loading..........
-Kernel command line: -q run 'tar fs.tar /' append fs.tar
-Pintos booting with 3,968 kB RAM...
-367 pages available in kernel pool.
-367 pages available in user pool.
-Calibrating timer...  314,163,200 loops/s.
-hda: 11,088 sectors (5 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 163 sectors (81 kB), Pintos OS kernel (20)
-hda2: 2,048 sectors (1 MB), Pintos scratch (22)
-hda3: 8,192 sectors (4 MB), Pintos swap (23)
-hdb: 5,040 sectors (2 MB), model "QM00002", serial "QEMU HARDDISK"
-hdb1: 4,096 sectors (2 MB), Pintos file system (21)
-filesys: using hdb1
-scratch: using hda2
-swap: using hda3
-Boot complete.
-Executing 'tar fs.tar /':
-Kernel PANIC at ../../devices/block.c:112 in check_sector(): Access past end of device hdb1 (sector=3221445432, size=4096)
-
-Call stack: 0xc0028770 0xc00248dd 0xc00248fa 0xc002e2ae 0xc002e50f 0xc002df10 0xc002d0f8 0xc002be42 0xc0021ccd 0xc0021dff 0x804ab11 0x804820e 0x8048315 0x804846c 0x8048c22.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 89 ticks
-Thread: 3 idle ticks, 73 kernel ticks, 13 user ticks
-hdb1 (filesys): 449 reads, 417 writes
-hda2 (scratch): 0 reads, 0 writes
-hda3 (swap): 0 reads, 0 writes
-Console: 1256 characters output
-Keyboard: 0 keys pressed
-Exception: 0 page faults
-Powering off...
-Copying tests/filesys/extended/syn-rw.tar out of /tmp/hhsAwN1DKU.dsk...
+[...details of reboot(s) omitted...]
