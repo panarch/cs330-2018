@@ -149,19 +149,18 @@ byte_to_sector (struct inode *inode, off_t pos, size_t size, bool is_write)
     sector = inode->data.sectors[idx];
   else if (idx < indirect_max_idx)
     {
+      size_t indirect_idx;
       indirect_disk_inode = calloc (1, sizeof *indirect_disk_inode);
 
       idx -= direct_max_idx;
-      sector = inode->data.indirect_sectors[idx / TOTAL_SECTORS];
+      indirect_idx = idx / TOTAL_SECTORS;
+      sector = inode->data.indirect_sectors[indirect_idx];
 
       cache_read (fs_device, sector, indirect_disk_inode);
 
       ASSERT (indirect_disk_inode->magic == INODE_FILE_MAGIC);
 
-      if (idx >= TOTAL_SECTORS)
-        idx -= TOTAL_SECTORS;
-
-      sector = indirect_disk_inode->sectors[idx];
+      sector = indirect_disk_inode->sectors[idx - indirect_idx * TOTAL_SECTORS];
 
       free (indirect_disk_inode);
     }
