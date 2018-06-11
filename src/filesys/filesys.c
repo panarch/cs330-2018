@@ -152,14 +152,19 @@ filesys_mkdir (const char *name)
 
   ASSERT (dir != NULL);
 
-  dir_add (dir, ".", sector);
-  dir_add (dir, "..", inode_get_inumber (dir_get_inode (dir)));
-  dir_add (dir, filename, sector);
+  struct dir *new_dir = dir_open (inode_open (sector));
+
+  bool success = (
+    dir_add (dir, filename, sector) &&
+    dir_add (new_dir, ".", sector) &&
+    dir_add (new_dir, "..", inode_get_inumber (dir_get_inode (dir)))
+  );
 
   if (dir != cur->dir)
     dir_close (dir);
+  dir_close (new_dir);
 
-  return true;
+  return success;
 }
 
 bool
@@ -226,7 +231,7 @@ extract_dir (const char *_name, char **filename)
   for (token = strtok_r (name, "/", &save_ptr); token != NULL;
        token = strtok_r (NULL, "/", &save_ptr))
   {
-    if (prev_token != NULL && strcmp (prev_token, ".") != 0)
+    if (prev_token != NULL && strcmp (prev_token, ".") != 0 && strcmp (prev_token, "..") != 0)
       {
         dir_lookup (dir, prev_token, &inode);
 

@@ -477,6 +477,7 @@ syscall_readdir (struct intr_frame *f)
     }
 
   file_seek (file, dir_tell (dir));
+  dir_close (dir);
 
   f->eax = true;
 }
