@@ -471,3 +471,9 @@ inode_isdir (const struct inode *inode)
 {
   return inode_disk_isdir (&inode->data);
 }
+
+int
+inode_get_open_cnt (const struct inode *inode)
+{
+  return inode->open_cnt;
+}
