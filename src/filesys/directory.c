@@ -213,6 +213,10 @@ dir_remove (struct dir *dir, const char *name)
           dir_close (target_dir);
           goto done;
         }
+
+      /* Check inode is not being used */
+      if (inode_get_open_cnt (inode) > 1)
+        goto done;
     }
 
   /* Erase directory entry. */
