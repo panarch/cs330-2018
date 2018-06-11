@@ -415,23 +415,11 @@ syscall_chdir (struct intr_frame *f)
 
   syscall_file_lock_acquire ();
 
-  struct thread *cur = thread_current ();
-  struct inode *inode;
-
-  ASSERT (cur->dir != NULL);
-
-  dir_lookup (cur->dir, dirname, &inode);
-  dir_close (cur->dir);
-  cur->dir = dir_open (inode);
-
-  if (!cur->dir)
-    {
-      f->eax = false;
-      return;
-    }
+  bool success = filesys_chdir (dirname);
 
   syscall_file_lock_release ();
-  return true;
+
+  f->eax = success;
 }
 
 static void

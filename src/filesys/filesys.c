@@ -152,6 +152,27 @@ filesys_mkdir (const char *name)
   return true;
 }
 
+bool
+filesys_chdir (const char *name)
+{
+  char *filename = NULL;
+  struct dir *dir = extract_dir (name, &filename);
+  struct thread *cur = thread_current ();
+  struct inode *inode;
+
+  ASSERT (cur->dir != NULL);
+
+  if (strcmp (filename, "/") == 0)
+    inode = dir_get_inode (dir_open_root ());
+  else if (!dir_lookup (dir, filename, &inode))
+    return false;
+
+  dir_close (cur->dir);
+  cur->dir = dir_open (inode);
+
+  return true;
+}
+
 
 /* Formats the file system. */
 static void
