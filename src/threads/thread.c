@@ -21,6 +21,8 @@
    of thread.h for details. */
 #define THREAD_MAGIC 0xcd6abf4b
 
+static struct list waiting_list;
+
 /* List of processes in THREAD_READY state, that is, processes
    that are ready to run but not actually running. */
 static struct list ready_list;
@@ -91,6 +93,7 @@ thread_init (void)
   ASSERT (intr_get_level () == INTR_OFF);
 
   lock_init (&tid_lock);
+  list_init (&waiting_list);
   list_init (&ready_list);
   list_init (&all_list);
 
@@ -118,11 +121,30 @@ thread_start (void)
   sema_down (&idle_started);
 }
 
+static void
+wakeup (int64_t ticks)
+{
+  struct thread *t;
+
+  while (!list_empty (&waiting_list))
+    {
+      t = list_entry (list_front (&waiting_list), struct thread, elem);
+
+      if (ticks < t->wakeup_ticks)
+        break;
+
+      list_pop_front (&waiting_list);
+      thread_unblock (t);
+    }
+}
+
 /* Called by the timer interrupt handler at each timer tick.
    Thus, this function runs in an external interrupt context. */
 void
-thread_tick (void) 
+thread_tick (int64_t ticks)
 {
+  wakeup (ticks);
+
   struct thread *t = thread_current ();
 
   /* Update statistics. */
@@ -138,6 +160,35 @@ thread_tick (void)
   /* Enforce preemption. */
   if (++thread_ticks >= TIME_SLICE)
     intr_yield_on_return ();
+}
+
+static bool
+waiting_list_less_func (const struct list_elem *a,
+                const struct list_elem *b,
+                void *aux UNUSED)
+{
+  struct thread *ta = list_entry (a, struct thread, elem);
+  struct thread *tb = list_entry (b, struct thread, elem);
+
+  return ta->wakeup_ticks < tb->wakeup_ticks;
+}
+
+void
+thread_sleep (int64_t wakeup_ticks)
+{
+  struct thread *t;
+
+  enum intr_level old_level;
+  old_level = intr_disable ();
+
+  t = thread_current ();
+  ASSERT(t != idle_thread);
+
+  t->wakeup_ticks = wakeup_ticks;
+  list_insert_ordered (&waiting_list, &t->elem, waiting_list_less_func, 0);
+  thread_block ();
+
+  intr_set_level (old_level);
 }
 
 /* Prints thread statistics. */
