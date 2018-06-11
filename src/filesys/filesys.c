@@ -81,6 +81,7 @@ filesys_open (const char *name)
 {
   char *filename = NULL;
   struct dir *dir = extract_dir (name, &filename);
+  struct thread *cur = thread_current ();
   struct inode *inode = NULL;
 
   if (!dir)
@@ -88,9 +89,16 @@ filesys_open (const char *name)
 
   ASSERT (filename != NULL);
 
-  dir_lookup (dir, filename, &inode);
+  if (strcmp (filename, ".") == 0)
+    inode = dir_get_inode (cur->dir);
+  else if (strcmp (filename, "/") != 0)
+    dir_lookup (dir, filename, &inode);
+  else
+    inode = dir_get_inode (dir);
 
-  struct thread *cur = thread_current ();
+  if (inode == NULL)
+    return NULL;
+
   if (dir != cur->dir)
     dir_close (dir);
 
@@ -144,6 +152,8 @@ filesys_mkdir (const char *name)
 
   ASSERT (dir != NULL);
 
+  dir_add (dir, ".", sector);
+  dir_add (dir, "..", inode_get_inumber (dir_get_inode (dir)));
   dir_add (dir, filename, sector);
 
   if (dir != cur->dir)
@@ -200,20 +210,23 @@ extract_dir (const char *_name, char **filename)
 
   char *name = pre_name;
 
-  if (cur->dir == NULL || name[0] == '/')
+  if (cur->dir == NULL)
+    cur->dir = dir_open_root();
+
+  if (name[0] == '/')
     {
-      cur->dir = dir_open_root ();
+      dir = dir_open_root ();
 
       if (pre_name[0] == '/')
         name++;
     }
-
-  dir = cur->dir;
+  else
+    dir = cur->dir;
 
   for (token = strtok_r (name, "/", &save_ptr); token != NULL;
        token = strtok_r (NULL, "/", &save_ptr))
   {
-    if (prev_token != NULL)
+    if (prev_token != NULL && strcmp (prev_token, ".") != 0)
       {
         dir_lookup (dir, prev_token, &inode);
 
@@ -229,7 +242,8 @@ extract_dir (const char *_name, char **filename)
     prev_token = token;
   }
 
-  ASSERT (prev_token != NULL);
+  if (prev_token == NULL)
+    prev_token = pre_name;
 
   name_length = strlen (prev_token) + 1;
   *filename = malloc (name_length);
