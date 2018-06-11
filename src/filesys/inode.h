@@ -21,5 +21,6 @@ void inode_allow_write (struct inode *);
 off_t inode_length (const struct inode *);
 bool inode_isdir (const struct inode *);
 int inode_get_open_cnt (const struct inode *);
+bool inode_verify (const struct inode *);
 
 #endif /* filesys/inode.h */

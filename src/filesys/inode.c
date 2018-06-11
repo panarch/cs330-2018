@@ -9,6 +9,7 @@
 #include "threads/malloc.h"
 
 /* Identifies an inode. */
+#define INODE_MAGIC 0x494eae11
 #define INODE_FILE_MAGIC 0x494e4f44
 #define INODE_DIR_MAGIC 0x494d4f34
 
@@ -49,6 +50,8 @@ struct inode
     bool removed;                       /* True if deleted, false otherwise. */
     int deny_write_cnt;                 /* 0: writes ok, >0: deny writes. */
     struct inode_disk data;             /* Inode content. */
+
+    unsigned magic;                     /* Inode magic number */
   };
 
 static bool
@@ -247,6 +250,7 @@ inode_open (block_sector_t sector)
   inode->open_cnt = 1;
   inode->deny_write_cnt = 0;
   inode->removed = false;
+  inode->magic = INODE_MAGIC;
   cache_read (fs_device, inode->sector, &inode->data);
   return inode;
 }
@@ -308,6 +312,7 @@ inode_remove (struct inode *inode)
 {
   ASSERT (inode != NULL);
   inode->removed = true;
+  inode->magic = 0;
 }
 
 /* Reads SIZE bytes from INODE into BUFFER, starting at position OFFSET.
@@ -476,4 +481,10 @@ int
 inode_get_open_cnt (const struct inode *inode)
 {
   return inode->open_cnt;
+}
+
+bool
+inode_verify (const struct inode *inode)
+{
+  return inode->magic == INODE_MAGIC;
 }
