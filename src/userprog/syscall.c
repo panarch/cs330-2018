@@ -462,6 +462,31 @@ syscall_readdir (struct intr_frame *f)
   int *esp = f->esp;
   int fd = *(esp + 1);
   char *name = (char *)*(esp + 2);
+
+  struct file *file = thread_file_find (fd);
+
+  if (file == NULL)
+    {
+      syscall_exit_by_status (-1);
+      return;
+    }
+
+  struct dir *dir = dir_open (file_get_inode (file));
+
+  if (dir == NULL)
+    {
+      f->eax = false;
+      return;
+    }
+
+  bool success = dir_readdir (dir, name);
+
+  if (!success) {
+      f->eax = false;
+      return;
+    }
+
+  f->eax = true;
 }
 
 static void
@@ -469,6 +494,16 @@ syscall_isdir (struct intr_frame *f)
 {
   int *esp = f->esp;
   int fd = *(esp + 1);
+
+  struct file *file = thread_file_find (fd);
+
+  if (file == NULL)
+    {
+      syscall_exit_by_status (-1);
+      return;
+    }
+
+  f->eax = file_isdir (file);
 }
 
 static void
@@ -476,4 +511,14 @@ syscall_inumber (struct intr_frame *f)
 {
   int *esp = f->esp;
   int fd = *(esp + 1);
+
+  struct file *file = thread_file_find (fd);
+
+  if (file == NULL)
+    {
+      syscall_exit_by_status (-1);
+      return;
+    }
+
+  f->eax = file_inumber (file);
 }
