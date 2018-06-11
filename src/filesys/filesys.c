@@ -53,6 +53,9 @@ filesys_create (const char *name, off_t initial_size)
   block_sector_t inode_sector = 0;
   struct dir *dir = extract_dir (name, &filename);
 
+  if (!inode_verify (dir_get_inode (dir)))
+    return false;
+
   ASSERT (dir != NULL);
   ASSERT (filename != NULL);
 
@@ -88,6 +91,9 @@ filesys_open (const char *name)
     return NULL;
 
   ASSERT (filename != NULL);
+
+  if (!inode_verify (dir_get_inode (cur->dir)))
+    return NULL;
 
   if (strcmp (filename, ".") == 0)
     inode = dir_get_inode (cur->dir);
@@ -162,7 +168,8 @@ filesys_mkdir (const char *name)
 
   if (dir != cur->dir)
     dir_close (dir);
-  dir_close (new_dir);
+
+  free (new_dir);
 
   return success;
 }

@@ -9,6 +9,9 @@
 struct file *
 file_open (struct inode *inode) 
 {
+  if (!inode_verify (inode))
+    return NULL;
+
   struct file *file = calloc (1, sizeof *file);
   if (inode != NULL && file != NULL)
     {

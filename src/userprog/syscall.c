@@ -10,6 +10,7 @@
 #include "filesys/file.h"
 #include "filesys/directory.h"
 #include "filesys/filesys.h"
+#include "threads/malloc.h"
 #include "threads/vaddr.h"
 #include "vm/vm.h"
 
@@ -477,7 +478,7 @@ syscall_readdir (struct intr_frame *f)
     }
 
   file_seek (file, dir_tell (dir));
-  dir_close (dir);
+  free (dir);
 
   f->eax = true;
 }
