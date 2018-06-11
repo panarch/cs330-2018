@@ -258,3 +258,10 @@ dir_seek (struct dir *dir, off_t pos)
 {
   dir->pos = pos;
 }
+
+off_t
+dir_tell (struct dir *dir)
+{
+  ASSERT (dir != NULL);
+  return dir->pos;
+}

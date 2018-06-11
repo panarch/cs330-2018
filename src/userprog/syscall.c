@@ -460,6 +460,7 @@ syscall_readdir (struct intr_frame *f)
     }
 
   struct dir *dir = dir_open (file_get_inode (file));
+  dir_seek (dir, file_tell (file));
 
   if (dir == NULL)
     {
@@ -469,10 +470,13 @@ syscall_readdir (struct intr_frame *f)
 
   bool success = dir_readdir (dir, name);
 
-  if (!success) {
+  if (!success)
+    {
       f->eax = false;
       return;
     }
+
+  file_seek (file, dir_tell (dir));
 
   f->eax = true;
 }
