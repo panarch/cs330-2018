@@ -10,7 +10,8 @@
 
 #define CACHE_MAX 64
 
-static void read_ahead_async (void *aux);
+static void read_ahead_async (void *aux UNUSED);
+static void flush_all_async (void *aux UNUSED);
 
 static char cache_entries[CACHE_MAX * BLOCK_SECTOR_SIZE];
 static block_sector_t cache_sectors[CACHE_MAX];
@@ -36,6 +37,7 @@ cache_init (void)
   lock_init (&lock);
 
   thread_create ("read_ahead_async", PRI_DEFAULT, read_ahead_async, NULL);
+  thread_create ("flush_all_async", PRI_DEFAULT, flush_all_async, NULL);
 }
 
 static size_t
@@ -122,12 +124,16 @@ cache_flush (block_sector_t sector)
 void
 cache_flush_all ()
 {
+  lock_acquire (&lock);
+
   read_ahead_sector = CACHE_MAX;
 
   int i;
 
   for (i = 0; i < CACHE_MAX; i++)
     pop_victim ();
+
+  lock_release (&lock);
 }
 
 static size_t
@@ -193,3 +199,13 @@ read_ahead_async (void *aux UNUSED)
     }
 }
 
+static void
+flush_all_async (void *aux UNUSED)
+{
+  while (true)
+    {
+      timer_msleep (10000);
+
+      cache_flush_all ();
+    }
+}
